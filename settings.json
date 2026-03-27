@@ -1,0 +1,66 @@
+{
+  "respectGitignore": true,
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm run test *)",
+      "Bash(npm view *)",
+      "Bash(npm ls *)",
+      "Bash(* --version)",
+      "Bash(* --help)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git diff * \"---UNSTAGED---\" *)",
+      "Bash(git -C * diff *)",
+      "Bash(git log*)",
+      "Bash(git show *)",
+      "Bash(ls *)",
+      "Bash(head *)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(wc *)",
+      "Bash(find *)",
+      "Bash(sed *)",
+      "Back(mkdir *)",
+      "Bash(flutter test*)",
+      "Bash(uv sync*)",
+      "Bash(uv run pytest*)",
+      "Bash(uv run python -m pytest*)",
+      "Bash(uv run behave*)",
+      "Bash(uv run ruff check*)",
+      "Bash(uv run ruff format*)",
+      "Bash(uv run uvicorn*)",
+      "Bash(python3 ~/.claude/cost-log/extract_cost.py *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Read(.)",
+      "Search(.)",
+      "Read(~/.claude/**)",
+      "Write(~/.claude/cost-log/**)",
+      "Search(~/.claude/**)",
+      "Read(~/.zprofile)",
+      "Read(~/.zshrc)"
+    ],
+    "ask": [
+      "Bash(find*delete*)",
+      "Bash(find*exec*)",
+      "Bash(sed*i*)",
+      "Read(//**)",
+      "Search(//**)",
+      "Write(//**)"
+    ],
+    "defaultMode": "default"
+  },
+  "model": "opusplan",
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "fastMode": true,
+  "prefersReducedMotion": true,
+  "themePreference": "dark"
+}
