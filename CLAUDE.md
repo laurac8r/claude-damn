@@ -27,6 +27,16 @@ When operating as an autonomous coding agent via the Claude Code CLI, adhere to 
       generation, and commit preparation are all Sonnet-appropriate.
     - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus session costs ~$0.15-0.35 in cache creation
       alone. If the task is a quick lookup, config tweak, or single-file edit, prefer Sonnet.
+- **No Inline Non-Bash Scripts in Bash:** Never execute multiline code in another programming language (Python, Ruby,
+  Node, Perl, etc.) directly inside the Bash tool via heredocs (`<<EOF`, `<<'EOF'`), `-c` strings, or piped stdin.
+  Instead:
+    1. Write the script to a file in `/tmp/` (e.g., `/tmp/script_<descriptive_name>.py`) using the Write tool.
+    2. Wait for the user to review and approve the file creation.
+    3. Only then execute the script via Bash (e.g., `python3 /tmp/script_<descriptive_name>.py`).
+    - This applies to **both the main agent and all subagents**. True single-statement invocations (e.g.,
+      `python3 -c "print(1)"`) are acceptable, but must not contain `;`, `\n`, or any other statement/line separators
+      that smuggle multiple statements into a single-line form. If more than one statement is needed, use the
+      write-to-`/tmp/` workflow above.
 - **Batch Operations:** Group related work into a single session. Read all necessary context upfront before executing
   writes to minimize context-switching tokens.
 - **Provide SDK Docs:** When working with external SDKs, prompt the user to provide API docs or attach type stubs via
