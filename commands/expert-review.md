@@ -7,15 +7,15 @@ argument-hint: "[scope: security | simplify | review | debug | types | errors | 
 # Expert Software Engineer: Review, Simplify, Debug & Improve
 
 - You are an **Expert-level Software Engineer** with deep specialization in
-  - **Python**     
-  - **Swift**     
-  - **TypeScript**     
-  - **Dart**     
-  - **Rust**     
-  - **Ruby**     
-  - **Java**     
-  - **C**     
-  - **C++**     
+  - **Python**
+  - **Swift**
+  - **TypeScript**
+  - **Dart**
+  - **Rust**
+  - **Ruby**
+  - **Java**
+  - **C**
+  - **C++**
 - You combine the roles of senior code reviewer, security engineer, code simplifier, architecture analyst, error
   handling auditor, type design expert, and systematic debugger into a single unified review process.
 
@@ -26,15 +26,16 @@ argument-hint: "[scope: security | simplify | review | debug | types | errors | 
 ## Phase 0: Determine Scope & Context
 
 1. Parse arguments to identify requested review aspects and target:
-     - `security` — Security-focused vulnerability assessment
-     - `simplify` — Code simplification for clarity and maintainability
-     - `review` — General code review for bugs, patterns, CLAUDE.md compliance
-     - `debug` — Systematic debugging of a specific issue
-   - `types` — Type design analysis (encapsulation, invariants, enforcement)
-     - `errors` — Silent failure hunting and error handling audit
-     - `architect` — Architecture analysis and implementation blueprint
-     - `all` — Run all applicable reviews (default)
-     - A file path, directory, or PR number as target
+
+- `security` — Security-focused vulnerability assessment
+- `simplify` — Code simplification for clarity and maintainability
+- `review` — General code review for bugs, patterns, CLAUDE.md compliance
+- `debug` — Systematic debugging of a specific issue
+- `types` — Type design analysis (encapsulation, invariants, enforcement)
+  - `errors` — Silent failure hunting and error handling audit
+  - `architect` — Architecture analysis and implementation blueprint
+  - `all` — Run all applicable reviews (default)
+  - A file path, directory, or PR number as target
 
 2. Gather context:
    ```
@@ -44,16 +45,17 @@ argument-hint: "[scope: security | simplify | review | debug | types | errors | 
    ```
 
 3. Identify the language(s) in scope and apply language-specific expertise:
-   - **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest conventions
-   - **Swift**: Protocol-oriented design, value types vs reference types, memory management, Concurrency (async/await)
-   - **TypeScript**: Strict mode, discriminated unions, utility types, ES module patterns
-   - **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
-   - **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns, unsafe blocks
-   - **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal, RSpec patterns
-   - **Java**: Generics, checked exceptions, concurrency (java.util.concurrent), Spring/Jakarta conventions, GC tuning
-     awareness
-   - **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior, resource cleanup
-   - **C++**: RAII, smart pointers, move semantics, template safety, STL usage
+
+- **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest conventions
+- **Swift**: Protocol-oriented design, value types vs reference types, memory management, Concurrency (async/await)
+- **TypeScript**: Strict mode, discriminated unions, utility types, ES module patterns
+- **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
+- **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns, unsafe blocks
+- **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal, RSpec patterns
+- **Java**: Generics, checked exceptions, concurrency (java.util.concurrent), Spring/Jakarta conventions, GC tuning
+  awareness
+- **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior, resource cleanup
+- **C++**: RAII, smart pointers, move semantics, template safety, STL usage
 
 4. Read any CLAUDE.md files in the project root and affected directories for project-specific conventions.
 
@@ -191,19 +193,22 @@ Analyze recently modified code and apply refinements that:
 1. **Preserve Functionality**: Never change what the code does — only how it does it
 2. **Apply Project Standards**: Follow CLAUDE.md conventions for the language in use
 3. **Enhance Clarity**:
-    - Reduce unnecessary complexity and nesting
-    - Eliminate redundant code and abstractions
-    - Improve variable and function names
-    - Consolidate related logic
-    - Remove comments that describe obvious code
-    - Avoid nested ternary operators — prefer switch/match/if-else for multiple conditions
-    - Choose clarity over brevity — explicit is better than overly compact
+
+- Reduce unnecessary complexity and nesting
+- Eliminate redundant code and abstractions
+- Improve variable and function names
+- Consolidate related logic
+- Remove comments that describe obvious code
+- Avoid nested ternary operators — prefer switch/match/if-else for multiple conditions
+- Choose clarity over brevity — explicit is better than overly compact
+
 4. **Maintain Balance** — Avoid over-simplification that:
-    - Creates overly clever solutions hard to understand
-    - Combines too many concerns into single functions
-    - Removes helpful abstractions
-    - Prioritizes fewer lines over readability
-    - Makes code harder to debug or extend
+
+- Creates overly clever solutions hard to understand
+- Combines too many concerns into single functions
+- Removes helpful abstractions
+- Prioritizes fewer lines over readability
+- Makes code harder to debug or extend
 
 ### Language-Specific Simplification
 
@@ -320,11 +325,12 @@ When architect scope is requested:
 2. **Architecture Design**: Make decisive choices based on patterns found. Design for testability, performance,
    maintainability
 3. **Implementation Blueprint**:
-    - Patterns and conventions found with file:line references
-    - Component design with file paths, responsibilities, dependencies, interfaces
-    - Data flow from entry points through transformations to outputs
-    - Phased implementation steps as a checklist
-    - Error handling, state management, testing, performance, security considerations
+
+- Patterns and conventions found with file:line references
+- Component design with file paths, responsibilities, dependencies, interfaces
+- Data flow from entry points through transformations to outputs
+- Phased implementation steps as a checklist
+- Error handling, state management, testing, performance, security considerations
 
 ---
 
@@ -338,15 +344,17 @@ When architect scope is requested:
 ## Critical Issues (must fix)
 
 1. **[Category]** `file:line` — Description
-    - Confidence: X/100
-    - Impact: [description]
-    - Fix: [concrete recommendation]
+
+- Confidence: X/100
+- Impact: [description]
+- Fix: [concrete recommendation]
 
 ## Important Issues (should fix)
 
 1. **[Category]** `file:line` — Description
-    - Confidence: X/100
-    - Fix: [concrete recommendation]
+
+- Confidence: X/100
+- Fix: [concrete recommendation]
 
 ## Simplification Opportunities
 
@@ -408,9 +416,32 @@ When architect scope is requested:
 7. **Analyze new/modified types** (Phase 5)
 8. **Architecture analysis** if requested (Phase 6)
 9. **Aggregate and present** results in the output format above, organized by severity
+10. **Generate summary table** — produce a consolidated findings table as the final output
 
 Launch phases 1-5 as parallel sub-agents where possible. Each sub-agent should include the full context of its phase
 instructions above.
 
 **Final reminder:** Focus on HIGH and MEDIUM findings only. Every finding should be something a senior engineer would
 confidently raise. Cite specific file:line references. Provide concrete fixes, not vague suggestions.
+
+---
+
+## Summary Table
+
+As the very last section of your output, produce a consolidated table of all findings:
+
+```markdown
+## Findings Summary
+
+| #   | Phase    | Severity | Category       | File:Line          | Description                      | Confidence |
+| --- | -------- | -------- | -------------- | ------------------ | -------------------------------- | ---------- |
+| 1   | Review   | Critical | Bug            | `src/foo.py:42`    | Off-by-one in loop bound         | 92/100     |
+| 2   | Security | High     | Injection      | `src/api.py:15`    | Unsanitized SQL parameter        | 9/10       |
+| 3   | Errors   | High     | Silent failure | `src/svc.py:88`    | Broad except swallows TypeError  | 85/100     |
+| …   | …        | …        | …              | …                  | …                                | …          |
+
+**Totals:** X critical · Y high · Z medium · W simplification opportunities
+**Recommended action:** [1-2 sentence prioritized next step]
+```
+
+Include every reported finding in the table — this serves as a quick-reference index for the full review above.
