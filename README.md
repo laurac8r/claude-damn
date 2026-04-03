@@ -1,1 +1,1 @@
-# awesome-claude
+# claude-claude
