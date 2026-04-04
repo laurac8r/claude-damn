@@ -1,3 +1,9 @@
+---
+name: cost-opt
+description: 1. First, ensure logs exist by running: `python3 ~/.claude/extract_cost.py --append-log --quiet`
+user-invocable: true
+---
+
 1. First, ensure logs exist by running: `python3 ~/.claude/extract_cost.py --append-log --quiet`
 2. Read the JSONL cost log files in `~/.claude/cost-log/*.jsonl` and the existing `~/.claude/COST-SUMMARY.md`.
 3. Recalibrate and update `~/.claude/extract_cost.py` `PRICING` table and the `~/.claude/statusline-command.sh`

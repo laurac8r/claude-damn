@@ -1,3 +1,9 @@
+---
+name: cost_
+description: Extract and log cost data for the current session.
+user-invocable: true
+---
+
 Extract and log cost data for the current session.
 
 1. Run

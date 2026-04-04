@@ -1,3 +1,9 @@
+---
+name: review
+description: Review command
+user-invocable: true
+---
+
 # Review command
 
 You are a senior software engineer performing a thorough code review to identify potential bugs.

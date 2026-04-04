@@ -1,7 +1,9 @@
 ---
-allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
+name: expert-review
 description: Expert-level multi-language code review, simplification, debugging, and security audit
-argument-hint: "[scope: security | simplify | review | debug | types | errors | architect | all] [target: file/dir/PR]"
+allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
+argument-hint: "[scope] [target]"
+user-invocable: true
 ---
 
 # Expert Software Engineer: Review, Simplify, Debug & Improve
@@ -27,15 +29,18 @@ argument-hint: "[scope: security | simplify | review | debug | types | errors | 
 
 1. Parse arguments to identify requested review aspects and target:
 
-- `security` — Security-focused vulnerability assessment
-- `simplify` — Code simplification for clarity and maintainability
-- `review` — General code review for bugs, patterns, CLAUDE.md compliance
-- `debug` — Systematic debugging of a specific issue
-- `types` — Type design analysis (encapsulation, invariants, enforcement)
+  - `help` — Display all available scopes and usage, then stop
+  - `security` — Security-focused vulnerability assessment
+  - `simplify` — Code simplification for clarity and maintainability
+  - `review` — General code review for bugs, patterns, CLAUDE.md compliance
+  - `debug` — Systematic debugging of a specific issue
+  - `types` — Type design analysis (encapsulation, invariants, enforcement)
   - `errors` — Silent failure hunting and error handling audit
   - `architect` — Architecture analysis and implementation blueprint
   - `all` — Run all applicable reviews (default)
   - A file path, directory, or PR number as target
+
+If scope is `help`, print this list and exit without running any review phases.
 
 2. Gather context:
    ```
@@ -212,7 +217,8 @@ Analyze recently modified code and apply refinements that:
 
 ### Language-Specific Simplification
 
-- **Python**: Replace verbose patterns with comprehensions, prefer pathlib over os.path, use match statements (3.10+)
+- **Python**: Replace verbose patterns with comprehensions, prefer `pathlib` over `os.path`, use match statements (
+  3.10+)
 - **Swift**: Leverage trailing closure syntax, prefer guard-let over nested if-let, use result builders where
   appropriate
 - **TypeScript**: Use discriminated unions over type assertions, prefer satisfies for type validation, use as const for
@@ -225,7 +231,7 @@ Analyze recently modified code and apply refinements that:
 - **C++**: Use structured bindings, range-based for loops, std::optional over sentinel values, CTAD where it helps
   readability
 - **Ruby**: Leverage then/yield_self, prefer frozen_string_literal, use pattern matching (3.0+)
-- **Dart**: Use cascade notation, prefer final over var, leverage collection-if/collection-for
+- **Dart**: Use cascade notation, prefer `final` over `var`, leverage collection-if/collection-for
 
 ---
 
