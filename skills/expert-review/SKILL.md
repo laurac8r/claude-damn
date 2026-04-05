@@ -2,7 +2,7 @@
 name: expert-review
 description: Expert-level multi-language code review, simplification, debugging, and security audit
 allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
-argument-hint: "[scope] [target]"
+argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
 
@@ -440,10 +440,12 @@ Use this scope when the built-in phases do not cover the specific concern the us
 6. **Audit error handling** in changed code (Phase 4)
 7. **Analyze new/modified types** (Phase 5)
 8. **Architecture analysis** if requested (Phase 6)
-9. **Aggregate and present** results in the output format above, organized by severity
-10. **Generate summary table** — produce a consolidated findings table as the final output
+9. **Custom focus analysis** if requested (Phase 7)
+10. **Aggregate and present** results in the output format above, organized by severity
+11. **Generate summary table** — produce a consolidated findings table as the final output
 
-Launch phases 1-5 as parallel sub-agents where possible. Each sub-agent should include the full context of its phase
+Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself dispatch parallel sub-agents when the
+custom directive decomposes into independent checks. Each sub-agent should include the full context of its phase
 instructions above.
 
 **Final reminder:** Focus on HIGH and MEDIUM findings only. Every finding should be something a senior engineer would
