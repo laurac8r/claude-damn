@@ -2,7 +2,7 @@
 
 import pytest
 
-from extract_cost import PRICING, calc_cost, model_key
+from src.extract_cost import PRICING, calc_cost, model_key
 
 
 class TestFastModePricing:
