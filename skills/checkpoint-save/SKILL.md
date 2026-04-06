@@ -17,7 +17,7 @@ Create `CHECKPOINT.md` in the project root (or working directory) with:
 # Checkpoint: [Brief Title]
 
 **Date:** [today's date]
-**Branch:** [current git branch]
+**Branch:** `[current git branch]`
 **Session context:** [1-2 sentence summary of what we were doing]
 
 ## Current State
@@ -72,6 +72,13 @@ Run:
 
 ```
 COMMON_DIR=$(git rev-parse --path-format=absolute --git-common-dir)
+```
+
+If this command exits non-zero, abort: **"Not a git repository. checkpoint-save requires a git repo at CWD."**
+
+Then:
+
+```
 ARCHIVE=$(dirname "$COMMON_DIR")/.checkpoints
 mkdir -p "$ARCHIVE"
 ```
@@ -100,14 +107,25 @@ single-slot backup before the same-branch overwrite.
 **Case B — Different branch:**
 The existing checkpoint belongs to a different effort. Derive `<old-slug>` from the `**Branch:**` value in the
 existing file (apply the same slug rules). Move (not copy) the existing `CHECKPOINT.md` to `.checkpoints/<old-slug>.md`.
-On collision (file already exists), append `-2`, `-3`, etc. until the name is free. Report to the user:
+On collision (file already exists), append `-2`, `-3`, etc. until the name is free.
+
+**Before proceeding to Step 5, verify the `mv` succeeded.** If it fails (permissions, disk full, cross-device), abort:
+**"Failed to archive existing CHECKPOINT.md. The old checkpoint is still at CWD. Resolve the mv failure before
+retrying."** Do not overwrite `CHECKPOINT.md` until the archive is confirmed.
+
+Report to the user:
 
 > "Archived previous checkpoint (branch: `<old-branch>`) to `.checkpoints/<old-slug>.md`."
 
 **Case C — Branch line missing or unparseable:**
-The `**Branch:**` line cannot be found or its value is empty/malformed. Use the file's modification time to form a
-timestamp: `mtime` formatted as `YYYYMMDD-HHMMSS`. Move the existing file to
-`.checkpoints/unparsed-<YYYYMMDD-HHMMSS>.md`. Report to the user:
+The `**Branch:**` line cannot be found or its value is empty/malformed. Get the file's modification time as a timestamp
+(`YYYYMMDD-HHMMSS`):
+
+- **macOS:** `stat -f "%Sm" -t "%Y%m%d-%H%M%S" CHECKPOINT.md`
+- **Linux:** `date -r CHECKPOINT.md +%Y%m%d-%H%M%S`
+- **Fallback** (if both fail): `date +%Y%m%d-%H%M%S` (uses current time)
+
+Move the existing file to `.checkpoints/unparsed-<YYYYMMDD-HHMMSS>.md`. Report to the user:
 
 > "Could not parse branch from existing CHECKPOINT.md. Archived to `.checkpoints/unparsed-<YYYYMMDD-HHMMSS>.md`."
 

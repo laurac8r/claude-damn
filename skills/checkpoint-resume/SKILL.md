@@ -15,7 +15,15 @@ Resume work from a CHECKPOINT.md file. Rebuild full context and continue exactly
 Run:
 
 ```bash
-ARCHIVE=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/.checkpoints
+COMMON_DIR=$(git rev-parse --path-format=absolute --git-common-dir)
+```
+
+If this command exits non-zero, abort: **"Not a git repository. checkpoint-resume requires a git repo at CWD."**
+
+Then:
+
+```bash
+ARCHIVE=$(dirname "$COMMON_DIR")/.checkpoints
 ```
 
 This resolves to the shared `.checkpoints/` directory at the main checkout root, consistent across all worktrees.
@@ -69,8 +77,7 @@ Wait for the user's response before continuing.
 > Found an archived checkpoint for the current branch (`<current-slug>`). Restore it to continue work?
 
 On user confirmation: **move** (not copy) `$ARCHIVE/<current-slug>.md` to `CHECKPOINT.md` at CWD, then proceed to Step
-5.
-On user decline: stop and report no active checkpoint to resume.
+5. On user decline: stop and report no active checkpoint to resume.
 
 **Case D — No CHECKPOINT.md at CWD, no slug match, archive non-empty**
 
