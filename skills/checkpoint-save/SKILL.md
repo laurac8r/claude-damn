@@ -56,11 +56,89 @@ Create `CHECKPOINT.md` in the project root (or working directory) with:
 
 ## Process
 
-1. Run `git status` and `git diff --stat` to capture current state
-2. Review any active tasks/todos in the session
-3. Check memory files for relevant context to reference
-4. Write CHECKPOINT.md with all sections filled in
-5. Stage the checkpoint file: `git add CHECKPOINT.md`
+### Step 1 — Compute current-branch slug
+
+Run `git branch --show-current` to get the current branch name. If the output is empty (detached HEAD), fall back to
+the basename of CWD (`basename "$PWD"`). Apply slug rules to produce `<slug>`:
+
+1. Lowercase.
+2. Replace `/` with `-`.
+3. Strip characters outside `[a-z0-9-]`.
+4. Collapse consecutive `-`.
+
+### Step 2 — Resolve archive directory
+
+Run:
+
+```
+COMMON_DIR=$(git rev-parse --path-format=absolute --git-common-dir)
+ARCHIVE=$(dirname "$COMMON_DIR")/.checkpoints
+mkdir -p "$ARCHIVE"
+```
+
+This resolves to the **main checkout root's** `.checkpoints/` directory, ensuring all git worktrees share a single
+archive.
+
+### Step 3 — Verify `.gitignore` coverage
+
+Check whether `.checkpoints/` is listed in the main checkout's `.gitignore` (the `.gitignore` at `$(dirname
+"$COMMON_DIR")/.gitignore`). If the line is absent, append `.checkpoints/` to that `.gitignore` and report to the
+user:
+
+> "Added `.checkpoints/` to `.gitignore` in the main checkout. Please review and commit that change when ready."
+
+Do NOT auto-commit — the user handles all git commits.
+
+### Step 4 — Handle existing CHECKPOINT.md
+
+If `CHECKPOINT.md` exists at CWD, parse its `**Branch:**` line and apply one of the three cases below:
+
+**Case A — Same branch as current:**
+Copy the existing file to `.checkpoints/<slug>.prev.md` (overwrite any prior `.prev.md`). This is a rolling
+single-slot backup before the same-branch overwrite.
+
+**Case B — Different branch:**
+The existing checkpoint belongs to a different effort. Derive `<old-slug>` from the `**Branch:**` value in the
+existing file (apply the same slug rules). Move (not copy) the existing `CHECKPOINT.md` to `.checkpoints/<old-slug>.md`.
+On collision (file already exists), append `-2`, `-3`, etc. until the name is free. Report to the user:
+
+> "Archived previous checkpoint (branch: `<old-branch>`) to `.checkpoints/<old-slug>.md`."
+
+**Case C — Branch line missing or unparseable:**
+The `**Branch:**` line cannot be found or its value is empty/malformed. Use the file's modification time to form a
+timestamp: `mtime` formatted as `YYYYMMDD-HHMMSS`. Move the existing file to
+`.checkpoints/unparsed-<YYYYMMDD-HHMMSS>.md`. Report to the user:
+
+> "Could not parse branch from existing CHECKPOINT.md. Archived to `.checkpoints/unparsed-<YYYYMMDD-HHMMSS>.md`."
+
+### Step 5 — Write new CHECKPOINT.md
+
+Write a fresh `CHECKPOINT.md` at CWD using the template above, filling in all sections. Run `git status` and
+`git diff --stat` to capture current state. Review active tasks/todos in the session. Check memory files for relevant
+context to reference.
+
+### Step 6 — Stage the file
+
+```
+git add CHECKPOINT.md
+```
+
+### Step 7 — Report
+
+Summarize to the user:
+
+- Any archive action taken (Case A, B, or C from Step 4, or "no prior checkpoint existed").
+- Confirmation that the new `CHECKPOINT.md` is written and staged.
+- Invariants upheld (see below).
+
+## Invariants
+
+After every successful save, all three of the following must hold:
+
+1. **CWD has exactly one `CHECKPOINT.md`** — it was just written.
+2. **Its `**Branch:**` line matches the current git branch** — the template was filled in with the current branch.
+3. **No prior checkpoint content has been lost** — any pre-existing `CHECKPOINT.md` was archived to `.checkpoints/`
+   before overwrite (Case A → `.prev.md`; Case B → `<old-slug>.md`; Case C → `unparsed-<timestamp>.md`).
 
 ## Key Principles
 
