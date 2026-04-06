@@ -18,9 +18,6 @@
       "Bash(git -C * log *)",
       "Bash(git -C * diff *)",
       "Bash(git -C * show *)",
-      "Bash(git log *)",
-      "Bash(git diff *)",
-      "Bash(git show *)",
       "Bash(ls *)",
       "Bash(head *)",
       "Bash(cat *)",
@@ -29,7 +26,7 @@
       "Bash(wc *)",
       "Bash(find *)",
       "Bash(sed *)",
-      "Back(mkdir *)",
+      "Bash(mkdir *)",
       "Bash(flutter test*)",
       "Bash(uv sync*)",
       "Bash(uv run pytest*)",
@@ -63,7 +60,6 @@
       "Bash(npm install:*)",
       "Bash(npx vitest:*)",
       "Bash(npm test:*)",
-      "Write(CHECKPOINT.md)",
       "Write(.checkpoints/*)",
       "Write(.remember/*)"
     ],
@@ -159,6 +155,6 @@
     "hookify@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "remember@claude-plugins-official": true,
+    "remember@claude-plugins-official": true
   }
 }

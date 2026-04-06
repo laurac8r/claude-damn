@@ -46,6 +46,8 @@ setup() {
   REPO="$TEST_DIR/repo"
   mkdir -p "$REPO"
   git -C "$REPO" init -b main --quiet
+  git -C "$REPO" config user.email "test@example.com"
+  git -C "$REPO" config user.name "Test User"
   git -C "$REPO" commit --allow-empty -m "init" --quiet
 }
 
