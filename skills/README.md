@@ -40,6 +40,21 @@ Skills are composed from modifiers. Each modifier maps to a specific underlying 
 | `/super-duper-debug-and-fix`     | super + duper + debug + tdd       | /expert-review debug + /brainstorming + /tdd + /using-git-worktrees                                |
 | `/super-duper-debug-and-fix-cat` | super + duper + debug + tdd + cat | /expert-review debug + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
 
+### Base: Expert Review
+
+| Skill                            | Modifiers                          | Invokes                                                                                      |
+|----------------------------------|------------------------------------|----------------------------------------------------------------------------------------------|
+| `/expert-review`                 | expert                             | /expert-review                                                                               |
+| `/expert-cat-review`             | expert + cat                       | /expert-review (parallel subagent phases)                                                    |
+| `/expert-tdd-review`             | expert + tdd                       | /expert-review + /tdd                                                                        |
+| `/expert-tdd-cat-review`         | expert + tdd + cat                 | /expert-review + /tdd + /subagent-driven-development                                         |
+| `/expert-super-review`           | expert + super + tdd               | /expert-review + /brainstorming + /tdd                                                       |
+| `/expert-super-cat-review`       | expert + super + tdd + cat         | /expert-review + /brainstorming + /tdd + /subagent-driven-development                        |
+| `/expert-duper-tdd-review`       | expert + duper + tdd               | /expert-review + /tdd + /using-git-worktrees                                                 |
+| `/expert-duper-tdd-cat-review`   | expert + duper + tdd + cat         | /expert-review + /tdd + /using-git-worktrees + /subagent-driven-development                  |
+| `/expert-super-duper-review`     | expert + super + duper + tdd       | /expert-review + /brainstorming + /tdd + /using-git-worktrees                                |
+| `/expert-super-duper-cat-review` | expert + super + duper + tdd + cat | /expert-review + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
+
 ## Other Skills
 
 | Skill                         | Purpose                                          |
