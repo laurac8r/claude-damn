@@ -4,4 +4,4 @@ description: TDD workflow using an isolated git worktree with subagent-driven-de
 user-invocable: true
 ---
 
-/tdd but using /using-git-worktrees with /subagent-driven-development
+/tdd but using /duper with /cat
