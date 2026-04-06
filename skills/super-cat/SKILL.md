@@ -4,4 +4,4 @@ description: Brainstorm first, then implement using TDD with subagent-driven-dev
 user-invocable: true
 ---
 
-/brainstorming, but use /tdd when finally implementing with /subagent-driven-development
+/brainstorming, but use /tdd when finally implementing with /cat
