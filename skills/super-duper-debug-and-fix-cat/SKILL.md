@@ -4,4 +4,4 @@ description: Expert review to debug, then fix using brainstorm+TDD workflow in a
 user-invocable: true
 ---
 
-/expert-review debug, then fix using /super with /using-git-worktrees with /subagent-driven-development
+/expert-review debug, then fix using /super with /duper with /cat

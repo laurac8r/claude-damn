@@ -4,4 +4,4 @@ description: Brainstorm+TDD workflow using an isolated git worktree with subagen
 user-invocable: true
 ---
 
-/super but using /using-git-worktrees with /subagent-driven-development
+/super but using /duper with /cat

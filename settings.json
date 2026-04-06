@@ -9,16 +9,15 @@
       "Bash(* --version)",
       "Bash(* --help)",
       "Bash(git status)",
+      "Bash(git -C * status)",
       "Bash(git add *)",
+      "Bash(git -C * add *)",
       "Bash(git log *)",
       "Bash(git diff *)",
       "Bash(git show *)",
       "Bash(git -C * log *)",
       "Bash(git -C * diff *)",
       "Bash(git -C * show *)",
-      "Bash(git log *)",
-      "Bash(git diff *)",
-      "Bash(git show *)",
       "Bash(ls *)",
       "Bash(head *)",
       "Bash(cat *)",
@@ -27,7 +26,7 @@
       "Bash(wc *)",
       "Bash(find *)",
       "Bash(sed *)",
-      "Back(mkdir *)",
+      "Bash(mkdir *)",
       "Bash(flutter test*)",
       "Bash(uv sync*)",
       "Bash(uv run pytest*)",
@@ -54,15 +53,15 @@
       "Write(~/.claude/cost-log/**)",
       "Write(~/.claude/extract_cost.py)",
       "Write(~/.claude/COST-SUMMARY.md)",
+      "Write(CHECKPOINT.md)",
       "Bash(cat ~/.claude/cost-log/*)",
       "Bash(brew list:*)",
       "Bash(command -v trash)",
-      "WebFetch(domain:developers.dropbox.com)",
       "Bash(npm install:*)",
       "Bash(npx vitest:*)",
-      "WebFetch(domain:dropbox.github.io)",
       "Bash(npm test:*)",
-      "Bash(~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh *)"
+      "Write(.checkpoints/*)",
+      "Write(.remember/*)"
     ],
     "ask": [
       "Write(*settings.json*)",
@@ -73,10 +72,10 @@
       "Bash(gh api*)",
       "Bash(find*-delete*)",
       "Bash(find*-exec*)",
-      "Bash(sed*-i*)"
+      "Bash(sed*-i*)",
+      "Bash(*git commit*)"
     ],
     "deny": [
-      "Bash(*git commit*)",
       "Bash(*gh pr create*)",
       "Bash(*gh pr merge*)",
       "Bash(*gh pr close*)",
@@ -156,14 +155,6 @@
     "hookify@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "deploy-on-aws@claude-plugins-official": true,
-    "remember@claude-plugins-official": true,
-    "aws-serverless@claude-plugins-official": true,
-    "stripe@claude-plugins-official": true,
-    "legalzoom@claude-plugins-official": true,
-    "product-tracking-skills@claude-plugins-official": true
-  },
-  "fastMode": false,
-  "prefersReducedMotion": true,
-  "themePreference": "light"
+    "remember@claude-plugins-official": true
+  }
 }
