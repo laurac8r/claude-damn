@@ -159,6 +159,6 @@
     "hookify@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "remember@claude-plugins-official": true,
+    "remember@claude-plugins-official": true
   }
 }
