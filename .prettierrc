@@ -1,15 +1,32 @@
 {
+  "plugins": [
+    "/opt/homebrew/lib/node_modules/prettier-plugin-toml/lib/index.cjs"
+  ],
   "overrides": [
     {
-      "files": "*.md",
+      "files": [
+        "*.md",
+        "*.mdx"
+      ],
       "options": {
         "parser": "markdown",
         "proseWrap": "always",
-        "printWidth": 120,
+        "printWidth": 80,
         "tabWidth": 2,
-        "useTabs": false,
-        "singleQuote": false,
-        "embeddedLanguageFormatting": "auto"
+        "useTabs": true,
+        "embeddedLanguageFormatting": "auto",
+        "htmlWhitespaceSensitivity": "css"
+      }
+    },
+    {
+      "files": [
+        "*.toml"
+      ],
+      "options": {
+        "parser": "toml",
+        "printWidth": 88,
+        "tabWidth": 4,
+        "useTabs": false
       }
     }
   ]

@@ -16,4 +16,9 @@ security_warnings*.json
 history.jsonl
 settings.json
 .worktrees/
+worktrees/
 .checkpoints/
+.remember
+CHECKPOINT.md
+.claude
+docs/superpowers

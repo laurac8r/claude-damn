@@ -86,24 +86,30 @@ class TestStatusLine:
 class TestPluginDefaults:
     """Ensure critical plugins stay enabled and problematic ones stay disabled."""
 
-    @pytest.mark.parametrize("plugin", [
-        "code-review@claude-plugins-official",
-        "commit-commands@claude-plugins-official",
-        "pr-review-toolkit@claude-plugins-official",
-        "security-guidance@claude-plugins-official",
-        "hookify@claude-plugins-official",
-    ])
+    @pytest.mark.parametrize(
+        "plugin",
+        [
+            "code-review@claude-plugins-official",
+            "commit-commands@claude-plugins-official",
+            "pr-review-toolkit@claude-plugins-official",
+            "security-guidance@claude-plugins-official",
+            "hookify@claude-plugins-official",
+        ],
+    )
     def test_critical_plugins_enabled(
-        self, enabled_plugins: dict[str, bool], plugin: str
+            self, enabled_plugins: dict[str, bool], plugin: str
     ) -> None:
         assert enabled_plugins.get(plugin) is True, f"{plugin} must be enabled"
 
-    @pytest.mark.parametrize("plugin", [
-        "explanatory-output-style@claude-plugins-official",
-        "ralph-loop@claude-plugins-official",
-    ])
+    @pytest.mark.parametrize(
+        "plugin",
+        [
+            "explanatory-output-style@claude-plugins-official",
+            "ralph-loop@claude-plugins-official",
+        ],
+    )
     def test_noisy_plugins_not_enabled(
-        self, enabled_plugins: dict[str, bool], plugin: str
+            self, enabled_plugins: dict[str, bool], plugin: str
     ) -> None:
         # These plugins should either be absent or explicitly False
         assert enabled_plugins.get(plugin) is not True, f"{plugin} must not be enabled"

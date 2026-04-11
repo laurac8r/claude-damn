@@ -40,13 +40,17 @@ def main():
 
         command = data.get("tool_input", {}).get("command", "")
         if PATTERN.search(command):
-            print(json.dumps({
-                "hookSpecificOutput": {
-                    "hookEventName": "PreToolUse",
-                    "permissionDecision": "deny",
-                },
-                "systemMessage": MESSAGE,
-            }))
+            print(
+                json.dumps(
+                    {
+                        "hookSpecificOutput": {
+                            "hookEventName": "PreToolUse",
+                            "permissionDecision": "deny",
+                        },
+                        "systemMessage": MESSAGE,
+                    }
+                )
+            )
         else:
             print(json.dumps({}))
     except Exception as e:
