@@ -1,0 +1,10 @@
+[analysis]
+# Whether ty should respect standard `type: ignore` comments (defaults to true)
+# If false, it will only respect `ty: ignore` comments.
+respect-type-ignore-comments = true
+
+[rules]
+# You can customize specific typing diagnostic levels here ("error", "warn", "ignore")
+# Example:
+# missing-return = "warn"
+# index-out-of-bounds = "ignore"

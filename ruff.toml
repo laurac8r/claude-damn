@@ -1,0 +1,19 @@
+# Black's standard line length is 88 characters
+line-length = 88
+
+[format]
+# These settings explicitly match Black's behavior (they are also Ruff's defaults)
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# Optional: Enable auto-formatting of code examples in docstrings
+docstring-code-format = true
+
+[lint]
+# Enable standard linting rules (Pyflakes and a subset of pycodestyle)
+select = ["E", "F", "I"] # "I" added to sort imports (like `isort`)
+
+# Ruff automatically ignores linting rules that conflict with its formatter
+ignore = []

@@ -1,8 +1,11 @@
 # claude-damn
 
-A composable skill library and opinionated harness for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
-Ships slash commands, skills, hooks, permission guards, and cost-tracking tooling that layer on top of the
-[superpowers](https://github.com/anthropics/claude-plugins-official/tree/main/superpowers) plugin.
+A composable skill library and opinionated harness for
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code). Ships slash
+commands, skills, hooks, permission guards, and cost-tracking tooling that layer
+on top of the
+[superpowers](https://github.com/anthropics/claude-plugins-official/tree/main/superpowers)
+plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
@@ -13,7 +16,7 @@ Ships slash commands, skills, hooks, permission guards, and cost-tracking toolin
 Skills compose from four modifiers — stack them to build the workflow you need:
 
 | Modifier | What it adds                            |
-|----------|-----------------------------------------|
+| -------- | --------------------------------------- |
 | `super`  | Brainstorm requirements first, then TDD |
 | `duper`  | Isolated git worktree                   |
 | `cat`    | Parallel subagent execution             |
@@ -22,33 +25,46 @@ Skills compose from four modifiers — stack them to build the workflow you need
 These combine into four skill families:
 
 - **TDD** — `/tdd`, `/tdd-cat`, `/duper-tdd`, `/duper-tdd-cat`
-- **Brainstorm + TDD** — `/super`, `/super-cat`, `/super-duper`, `/super-duper-cat`
-- **Debug + Brainstorm + TDD** — `/super-debug-and-fix`, `/super-debug-and-fix-cat`, `/super-duper-debug-and-fix`, `/super-duper-debug-and-fix-cat`
-- **Expert Review** — `/expert-review` through `/expert-super-duper-cat-review` (10 variants)
+- **Brainstorm + TDD** — `/super`, `/super-cat`, `/super-duper`,
+  `/super-duper-cat`
+- **Debug + Brainstorm + TDD** — `/super-debug-and-fix`,
+  `/super-debug-and-fix-cat`, `/super-duper-debug-and-fix`,
+  `/super-duper-debug-and-fix-cat`
+- **Expert Review** — `/expert-review` through `/expert-super-duper-cat-review`
+  (10 variants)
 
-Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`, `/check-yourself`, `/cost_`, `/cost-opt`,
-`/fast-pr-feedback-to-me`, `/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, and more.
+Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`,
+`/check-yourself`, `/cost_`, `/cost-opt`, `/fast-pr-feedback-to-me`,
+`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, and more.
 
 See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 
 ### Harness features
 
-- **Permission guards** — granular allow/ask/deny rules in `settings.json` (blocks destructive GitHub CLI operations, gates commits, protects settings files)
-- **Inline-script hook** — pre-tool hook that blocks multiline non-Bash scripts from running inside the Bash tool
-- **Cost tracking** — `/cost_` extracts per-session token usage from JSONL logs; `/cost-opt` compacts and reviews optimization suggestions
-- **Checkpoint system** — save/resume work across sessions with automatic archive rotation per branch
-- **CLAUDE.md** — opinionated project rules for model routing, testing standards, Python style, and FastAPI architecture
+- **Permission guards** — granular allow/ask/deny rules in `settings.json`
+  (blocks destructive GitHub CLI operations, gates commits, protects settings
+  files)
+- **Inline-script hook** — pre-tool hook that blocks multiline non-Bash scripts
+  from running inside the Bash tool
+- **Cost tracking** — `/cost_` extracts per-session token usage from JSONL logs;
+  `/cost-opt` compacts and reviews optimization suggestions
+- **Checkpoint system** — save/resume work across sessions with automatic
+  archive rotation per branch
+- **CLAUDE.md** — opinionated project rules for model routing, testing
+  standards, Python style, and FastAPI architecture
 
 ## Setup
 
 ### Prerequisites
 
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
+- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
+  and authenticated
 - Git
 
 ### 1. Enable the official plugin marketplace
 
-In Claude Code, confirm you can access plugins from `claude-plugins-official`. If prompted, approve marketplace access:
+In Claude Code, confirm you can access plugins from `claude-plugins-official`.
+If prompted, approve marketplace access:
 
 ```
 claude plugins list
@@ -101,9 +117,11 @@ cp settings.json ~/.claude/settings.json
 cp CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
-> **Note:** If you already have a `~/.claude/settings.json` or `~/.claude/CLAUDE.md`, merge manually rather than
-> overwriting. The `settings.json` in this repo includes hook definitions, permission allow/ask/deny lists, and
-> plugin enablement that you may want to adapt to your own setup.
+> **Note:** If you already have a `~/.claude/settings.json` or
+> `~/.claude/CLAUDE.md`, merge manually rather than overwriting. The
+> `settings.json` in this repo includes hook definitions, permission
+> allow/ask/deny lists, and plugin enablement that you may want to adapt to your
+> own setup.
 
 ### 5. Verify
 
