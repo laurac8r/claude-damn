@@ -6,4 +6,60 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "pytest>=9.0.2",
+    "pyyaml>=6.0.3",
 ]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not smoke and not performance'"
+markers = [
+    "smoke: live skill invocation tests (cost tokens, non-deterministic)",
+    "performance: stress test matrix (125 combos, expensive, non-deterministic)",
+]
+[project]
+name = "claude-damn"
+version = "0.1.0"
+description = "Claude Code superpowers plugin"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pytest>=9.0.2",
+    "pyyaml>=6.0.3",
+]
+
+[tool.ruff]
+# Black's standard line length is 88 characters
+line-length = 88
+
+[tool.ruff.format]
+# These settings explicitly match Black's behavior (they are also Ruff's defaults)
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# Optional: Enable auto-formatting of code examples in docstrings
+# (Black doesn't do this natively without external tools, but it's a fantastic Ruff feature)
+docstring-code-format = true
+
+[tool.ruff.lint]
+# Enable standard linting rules (Pyflakes and a subset of pycodestyle)
+select = ["E", "F", "I"] # "I" added to sort imports (like `isort`)
+
+# Ruff automatically ignores linting rules that conflict with its formatter,
+# so you rarely need to manually ignore things here unless you have specific preferences.
+ignore = []
+
+[tool.ty]
+# ty is a type checker, not a formatter, so its settings deal with typing strictness.
+# This is a standard baseline you can tweak as your project grows.
+
+[tool.ty.analysis]
+# Whether ty should respect standard `type: ignore` comments (defaults to true)
+# If false, it will only respect `ty: ignore` comments.
+respect-type-ignore-comments = true
+
+[tool.ty.rules]
+# You can customize specific typing diagnostic levels here ("error", "warn", "ignore")
+# Example:
+# missing-return = "warn"
+# index-out-of-bounds = "ignore"
