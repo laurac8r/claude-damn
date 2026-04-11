@@ -29,18 +29,18 @@ user-invocable: true
 
 1. Parse arguments to identify requested review aspects and target:
 
-  - `help` — Display all available scopes and usage, then stop
-  - `security` — Security-focused vulnerability assessment
-  - `simplify` — Code simplification for clarity and maintainability
-  - `review` — General code review for bugs, patterns, CLAUDE.md compliance
-  - `debug` — Systematic debugging of a specific issue
-  - `types` — Type design analysis (encapsulation, invariants, enforcement)
-  - `errors` — Silent failure hunting and error handling audit
-  - `architect` — Architecture analysis and implementation blueprint
-  - `custom` — User-defined review focus; remaining arguments specify the criteria (e.g.
-    `custom "check for N+1 queries in src/repositories/"`)
-  - `all` — Run all applicable reviews (default)
-  - A file path, directory, or PR number as target
+- `help` — Display all available scopes and usage, then stop
+- `security` — Security-focused vulnerability assessment
+- `simplify` — Code simplification for clarity and maintainability
+- `review` — General code review for bugs, patterns, CLAUDE.md compliance
+- `debug` — Systematic debugging of a specific issue
+- `types` — Type design analysis (encapsulation, invariants, enforcement)
+- `errors` — Silent failure hunting and error handling audit
+- `architect` — Architecture analysis and implementation blueprint
+- `custom` — User-defined review focus; remaining arguments specify the criteria (e.g.
+  `custom "check for N+1 queries in src/repositories/"`)
+- `all` — Run all applicable reviews (default)
+- A file path, directory, or PR number as target
 
 If scope is `help`, print this list and exit without running any review phases.
 
