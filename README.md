@@ -23,7 +23,8 @@ These combine into four skill families:
 
 - **TDD** — `/tdd`, `/tdd-cat`, `/duper-tdd`, `/duper-tdd-cat`
 - **Brainstorm + TDD** — `/super`, `/super-cat`, `/super-duper`, `/super-duper-cat`
-- **Debug + Brainstorm + TDD** — `/super-debug-and-fix`, `/super-debug-and-fix-cat`, `/super-duper-debug-and-fix`, `/super-duper-debug-and-fix-cat`
+- **Debug + Brainstorm + TDD** — `/super-debug-and-fix`, `/super-debug-and-fix-cat`, `/super-duper-debug-and-fix`,
+  `/super-duper-debug-and-fix-cat`
 - **Expert Review** — `/expert-review` through `/expert-super-duper-cat-review` (10 variants)
 
 Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`, `/check-yourself`, `/cost_`, `/cost-opt`,
@@ -33,9 +34,11 @@ See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 
 ### Harness features
 
-- **Permission guards** — granular allow/ask/deny rules in `settings.json` (blocks destructive GitHub CLI operations, gates commits, protects settings files)
+- **Permission guards** — granular allow/ask/deny rules in `settings.json` (blocks destructive GitHub CLI operations,
+  gates commits, protects settings files)
 - **Inline-script hook** — pre-tool hook that blocks multiline non-Bash scripts from running inside the Bash tool
-- **Cost tracking** — `/cost_` extracts per-session token usage from JSONL logs; `/cost-opt` compacts and reviews optimization suggestions
+- **Cost tracking** — `/cost_` extracts per-session token usage from JSONL logs; `/cost-opt` compacts and reviews
+  optimization suggestions
 - **Checkpoint system** — save/resume work across sessions with automatic archive rotation per branch
 - **CLAUDE.md** — opinionated project rules for model routing, testing standards, Python style, and FastAPI architecture
 
@@ -83,7 +86,7 @@ remember             # Session handoff notes
 ### 3. Clone this repo
 
 ```bash
-git clone <repo-url> claude-damn
+git clone <repo-url >claude-damn
 cd claude-damn
 ```
 
@@ -143,6 +146,33 @@ You should see the skill content expand in your session.
 │   └── test_settings_structure.py
 └── docs/
     └── superpowers/           # Design specs
+```
+
+## Running tests
+
+Tests are organized by fidelity level. Default `uv run pytest` runs everything except `smoke` and `performance`
+(see `pyproject.toml` markers).
+
+| Kind        | Location             | What it checks                                           | Command                                                              |
+|-------------|----------------------|----------------------------------------------------------|----------------------------------------------------------------------|
+| Structural  | `tests/structural/`  | Files, dirs, frontmatter — cheap existence checks        | `uv run pytest tests/structural/`                                    |
+| Behavioral  | `tests/behavioral/`  | Skill body content and protocol rules                    | `uv run pytest tests/behavioral/`                                    |
+| Integration | `tests/integration/` | Repo-wide references and cross-file consistency          | `uv run pytest tests/integration/`                                   |
+| Harness     | `tests/test_*.py`    | `settings.json`, permissions, hooks, cost extraction     | `uv run pytest tests/test_*.py`                                      |
+| Bats        | `tests/*.bats`       | Shell scripts (`checkpoint-archive`, `sync-theme`)       | `bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats` |
+| Smoke       | `tests/smoke/`       | Live skill invocation (costs tokens, non-deterministic)  | `uv run pytest -m smoke`                                             |
+| Performance | `tests/performance/` | Stress matrix (125 combos, expensive, non-deterministic) | `uv run pytest -m performance`                                       |
+
+Run everything cheap and deterministic:
+
+```bash
+uv run pytest
+```
+
+Run the full suite including live/expensive tests:
+
+```bash
+uv run pytest -m ""
 ```
 
 ## License
