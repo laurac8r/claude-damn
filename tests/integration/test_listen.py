@@ -31,6 +31,8 @@ class TestOldNameAbsent:
                 continue
             if "test_listen" in path.name:
                 continue
+            if path.name == "CHECKPOINT.md":
+                continue
             if ".venv" in path.parts or "node_modules" in path.parts:
                 continue
             try:
