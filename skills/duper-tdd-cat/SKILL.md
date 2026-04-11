@@ -1,6 +1,7 @@
 ---
 name: duper-tdd-cat
-description: TDD workflow using an isolated git worktree with subagent-driven-development
+description:
+  TDD workflow using an isolated git worktree with subagent-driven-development
 user-invocable: true
 ---
 

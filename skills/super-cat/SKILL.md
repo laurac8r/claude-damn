@@ -1,6 +1,7 @@
 ---
 name: super-cat
-description: Brainstorm first, then implement using TDD with subagent-driven-development
+description:
+  Brainstorm first, then implement using TDD with subagent-driven-development
 user-invocable: true
 ---
 
