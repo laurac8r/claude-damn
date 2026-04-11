@@ -59,7 +59,7 @@ skill:
 ## Other Skills
 
 | Skill                         | Purpose                                                               |
-|-------------------------------|-----------------------------------------------------------------------|
+| ----------------------------- | --------------------------------------------------------------------- |
 | `/checkpoint-save`            | Save a resumable work checkpoint                                      |
 | `/checkpoint-resume`          | Resume from a saved checkpoint                                        |
 | `/listen`                     | Execute instructions while invoking every `/skill` referenced in them |

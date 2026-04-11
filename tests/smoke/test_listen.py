@@ -14,12 +14,19 @@ class TestSingleSkillReference:
 
     def test_invokes_referenced_skill(self, invoke_skill) -> None:
         result = invoke_skill(
-            '/listen /tdd : list the 3 core steps of TDD in a numbered list, nothing else'
+            "/listen /tdd : list the 3 core steps of TDD in a numbered list, nothing else"
         )
         output = result.stdout.lower()
         assert any(
             phrase in output
-            for phrase in ["red", "green", "refactor", "failing test", "test-driven", "tdd"]
+            for phrase in [
+                "red",
+                "green",
+                "refactor",
+                "failing test",
+                "test-driven",
+                "tdd",
+            ]
         ), f"Expected TDD-related output, got:\n{result.stdout[:500]}"
 
 
@@ -27,12 +34,10 @@ class TestNoSkillReference:
     """Given instructions with no skill references, /listen should execute normally."""
 
     def test_executes_without_enforcement(self, invoke_skill) -> None:
-        result = invoke_skill(
-            '/listen say exactly "HELLO_SMOKE_TEST" and nothing else'
-        )
-        assert "HELLO_SMOKE_TEST" in result.stdout, (
-            f"Expected literal output, got:\n{result.stdout[:500]}"
-        )
+        result = invoke_skill('/listen say exactly "HELLO_SMOKE_TEST" and nothing else')
+        assert (
+                "HELLO_SMOKE_TEST" in result.stdout
+        ), f"Expected literal output, got:\n{result.stdout[:500]}"
 
 
 class TestCompositionalSkillReference:
@@ -40,12 +45,18 @@ class TestCompositionalSkillReference:
 
     def test_invokes_compositional_skill_directly(self, invoke_skill) -> None:
         result = invoke_skill(
-            '/listen /super-duper-cat : describe what skills you just loaded, as a bullet list'
+            "/listen /super-duper-cat : describe what skills you just loaded, as a bullet list"
         )
         output = result.stdout.lower()
         assert any(
             phrase in output
-            for phrase in ["brainstorm", "worktree", "subagent", "super-duper-cat", "tdd"]
+            for phrase in [
+                "brainstorm",
+                "worktree",
+                "subagent",
+                "super-duper-cat",
+                "tdd",
+            ]
         ), f"Expected compositional skill evidence, got:\n{result.stdout[:500]}"
 
 
@@ -54,8 +65,10 @@ class TestMultipleSkillReferences:
 
     def test_invokes_all_referenced_skills(self, invoke_skill) -> None:
         result = invoke_skill(
-            '/listen /tdd /review : list which skills you were asked to invoke, nothing else'
+            "/listen /tdd /review : list which skills you were asked to invoke, nothing else"
         )
         output = result.stdout.lower()
         assert "tdd" in output, f"Expected tdd mention, got:\n{result.stdout[:500]}"
-        assert "review" in output, f"Expected review mention, got:\n{result.stdout[:500]}"
+        assert (
+                "review" in output
+        ), f"Expected review mention, got:\n{result.stdout[:500]}"

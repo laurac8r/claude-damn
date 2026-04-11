@@ -165,11 +165,11 @@ You should see the skill content expand in your session.
 
 ## Running tests
 
-Tests are organized by fidelity level. Default `uv run pytest` runs everything except `smoke` and `performance`
-(see `pyproject.toml` markers).
+Tests are organized by fidelity level. Default `uv run pytest` runs everything
+except `smoke` and `performance` (see `pyproject.toml` markers).
 
 | Kind        | Location             | What it checks                                           | Command                                                              |
-|-------------|----------------------|----------------------------------------------------------|----------------------------------------------------------------------|
+| ----------- | -------------------- | -------------------------------------------------------- | -------------------------------------------------------------------- |
 | Structural  | `tests/structural/`  | Files, dirs, frontmatter — cheap existence checks        | `uv run pytest tests/structural/`                                    |
 | Behavioral  | `tests/behavioral/`  | Skill body content and protocol rules                    | `uv run pytest tests/behavioral/`                                    |
 | Integration | `tests/integration/` | Repo-wide references and cross-file consistency          | `uv run pytest tests/integration/`                                   |
