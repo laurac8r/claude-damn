@@ -90,7 +90,6 @@ class TestPluginDefaults:
         "plugin",
         [
             "code-review@claude-plugins-official",
-            "commit-commands@claude-plugins-official",
             "pr-review-toolkit@claude-plugins-official",
             "security-guidance@claude-plugins-official",
             "hookify@claude-plugins-official",

@@ -49,7 +49,6 @@ class TestDenyPatterns:
     @pytest.mark.parametrize(
         "pattern",
         [
-            "Bash(*git commit *)",
             "Bash(*gh pr create*)",
             "Bash(*gh pr merge*)",
             "Bash(*gh pr close*)",
@@ -87,8 +86,8 @@ class TestDenyPatterns:
     ) -> None:
         assert pattern in deny_list, f"Missing API deny pattern: {pattern}"
 
-    def test_git_commit_denied(self, deny_list: list[str]) -> None:
-        assert "Bash(*git commit *)" in deny_list
+    def test_git_commit_requires_ask(self, ask_list: list[str]) -> None:
+        assert "Bash(*git commit *)" in ask_list
 
 
 class TestAskPatterns:

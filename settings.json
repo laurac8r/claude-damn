@@ -18,6 +18,9 @@
       "Bash(git -C * log *)",
       "Bash(git -C * diff *)",
       "Bash(git -C * show *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
       "Bash(ls *)",
       "Bash(head *)",
       "Bash(cat *)",
@@ -60,20 +63,9 @@
       "Bash(npm install:*)",
       "Bash(npx vitest:*)",
       "Bash(npm test:*)",
+      "Write(CHECKPOINT.md)",
       "Write(.checkpoints/*)",
       "Write(.remember/*)"
-    ],
-    "ask": [
-      "Write(*settings.json*)",
-      "Delete(*settings.json*)",
-      "Update(*settings.json*)",
-      "Bash(*settings.json*)",
-      "Write(.)",
-      "Bash(gh api*)",
-      "Bash(find*-delete*)",
-      "Bash(find*-exec*)",
-      "Bash(sed*-i*)",
-      "Bash(*git commit*)"
     ],
     "deny": [
       "Bash(*gh pr create*)",
@@ -121,6 +113,18 @@
       "Bash(gh api *--method PATCH*)",
       "Bash(gh api *--method DELETE*)"
     ],
+    "ask": [
+      "Write(*settings.json*)",
+      "Delete(*settings.json*)",
+      "Update(*settings.json*)",
+      "Bash(*settings.json*)",
+      "Write(.)",
+      "Bash(gh api*)",
+      "Bash(find*-delete*)",
+      "Bash(find*-exec*)",
+      "Bash(sed*-i*)",
+      "Bash(*git commit *)"
+    ],
     "defaultMode": "default"
   },
   "model": "opus[1m]",
@@ -155,6 +159,13 @@
     "hookify@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "remember@claude-plugins-official": true
-  }
+    "deploy-on-aws@claude-plugins-official": true,
+    "remember@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
+  },
+  "fastMode": false,
+  "prefersReducedMotion": true,
+  "themePreference": "dark"
 }

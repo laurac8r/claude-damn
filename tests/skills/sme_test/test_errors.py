@@ -46,6 +46,7 @@ class TestErrorClasses:
         error_sections = [
             s for s in sections if any(ec in s.lower() for ec in ERROR_CLASSES)
         ]
-        assert (
-            len(error_sections) >= 5
-        ), f"Expected 5 error class sections, found {len(error_sections)}: {error_sections}"
+        assert len(error_sections) >= 5, (
+            f"Expected 5 error class sections, found "
+            f"{len(error_sections)}: {error_sections}"
+        )
