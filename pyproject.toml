@@ -49,6 +49,11 @@ ignore = []
 respect-type-ignore-comments = true
 
 [tool.ty.rules]
+
+[dependency-groups]
+dev = [
+    "pytest-xdist>=3.8.0",
+]
 # You can customize specific typing diagnostic levels here ("error", "warn", "ignore")
 # Example:
 # missing-return = "warn"
