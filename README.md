@@ -6,41 +6,10 @@ Ships slash commands, skills, hooks, permission guards, and cost-tracking toolin
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-A personal collection of Claude Code customizations — commands, skills, hooks, and scripts — being
-transitioned into a proper Claude Code plugin.
-
-## What's in here
-
-- **`skills/`** — Reusable skills invoked via the `Skill` tool.
-  - `sme-test/` — Subject Matter Expert TDD coach. Teaches Given/When/Then thinking before touching code.
-    Three modes: `coach` (default), `expert` (`-x`), `expert-auto` (`-xa`).
-- **`commands/`** — Slash commands (`/review`, `/expert-review`, `/address-pr-feedback`, `/cost`, `/cost-opt`).
-- **`extract_cost.py`** — Parses Claude Code session JSONL files and computes real token usage and cost
-  via the Anthropic pricing table. Logs to `~/.claude/cost-log/` as JSONL.
-- **`statusline-command.sh`** — Shell statusline showing per-session cost.
-- **`settings.json`** — Hook and permission config for the harness.
-- **`com.claude.sync-theme.plist`** — macOS launchd plist for syncing theme state.
-
-## Status
-
-Currently on branch `feat/transition-to-plugin` — converting the flat `~/.claude` layout into a proper
-plugin package with tests, a `pyproject.toml`, and `uv`-managed dependencies. See
-[`ROADMAP.md`](ROADMAP.md) for the transition plan and [`CHANGELOG.md`](CHANGELOG.md) for what's landed.
-
-## Development
-
-```bash
-uv sync # install dev deps
-uv run pytest # run the full test suite
-uv run ruff check . # lint
-uv run ruff format . # format
-```
-
-[//]: # (Design specs and implementation plans live in `docs/superpowers/{specs,plans}/`.)
-
-## License
-
-MIT — see [`LICENSE`](LICENSE).
+Currently on branch `feat/transition-to-plugin` — converting the flat `~/.claude` layout into a proper plugin package
+with tests, `pyproject.toml`, and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition plan and
+[`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and implementation plans live in
+`docs/superpowers/{specs,plans}/`.
 
 ## What's in the box
 
@@ -49,7 +18,7 @@ MIT — see [`LICENSE`](LICENSE).
 Skills compose from four modifiers — stack them to build the workflow you need:
 
 | Modifier | What it adds                            |
-|----------|-----------------------------------------|
+| -------- | --------------------------------------- |
 | `super`  | Brainstorm requirements first, then TDD |
 | `duper`  | Isolated git worktree                   |
 | `cat`    | Parallel subagent execution             |
@@ -122,7 +91,7 @@ remember             # Session handoff notes
 ### 3. Clone this repo
 
 ```bash
-git clone <repo-url> claude-damn
+git clone <repo-url > claude-damn
 cd claude-damn
 ```
 
@@ -141,8 +110,8 @@ cp CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
 > **Note:** If you already have a `~/.claude/settings.json` or `~/.claude/CLAUDE.md`, merge manually rather than
-> overwriting. The `settings.json` in this repo includes hook definitions, permission allow/ask/deny lists, and
-> plugin enablement that you may want to adapt to your own setup.
+> overwriting. The `settings.json` in this repo includes hook definitions, permission allow/ask/deny lists, and plugin
+> enablement that you may want to adapt to your own setup.
 
 ### 5. Verify
 
@@ -187,4 +156,3 @@ You should see the skill content expand in your session.
 ## License
 
 [MIT](LICENSE)
-
