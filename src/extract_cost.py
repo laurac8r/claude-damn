@@ -81,10 +81,10 @@ def calc_cost(model: str, usage: dict) -> float:
     cache_create = usage.get("cache_creation_input_tokens", 0)
 
     cost = (
-        (input_tokens / 1_000_000) * prices["input"]
-        + (output_tokens / 1_000_000) * prices["output"]
-        + (cache_read / 1_000_000) * prices["cache_read"]
-        + (cache_create / 1_000_000) * prices["cache_create"]
+            (input_tokens / 1_000_000) * prices["input"]
+            + (output_tokens / 1_000_000) * prices["output"]
+            + (cache_read / 1_000_000) * prices["cache_read"]
+            + (cache_create / 1_000_000) * prices["cache_create"]
     )
     return cost
 

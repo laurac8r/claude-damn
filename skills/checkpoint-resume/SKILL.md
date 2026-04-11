@@ -77,6 +77,7 @@ Wait for the user's response before continuing.
 > Found an archived checkpoint for the current branch (`<current-slug>`). Restore it to continue work?
 
 On user confirmation: **move** (not copy) `$ARCHIVE/<current-slug>.md` to `CHECKPOINT.md` at CWD, then proceed to Step
+
 5. On user decline: stop and report no active checkpoint to resume.
 
 **Case D — No CHECKPOINT.md at CWD, no slug match, archive non-empty**

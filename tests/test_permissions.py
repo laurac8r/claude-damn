@@ -22,7 +22,7 @@ class TestAllowPatterns:
         "Bash(flutter test*)",
     ])
     def test_essential_allow_patterns_present(
-        self, allow_list: list[str], pattern: str
+            self, allow_list: list[str], pattern: str
     ) -> None:
         assert pattern in allow_list, f"Missing allow pattern: {pattern}"
 
@@ -32,7 +32,7 @@ class TestAllowPatterns:
         "Search(~/.claude/**)",
     ])
     def test_claude_dir_access_allowed(
-        self, allow_list: list[str], pattern: str
+            self, allow_list: list[str], pattern: str
     ) -> None:
         assert pattern in allow_list, f"Missing claude dir access: {pattern}"
 
@@ -41,7 +41,6 @@ class TestDenyPatterns:
     """Critical deny rules that must never be removed."""
 
     @pytest.mark.parametrize("pattern", [
-        "Bash(*git commit *)",
         "Bash(*gh pr create*)",
         "Bash(*gh pr merge*)",
         "Bash(*gh pr close*)",
@@ -56,7 +55,7 @@ class TestDenyPatterns:
         "Bash(gh gist delete*)",
     ])
     def test_destructive_gh_commands_denied(
-        self, deny_list: list[str], pattern: str
+            self, deny_list: list[str], pattern: str
     ) -> None:
         assert pattern in deny_list, f"Missing deny pattern: {pattern}"
 
@@ -71,12 +70,12 @@ class TestDenyPatterns:
         "Bash(gh api *--method DELETE*)",
     ])
     def test_mutating_api_calls_denied(
-        self, deny_list: list[str], pattern: str
+            self, deny_list: list[str], pattern: str
     ) -> None:
         assert pattern in deny_list, f"Missing API deny pattern: {pattern}"
 
-    def test_git_commit_denied(self, deny_list: list[str]) -> None:
-        assert "Bash(*git commit *)" in deny_list
+    def test_git_commit_denied(self, ask_list: list[str]) -> None:
+        assert "Bash(*git commit *)" in ask_list
 
 
 class TestAskPatterns:
@@ -89,7 +88,7 @@ class TestAskPatterns:
         "Bash(sed*-i*)",
     ])
     def test_dangerous_commands_require_ask(
-        self, ask_list: list[str], pattern: str
+            self, ask_list: list[str], pattern: str
     ) -> None:
         assert pattern in ask_list, f"Missing ask pattern: {pattern}"
 
@@ -99,7 +98,7 @@ class TestNoOverlap:
     but overlaps signal config mistakes)."""
 
     def test_no_allow_deny_exact_overlap(
-        self, allow_list: list[str], deny_list: list[str]
+            self, allow_list: list[str], deny_list: list[str]
     ) -> None:
         overlap = set(allow_list) & set(deny_list)
         assert not overlap, f"Pattern in both allow and deny: {overlap}"

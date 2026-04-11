@@ -9,9 +9,11 @@ user-invocable: true
 3. Recalibrate and update `~/.claude/extract_cost.py` `PRICING` table and the `~/.claude/statusline-command.sh`
    `case "$model_id"` pricing block,based on the `~/.claude/cost-log/*.csv` actual
    extracts from
+
    - `https://platform.claude.com/cost` (cost-by-day), and
    - `https://platform.claude.com/logs` (historical API logs)
-    –> The user will periodically fetch these extracts themselves and upload them to `~/.claude/cost-log`.
+     –> The user will periodically fetch these extracts themselves and upload them to `~/.claude/cost-log`.
+
 4. Perform an efficient `/compact` summary on the log files (just changes since last summary) and update `SUMMARY.md`
    with the compacted summary including: total spend, spend by model, spend by project, busiest sessions, and trends.
 5. Suggest cost optimizations based on the data — e.g., sessions where Opus was used for tasks that Sonnet could handle,
