@@ -51,7 +51,7 @@ class TestHookBlocksInlineScripts:
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert (
-                hook_out.get("permissionDecision") == "deny"
+            hook_out.get("permissionDecision") == "deny"
         ), f"Should block: {command!r}"
 
     @pytest.mark.parametrize(

@@ -6,15 +6,18 @@ This adapter translates Given/When/Then test triples into pytest test code.
 
 Identify a Python project by checking for these signals (strongest-first):
 
-1. `pyproject.toml` with a `[tool.pytest.ini_options]` or `[tool.pytest]` section — highest confidence.
-2. `pyproject.toml` or `setup.cfg` with `pytest` listed under `[options.extras_require]` or
-   `[project.optional-dependencies]`.
+1. `pyproject.toml` with a `[tool.pytest.ini_options]` or `[tool.pytest]`
+   section — highest confidence.
+2. `pyproject.toml` or `setup.cfg` with `pytest` listed under
+   `[options.extras_require]` or `[project.optional-dependencies]`.
 3. `setup.py` present in the project root.
 4. `requirements.txt` or `requirements-dev.txt` containing `pytest`.
 5. `conftest.py` present in root or a `tests/` directory.
-6. `.py` files inside a `tests/` or `test/` directory with names matching `test_*.py` or `*_test.py`.
+6. `.py` files inside a `tests/` or `test/` directory with names matching
+   `test_*.py` or `*_test.py`.
 
-If two or more signals match, treat the project as a Python/pytest project and proceed.
+If two or more signals match, treat the project as a Python/pytest project and
+proceed.
 
 ## GENERATE
 
@@ -26,7 +29,8 @@ Generate pytest test code from G/W/T triples using these conventions:
 def test_<when>_<then>():
 ```
 
-Convert the When and Then descriptions to `snake_case`. Keep names descriptive but concise.
+Convert the When and Then descriptions to `snake_case`. Keep names descriptive
+but concise.
 
 ### Basic structure
 
@@ -49,7 +53,8 @@ def test_<when>_<then>(<given_resource>):
 ```
 
 - Use `@pytest.fixture` for every Given that establishes state or resources.
-- Place shared fixtures in `conftest.py` when multiple test triples share the same Given.
+- Place shared fixtures in `conftest.py` when multiple test triples share the
+  same Given.
 - One test function per When/Then pair.
 
 ### Multiple input cases — use parametrize
@@ -106,8 +111,8 @@ Key pytest patterns to explain when guiding the user:
 
 ### Bare assert statements
 
-pytest rewrites `assert` expressions to produce rich diff output on failure. No need for `assertEqual` or `assertThat`
-helpers — just write:
+pytest rewrites `assert` expressions to produce rich diff output on failure. No
+need for `assertEqual` or `assertThat` helpers — just write:
 
 ```python
 assert result == expected
@@ -117,7 +122,8 @@ assert my_list == [1, 2, 3]
 
 ### @pytest.fixture
 
-Fixtures provide reusable, isolated setup. Declare them with `@pytest.fixture` and accept them as function parameters:
+Fixtures provide reusable, isolated setup. Declare them with `@pytest.fixture`
+and accept them as function parameters:
 
 ```python
 @pytest.fixture
@@ -131,7 +137,8 @@ Fixtures can be scoped: `function` (default), `class`, `module`, or `session`.
 
 ### @pytest.mark.parametrize
 
-Run one test function with multiple input sets. Each tuple in the list becomes a separate test case:
+Run one test function with multiple input sets. Each tuple in the list becomes a
+separate test case:
 
 ```python
 @pytest.mark.parametrize("x, expected", [(1, True), (0, False)])
@@ -141,7 +148,8 @@ def test_is_truthy(x: int, expected: bool) -> None:
 
 ### pytest.raises with match=
 
-Assert that a specific exception is raised and that its message matches a pattern:
+Assert that a specific exception is raised and that its message matches a
+pattern:
 
 ```python
 with pytest.raises(KeyError, match="missing_key"):

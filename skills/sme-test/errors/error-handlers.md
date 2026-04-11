@@ -1,13 +1,14 @@
 # Error Handlers
 
-This document defines the five error classes recognized by the `sme-test` TDD coach skill, along with their triggers,
-examples, and recovery paths.
+This document defines the five error classes recognized by the `sme-test` TDD
+coach skill, along with their triggers, examples, and recovery paths.
 
 ---
 
 ## Error Class 1: Input Errors
 
-**Trigger:** Malformed triples, unsupported language, missing target file, or invalid `expert-auto` targets.
+**Trigger:** Malformed triples, unsupported language, missing target file, or
+invalid `expert-auto` targets.
 
 **Examples:**
 
@@ -18,7 +19,8 @@ examples, and recovery paths.
 
 **Recovery:**
 
-1. Display the specific problem clearly (e.g., "Triple is missing a `Then` clause").
+1. Display the specific problem clearly (e.g., "Triple is missing a `Then`
+   clause").
 2. Show the expected format with a concrete example.
 3. List supported languages (v1: Python, Bats).
 4. Prompt the user to supply valid input before proceeding.
@@ -27,7 +29,8 @@ examples, and recovery paths.
 
 ## Error Class 2: Environment Errors
 
-**Trigger:** Test runner not installed, wrong version, or missing dependencies that prevent test execution.
+**Trigger:** Test runner not installed, wrong version, or missing dependencies
+that prevent test execution.
 
 **Examples:**
 
@@ -50,7 +53,8 @@ examples, and recovery paths.
 
 ## Error Class 3: Subagent Errors
 
-**Trigger:** Subagent timeout, unexpected output format, or coordination failure in the shared memory layer.
+**Trigger:** Subagent timeout, unexpected output format, or coordination failure
+in the shared memory layer.
 
 **Examples:**
 
@@ -63,15 +67,17 @@ examples, and recovery paths.
 
 1. Retry the failed subagent once automatically.
 2. On second failure, surface the raw subagent output for manual inspection.
-3. If the failure is a coordination error (missing `shared/` file), re-run the prior stage that was supposed to produce
-   that file.
-4. Halt the workflow after two consecutive failures and report the stage that failed.
+3. If the failure is a coordination error (missing `shared/` file), re-run the
+   prior stage that was supposed to produce that file.
+4. Halt the workflow after two consecutive failures and report the stage that
+   failed.
 
 ---
 
 ## Error Class 4: RED-Gate Errors
 
-**Trigger:** Tests pass when they should fail — a false green that violates the RED phase gate of the TDD cycle.
+**Trigger:** Tests pass when they should fail — a false green that violates the
+RED phase gate of the TDD cycle.
 
 **Examples:**
 
@@ -81,7 +87,8 @@ examples, and recovery paths.
 
 **Recovery:**
 
-1. **BLOCK** progression — never allow advancement to the GREEN phase while this error is active.
+1. **BLOCK** progression — never allow advancement to the GREEN phase while this
+   error is active.
 2. Display the full test output so the user can see exactly what passed.
 3. Explain why a passing test at the RED gate is an error, not success.
 4. Offer three resolution paths:
@@ -95,11 +102,13 @@ examples, and recovery paths.
 
 ## Error Class 5: Safety-Refusal Errors
 
-**Trigger:** A subagent refuses to generate test content due to content policy or safety constraints.
+**Trigger:** A subagent refuses to generate test content due to content policy
+or safety constraints.
 
 **Examples:**
 
-- Test pattern involves security-sensitive operations that trigger content moderation
+- Test pattern involves security-sensitive operations that trigger content
+  moderation
 - Prompt phrasing causes the subagent to refuse on policy grounds
 
 **Recovery:**
@@ -111,4 +120,5 @@ examples, and recovery paths.
    - Write the test stub manually and skip subagent generation for this triple
 
 3. Never attempt to circumvent or work around the safety refusal.
-4. Log the refusal event (triple text, reason, timestamp) in `shared/coach-state.md` for audit purposes.
+4. Log the refusal event (triple text, reason, timestamp) in
+   `shared/coach-state.md` for audit purposes.

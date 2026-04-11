@@ -7,7 +7,8 @@ This adapter translates Given/When/Then test triples into bats test code.
 Identify a bats/shell project by checking for these signals (strongest-first):
 
 1. `.bats` files present anywhere in the repository — highest confidence.
-2. `test_helper/` directory at the project root (conventional bats helper layout).
+2. `test_helper/` directory at the project root (conventional bats helper
+   layout).
 3. `bats` listed as a dependency in `package.json` (Node-managed bats installs).
 4. Shell scripts (`.sh` or `.bash` files) in a `tests/` or `test/` directory.
 5. A `Makefile` with a `test` target that invokes `bats`.
@@ -25,7 +26,8 @@ Generate bats test code from G/W/T triples using these conventions:
 @test "description of what is being tested" {
 ```
 
-Descriptions should be plain English, describing the When and Then in natural language.
+Descriptions should be plain English, describing the When and Then in natural
+language.
 
 ### Basic structure
 
@@ -60,10 +62,12 @@ teardown() {
 
 ### Parametrize limitation — N discrete @test blocks
 
-**Bats has no native parametrize mechanism.** There is no equivalent to `@pytest.mark.parametrize`.
+**Bats has no native parametrize mechanism.** There is no equivalent to
+`@pytest.mark.parametrize`.
 
-For N input/output pairs, generate N discrete `@test` blocks — one per case. This is verbose but correct. This verbosity
-is accepted for v1 and is not worked around.
+For N input/output pairs, generate N discrete `@test` blocks — one per case.
+This is verbose but correct. This verbosity is accepted for v1 and is not worked
+around.
 
 Example with three cases instead of one parametrized test:
 
@@ -124,7 +128,8 @@ load 'test_helper/bats-support/load'
 load 'test_helper/bats-assert/load'
 ```
 
-Add these load lines at the top of each `.bats` file when the helpers are present.
+Add these load lines at the top of each `.bats` file when the helpers are
+present.
 
 ## EXPLAIN
 
@@ -179,5 +184,6 @@ teardown() {
 
 ### @test block isolation
 
-Each `@test` block runs in its own subshell. Environment changes inside one block do not leak into others. Use `setup()`
-and global variables (exported) to share state from preconditions into test bodies.
+Each `@test` block runs in its own subshell. Environment changes inside one
+block do not leak into others. Use `setup()` and global variables (exported) to
+share state from preconditions into test bodies.
