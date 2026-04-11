@@ -1,6 +1,7 @@
 ---
 name: expert-tdd-cat-review
-description: Expert-level review with subagents, then fix using TDD with subagents
+description:
+  Expert-level review with subagents, then fix using TDD with subagents
 user-invocable: true
 ---
 

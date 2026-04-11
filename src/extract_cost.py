@@ -176,10 +176,18 @@ def parse_session(jsonl_path: Path) -> dict:
         "turns": turn_count,
         "total_cost_usd": round(total_cost, 4),
         "models": {
-            m: {**v, "cost_usd": round(sum(
-                calc_cost(m, {k: v[k] for k in v if k != "turns" and k != "cost_usd"})
-                for _ in [1]  # just calc once from totals
-            ), 4)}
+            m: {
+                **v,
+                "cost_usd": round(
+                    sum(
+                        calc_cost(
+                            m, {k: v[k] for k in v if k != "turns" and k != "cost_usd"}
+                        )
+                        for _ in [1]  # just calc once from totals
+                    ),
+                    4,
+                ),
+            }
             for m, v in totals.items()
         },
         "last_prompt": (last_prompt or "")[:120],
@@ -232,7 +240,7 @@ def write_log_entry(data: dict) -> Path:
     # Parse timestamp for filename
     try:
         dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    except (ValueError, AttributeError):
+    except ValueError, AttributeError:
         dt = datetime.now(timezone.utc)
 
     # Build filename: YYYY-MM-DD_HHmm_{session_short}.jsonl

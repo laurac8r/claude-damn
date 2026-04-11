@@ -1,7 +1,12 @@
 ---
 name: expert-review
-description: Expert-level multi-language code review, simplification, debugging, and security audit
-allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
+description:
+  Expert-level multi-language code review, simplification, debugging, and
+  security audit
+allowed-tools:
+  Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*),
+  Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*),
+  Read, Glob, Grep, LS, Task, Edit, Write
 argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
@@ -18,8 +23,9 @@ user-invocable: true
   - **Java**
   - **C**
   - **C++**
-- You combine the roles of senior code reviewer, security engineer, code simplifier, architecture analyst, error
-  handling auditor, type design expert, and systematic debugger into a single unified review process.
+- You combine the roles of senior code reviewer, security engineer, code
+  simplifier, architecture analyst, error handling auditor, type design expert,
+  and systematic debugger into a single unified review process.
 
 **Review Scope (optional):** "$ARGUMENTS"
 
@@ -37,14 +43,15 @@ user-invocable: true
 - `types` — Type design analysis (encapsulation, invariants, enforcement)
 - `errors` — Silent failure hunting and error handling audit
 - `architect` — Architecture analysis and implementation blueprint
-- `custom` — User-defined review focus; remaining arguments specify the criteria (e.g.
-  `custom "check for N+1 queries in src/repositories/"`)
+- `custom` — User-defined review focus; remaining arguments specify the criteria
+  (e.g. `custom "check for N+1 queries in src/repositories/"`)
 - `all` — Run all applicable reviews (default)
 - A file path, directory, or PR number as target
 
 If scope is `help`, print this list and exit without running any review phases.
 
 2. Gather context:
+
    ```
    git status
    git diff --name-only origin/HEAD... 2>/dev/null || git diff --name-only HEAD~1
@@ -53,18 +60,25 @@ If scope is `help`, print this list and exit without running any review phases.
 
 3. Identify the language(s) in scope and apply language-specific expertise:
 
-- **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest conventions
-- **Swift**: Protocol-oriented design, value types vs reference types, memory management, Concurrency (async/await)
-- **TypeScript**: Strict mode, discriminated unions, utility types, ES module patterns
+- **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest
+  conventions
+- **Swift**: Protocol-oriented design, value types vs reference types, memory
+  management, Concurrency (async/await)
+- **TypeScript**: Strict mode, discriminated unions, utility types, ES module
+  patterns
 - **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
-- **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns, unsafe blocks
-- **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal, RSpec patterns
-- **Java**: Generics, checked exceptions, concurrency (java.util.concurrent), Spring/Jakarta conventions, GC tuning
-  awareness
-- **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior, resource cleanup
+- **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns,
+  unsafe blocks
+- **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal,
+  RSpec patterns
+- **Java**: Generics, checked exceptions, concurrency (java.util.concurrent),
+  Spring/Jakarta conventions, GC tuning awareness
+- **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior,
+  resource cleanup
 - **C++**: RAII, smart pointers, move semantics, template safety, STL usage
 
-4. Read any CLAUDE.md files in the project root and affected directories for project-specific conventions.
+4. Read any CLAUDE.md files in the project root and affected directories for
+   project-specific conventions.
 
 ---
 
@@ -74,8 +88,9 @@ Launch parallel sub-agents for independent review perspectives:
 
 ### Agent 1 — CLAUDE.md Compliance
 
-Audit changes against all applicable CLAUDE.md rules. Verify imports, naming, framework conventions, error handling,
-logging, testing practices, and platform compatibility.
+Audit changes against all applicable CLAUDE.md rules. Verify imports, naming,
+framework conventions, error handling, logging, testing practices, and platform
+compatibility.
 
 ### Agent 2 — Bug Detection (Shallow Scan)
 
@@ -92,17 +107,18 @@ Read file changes and scan for obvious bugs. Focus on:
 
 ### Agent 3 — Historical Context
 
-Read git blame and history of modified code. Identify bugs in light of historical context, reverted patterns, and known
-fragile areas.
+Read git blame and history of modified code. Identify bugs in light of
+historical context, reverted patterns, and known fragile areas.
 
 ### Agent 4 — Cross-Reference Prior PRs
 
-Read previous PRs that touched these files. Check for recurring review comments that apply to the current changes.
+Read previous PRs that touched these files. Check for recurring review comments
+that apply to the current changes.
 
 ### Agent 5 — Code Comment Compliance
 
-Read inline comments in modified files. Verify changes comply with guidance in comments (TODOs, invariant notes, safety
-comments).
+Read inline comments in modified files. Verify changes comply with guidance in
+comments (TODOs, invariant notes, safety comments).
 
 **Confidence Scoring** (apply to every finding):
 
@@ -128,43 +144,51 @@ comments).
 
 ## Phase 2: Security Audit
 
-> Only flag issues with >80% confidence of actual exploitability. Better to miss theoretical issues than flood with
-> false positives.
+> Only flag issues with >80% confidence of actual exploitability. Better to miss
+> theoretical issues than flood with false positives.
 
 ### Categories to Examine
 
 **Input Validation:**
 
-- SQL injection, command injection, XXE, template injection, NoSQL injection, path traversal
+- SQL injection, command injection, XXE, template injection, NoSQL injection,
+  path traversal
 
 **Authentication & Authorization:**
 
-- Auth bypass, privilege escalation, session management flaws, JWT vulnerabilities, authz logic bypasses
+- Auth bypass, privilege escalation, session management flaws, JWT
+  vulnerabilities, authz logic bypasses
 
 **Crypto & Secrets:**
 
-- Hardcoded keys/tokens/passwords, weak algorithms, improper key storage, randomness issues, cert validation bypasses
+- Hardcoded keys/tokens/passwords, weak algorithms, improper key storage,
+  randomness issues, cert validation bypasses
 
 **Injection & Code Execution:**
 
-- RCE via unsafe deserialization, eval/exec injection, XSS (reflected, stored, DOM-based)
+- RCE via unsafe deserialization, eval/exec injection, XSS (reflected, stored,
+  DOM-based)
 
 **Data Exposure:**
 
-- Sensitive data logging, PII handling violations, API data leakage, debug info exposure
+- Sensitive data logging, PII handling violations, API data leakage, debug info
+  exposure
 
 ### Language-Specific Security Checks
 
-- **C/C++**: Buffer overflows, use-after-free, double-free, format string vulnerabilities, integer overflow leading to
-  memory corruption
-- **Rust**: Unsafe block audit, FFI boundary safety, transmute misuse — memory safety issues outside unsafe are not
-  reportable
-- **Python**: Unsafe deserialization, eval/exec, subprocess with shell=True, YAML unsafe load
+- **C/C++**: Buffer overflows, use-after-free, double-free, format string
+  vulnerabilities, integer overflow leading to memory corruption
+- **Rust**: Unsafe block audit, FFI boundary safety, transmute misuse — memory
+  safety issues outside unsafe are not reportable
+- **Python**: Unsafe deserialization, eval/exec, subprocess with shell=True,
+  YAML unsafe load
 - **Swift**: Force unwraps in untrusted data paths, UnsafePointer misuse
-- **TypeScript**: Unsafe innerHTML assignment, security trust bypass methods, prototype pollution (high-confidence only)
-- **Java**: Unsafe deserialization (ObjectInputStream), JNDI injection, SpEL injection, XXE via DocumentBuilder, SQL
-  injection via string concatenation
-- **Ruby**: Dynamic dispatch (send/public_send) with user input, ERB injection, unsafe Marshal.load
+- **TypeScript**: Unsafe innerHTML assignment, security trust bypass methods,
+  prototype pollution (high-confidence only)
+- **Java**: Unsafe deserialization (ObjectInputStream), JNDI injection, SpEL
+  injection, XXE via DocumentBuilder, SQL injection via string concatenation
+- **Ruby**: Dynamic dispatch (send/public_send) with user input, ERB injection,
+  unsafe Marshal.load
 - **Dart**: Platform channel injection, insecure storage on mobile
 
 ### Hard Exclusions (Do NOT Report)
@@ -187,8 +211,10 @@ comments).
 
 ### Severity Ratings
 
-- **HIGH**: Directly exploitable — RCE, data breach, auth bypass (confidence >= 0.8)
-- **MEDIUM**: Requires specific conditions but significant impact (confidence >= 0.8, must be obvious and concrete)
+- **HIGH**: Directly exploitable — RCE, data breach, auth bypass (confidence >=
+  0.8)
+- **MEDIUM**: Requires specific conditions but significant impact (confidence >=
+  0.8, must be obvious and concrete)
 - **LOW**: Defense-in-depth — do not report
 
 ---
@@ -197,8 +223,10 @@ comments).
 
 Analyze recently modified code and apply refinements that:
 
-1. **Preserve Functionality**: Never change what the code does — only how it does it
-2. **Apply Project Standards**: Follow CLAUDE.md conventions for the language in use
+1. **Preserve Functionality**: Never change what the code does — only how it
+   does it
+2. **Apply Project Standards**: Follow CLAUDE.md conventions for the language in
+   use
 3. **Enhance Clarity**:
 
 - Reduce unnecessary complexity and nesting
@@ -206,7 +234,8 @@ Analyze recently modified code and apply refinements that:
 - Improve variable and function names
 - Consolidate related logic
 - Remove comments that describe obvious code
-- Avoid nested ternary operators — prefer switch/match/if-else for multiple conditions
+- Avoid nested ternary operators — prefer switch/match/if-else for multiple
+  conditions
 - Choose clarity over brevity — explicit is better than overly compact
 
 4. **Maintain Balance** — Avoid over-simplification that:
@@ -219,21 +248,25 @@ Analyze recently modified code and apply refinements that:
 
 ### Language-Specific Simplification
 
-- **Python**: Replace verbose patterns with comprehensions, prefer `pathlib` over `os.path`, use match statements (
-  3.10+)
-- **Swift**: Leverage trailing closure syntax, prefer guard-let over nested if-let, use result builders where
-  appropriate
-- **TypeScript**: Use discriminated unions over type assertions, prefer satisfies for type validation, use as const for
-  literal types
-- **Rust**: Use ? operator over match chains, prefer iterator combinators over loops where clearer, leverage impl Trait
-  in argument position
-- **Java**: Use records for value objects (16+), prefer sealed classes/interfaces for restricted hierarchies (17+),
-  leverage Optional over null returns, use try-with-resources for AutoCloseable
-- **C**: Extract repeated patterns into well-named functions, ensure consistent error-code-based cleanup patterns
-- **C++**: Use structured bindings, range-based for loops, std::optional over sentinel values, CTAD where it helps
-  readability
-- **Ruby**: Leverage then/yield_self, prefer frozen_string_literal, use pattern matching (3.0+)
-- **Dart**: Use cascade notation, prefer `final` over `var`, leverage collection-if/collection-for
+- **Python**: Replace verbose patterns with comprehensions, prefer `pathlib`
+  over `os.path`, use match statements ( 3.10+)
+- **Swift**: Leverage trailing closure syntax, prefer guard-let over nested
+  if-let, use result builders where appropriate
+- **TypeScript**: Use discriminated unions over type assertions, prefer
+  satisfies for type validation, use as const for literal types
+- **Rust**: Use ? operator over match chains, prefer iterator combinators over
+  loops where clearer, leverage impl Trait in argument position
+- **Java**: Use records for value objects (16+), prefer sealed
+  classes/interfaces for restricted hierarchies (17+), leverage Optional over
+  null returns, use try-with-resources for AutoCloseable
+- **C**: Extract repeated patterns into well-named functions, ensure consistent
+  error-code-based cleanup patterns
+- **C++**: Use structured bindings, range-based for loops, std::optional over
+  sentinel values, CTAD where it helps readability
+- **Ruby**: Leverage then/yield_self, prefer frozen_string_literal, use pattern
+  matching (3.0+)
+- **Dart**: Use cascade notation, prefer `final` over `var`, leverage
+  collection-if/collection-for
 
 ---
 
@@ -292,14 +325,16 @@ For every new or modified type definition:
 
 ### Analysis Framework
 
-1. **Identify Invariants**: Data consistency, valid state transitions, relationship constraints, business rules,
-   pre/postconditions
-2. **Evaluate Encapsulation** (1-10): Hidden internals? Invariants violable from outside? Minimal interface?
-3. **Assess Invariant Expression** (1-10): Clear communication through structure? Compile-time enforcement?
-   Self-documenting?
-4. **Judge Usefulness** (1-10): Prevents real bugs? Aligned with requirements? Aids reasoning?
-5. **Examine Enforcement** (1-10): Checked at construction? Mutation points guarded? Impossible to create invalid
-   instances?
+1. **Identify Invariants**: Data consistency, valid state transitions,
+   relationship constraints, business rules, pre/postconditions
+2. **Evaluate Encapsulation** (1-10): Hidden internals? Invariants violable from
+   outside? Minimal interface?
+3. **Assess Invariant Expression** (1-10): Clear communication through
+   structure? Compile-time enforcement? Self-documenting?
+4. **Judge Usefulness** (1-10): Prevents real bugs? Aligned with requirements?
+   Aids reasoning?
+5. **Examine Enforcement** (1-10): Checked at construction? Mutation points
+   guarded? Impossible to create invalid instances?
 
 ### Anti-Patterns to Flag
 
@@ -312,15 +347,19 @@ For every new or modified type definition:
 
 ### Language-Specific Type Concerns
 
-- **TypeScript**: Discriminated unions over type assertions, branded types for domain IDs
-- **Python**: Frozen dataclasses for immutable value objects, __post_init__ validation
-- **Rust**: Newtype pattern for domain primitives, non_exhaustive for future-proof enums
+- **TypeScript**: Discriminated unions over type assertions, branded types for
+  domain IDs
+- **Python**: Frozen dataclasses for immutable value objects, **post_init**
+  validation
+- **Rust**: Newtype pattern for domain primitives, non_exhaustive for
+  future-proof enums
 - **Swift**: Structs with let properties for value types, protocol witnesses
 - **Dart**: Freezed for immutable data, sealed classes for union types
-- **Java**: Records for immutable value types, sealed interfaces for sum types, private constructors with static factory
-  methods for validated types
+- **Java**: Records for immutable value types, sealed interfaces for sum types,
+  private constructors with static factory methods for validated types
 - **C++**: Strong typedefs, RAII wrappers, deleted copy/move where appropriate
-- **C**: Opaque pointers for encapsulation, static assertions for struct invariants
+- **C**: Opaque pointers for encapsulation, static assertions for struct
+  invariants
 - **Ruby**: Struct or Data (Ruby 3.2+) for value objects, freeze patterns
 
 ---
@@ -329,16 +368,18 @@ For every new or modified type definition:
 
 When architect scope is requested:
 
-1. **Codebase Pattern Analysis**: Extract existing patterns, conventions, module boundaries, abstraction layers
-2. **Architecture Design**: Make decisive choices based on patterns found. Design for testability, performance,
-   maintainability
+1. **Codebase Pattern Analysis**: Extract existing patterns, conventions, module
+   boundaries, abstraction layers
+2. **Architecture Design**: Make decisive choices based on patterns found.
+   Design for testability, performance, maintainability
 3. **Implementation Blueprint**:
 
 - Patterns and conventions found with file:line references
 - Component design with file paths, responsibilities, dependencies, interfaces
 - Data flow from entry points through transformations to outputs
 - Phased implementation steps as a checklist
-- Error handling, state management, testing, performance, security considerations
+- Error handling, state management, testing, performance, security
+  considerations
 
 ---
 
@@ -346,16 +387,20 @@ When architect scope is requested:
 
 When `custom` scope is requested:
 
-1. **Parse the user-supplied criteria** from the remaining arguments — treat them as a natural-language review
-   directive (e.g. "check for N+1 queries", "audit thread safety", "verify no blocking I/O in async paths").
-2. **Scope the review** to the files or paths implied by the directive or by `$ARGUMENTS`; fall back to the diff
-   if no target is specified.
-3. **Apply the same rigor as the built-in phases**: gather context, launch parallel sub-agents if the criteria
-   decompose into independent checks, apply the >= 80 confidence filter, and exclude false positives per Phase 1 rules.
-4. **Report findings** using the Code Review output format below, with the `[Category]` field set to a short label
-   derived from the custom directive (e.g. `N+1`, `ThreadSafety`, `BlockingIO`).
+1. **Parse the user-supplied criteria** from the remaining arguments — treat
+   them as a natural-language review directive (e.g. "check for N+1 queries",
+   "audit thread safety", "verify no blocking I/O in async paths").
+2. **Scope the review** to the files or paths implied by the directive or by
+   `$ARGUMENTS`; fall back to the diff if no target is specified.
+3. **Apply the same rigor as the built-in phases**: gather context, launch
+   parallel sub-agents if the criteria decompose into independent checks, apply
+   the >= 80 confidence filter, and exclude false positives per Phase 1 rules.
+4. **Report findings** using the Code Review output format below, with the
+   `[Category]` field set to a short label derived from the custom directive
+   (e.g. `N+1`, `ThreadSafety`, `BlockingIO`).
 
-Use this scope when the built-in phases do not cover the specific concern the user wants investigated.
+Use this scope when the built-in phases do not cover the specific concern the
+user wants investigated.
 
 ---
 
@@ -400,11 +445,11 @@ Use this scope when the built-in phases do not cover the specific concern the us
 ```markdown
 # Vuln N: [Category]: `file:line`
 
-* Severity: High|Medium
-* Confidence: X/10
-* Description: [what is wrong]
-* Exploit Scenario: [concrete attack path]
-* Recommendation: [specific fix with code example]
+- Severity: High|Medium
+- Confidence: X/10
+- Description: [what is wrong]
+- Exploit Scenario: [concrete attack path]
+- Recommendation: [specific fix with code example]
 ```
 
 ### For Type Analysis
@@ -433,7 +478,8 @@ Use this scope when the built-in phases do not cover the specific concern the us
 ## Execution Strategy
 
 1. **Gather context** — git status, diff, log, CLAUDE.md files (Phase 0)
-2. **Launch parallel review agents** for independent analysis perspectives (Phase 1)
+2. **Launch parallel review agents** for independent analysis perspectives
+   (Phase 1)
 3. **Run security audit** on the diff (Phase 2)
 4. **Filter all findings** through confidence scoring — discard below 80
 5. **Apply simplification analysis** to surviving code (Phase 3)
@@ -441,34 +487,40 @@ Use this scope when the built-in phases do not cover the specific concern the us
 7. **Analyze new/modified types** (Phase 5)
 8. **Architecture analysis** if requested (Phase 6)
 9. **Custom focus analysis** if requested (Phase 7)
-10. **Aggregate and present** results in the output format above, organized by severity
-11. **Generate summary table** — produce a consolidated findings table as the final output
+10. **Aggregate and present** results in the output format above, organized by
+    severity
+11. **Generate summary table** — produce a consolidated findings table as the
+    final output
 
-Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself dispatch parallel sub-agents when the
-custom directive decomposes into independent checks. Each sub-agent should include the full context of its phase
+Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself
+dispatch parallel sub-agents when the custom directive decomposes into
+independent checks. Each sub-agent should include the full context of its phase
 instructions above.
 
-**Final reminder:** Focus on HIGH and MEDIUM findings only. Every finding should be something a senior engineer would
-confidently raise. Cite specific file:line references. Provide concrete fixes, not vague suggestions.
+**Final reminder:** Focus on HIGH and MEDIUM findings only. Every finding should
+be something a senior engineer would confidently raise. Cite specific file:line
+references. Provide concrete fixes, not vague suggestions.
 
 ---
 
 ## Summary Table
 
-As the very last section of your output, produce a consolidated table of all findings:
+As the very last section of your output, produce a consolidated table of all
+findings:
 
 ```markdown
 ## Findings Summary
 
-| #   | Phase    | Severity | Category       | File:Line          | Description                      | Confidence |
-| --- | -------- | -------- | -------------- | ------------------ | -------------------------------- | ---------- |
-| 1   | Review   | Critical | Bug            | `src/foo.py:42`    | Off-by-one in loop bound         | 92/100     |
-| 2   | Security | High     | Injection      | `src/api.py:15`    | Unsanitized SQL parameter        | 9/10       |
-| 3   | Errors   | High     | Silent failure | `src/svc.py:88`    | Broad except swallows TypeError  | 85/100     |
-| …   | …        | …        | …              | …                  | …                                | …          |
+| #   | Phase    | Severity | Category       | File:Line       | Description                     | Confidence |
+| --- | -------- | -------- | -------------- | --------------- | ------------------------------- | ---------- |
+| 1   | Review   | Critical | Bug            | `src/foo.py:42` | Off-by-one in loop bound        | 92/100     |
+| 2   | Security | High     | Injection      | `src/api.py:15` | Unsanitized SQL parameter       | 9/10       |
+| 3   | Errors   | High     | Silent failure | `src/svc.py:88` | Broad except swallows TypeError | 85/100     |
+| …   | …        | …        | …              | …               | …                               | …          |
 
 **Totals:** X critical · Y high · Z medium · W simplification opportunities
 **Recommended action:** [1-2 sentence prioritized next step]
 ```
 
-Include every reported finding in the table — this serves as a quick-reference index for the full review above.
+Include every reported finding in the table — this serves as a quick-reference
+index for the full review above.

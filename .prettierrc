@@ -1,4 +1,7 @@
 {
+  "plugins": [
+    "/opt/homebrew/lib/node_modules/prettier-plugin-toml/lib/index.cjs"
+  ],
   "overrides": [
     {
       "files": [
@@ -7,12 +10,23 @@
       ],
       "options": {
         "parser": "markdown",
-        "proseWrap": "preserve",
+        "proseWrap": "always",
         "printWidth": 80,
         "tabWidth": 2,
-        "useTabs": false,
+        "useTabs": true,
         "embeddedLanguageFormatting": "auto",
         "htmlWhitespaceSensitivity": "css"
+      }
+    },
+    {
+      "files": [
+        "*.toml"
+      ],
+      "options": {
+        "parser": "toml",
+        "printWidth": 88,
+        "tabWidth": 4,
+        "useTabs": false
       }
     }
   ]
