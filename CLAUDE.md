@@ -11,27 +11,26 @@ When operating as an autonomous coding agent via the Claude Code CLI, adhere to 
   - Offload routine work (boilerplate, repetitive CRUD, test stubs, file exploration) to Sonnet/Haiku subagents.
   - Reserve Opus for architectural decisions, complex debugging, and business logic.
   - Be aware of when to recommend a manual switch of models:
-    - **Suggest `/model opus`** when the task requires sustained deep reasoning throughout execution, not just
-      planning — e.g., debugging a subtle runtime bug across many files, or a large refactor where every step
-      requires cross-cutting context. Say: _"This task would benefit from full Opus — run `/model opus` to switch."_
-    - **Suggest `/model sonnet`** when the session is primarily reads, searches, config edits, or short Q&A with
-      no complex logic — Sonnet alone will suffice and cost significantly less.
+    - **Suggest `/model opus`** when the task requires sustained deep reasoning throughout execution, not just planning
+      — e.g., debugging a subtle runtime bug across many files, or a large refactor where every step requires
+      cross-cutting context. Say: _"This task would benefit from full Opus — run `/model opus` to switch."_
+    - **Suggest `/model sonnet`** when the session is primarily reads, searches, config edits, or short Q&A with no
+      complex logic — Sonnet alone will suffice and cost significantly less.
   - **Model selection by task type** (data-driven from cost logs):
-    - **Use Sonnet for:** config file editing, dotfile management, `~/.claude` work, short exploratory sessions
-      (<10 turns), git operations, file scaffolding, search/read-heavy research, and any task where the main
-      deliverable is information rather than novel logic.
-    - **Use Opus for:** multi-file refactors with cross-cutting concerns, debugging subtle runtime bugs, designing
-      new APIs or data models, and tasks requiring deep contextual reasoning across >3 files.
+    - **Use Sonnet for:** config file editing, dotfile management, `~/.claude` work, short exploratory sessions (<10
+      turns), git operations, file scaffolding, search/read-heavy research, and any task where the main deliverable is
+      information rather than novel logic.
+    - **Use Opus for:** multi-file refactors with cross-cutting concerns, debugging subtle runtime bugs, designing new
+      APIs or data models, and tasks requiring deep contextual reasoning across >3 files.
   - **Subagent delegation target:** In sessions exceeding 20 turns, aim to delegate ≥30% of turns to Sonnet/Haiku
-    subagents. Actively look for opportunities: file reads, glob/grep searches, test execution, boilerplate
-    generation, and commit preparation are all Sonnet-appropriate.
+    subagents. Actively look for opportunities: file reads, glob/grep searches, test execution, boilerplate generation,
+    and commit preparation are all Sonnet-appropriate.
   - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus session costs ~$0.15-0.35 in cache creation
     alone. If the task is a quick lookup, config tweak, or single-file edit, prefer Sonnet.
 - **No Inline Non-Bash Scripts in Bash:**
   - Never execute multiline code in another programming language (Python, Ruby, Node, Perl, etc.) directly inside the
     Bash tool via heredocs (`<<EOF`, `<<'EOF'`), `-c` strings, or piped stdin.
   - Instead:
-
     1. Write the script to a file in `/tmp/` (e.g., `/tmp/script_<descriptive_name>.py`) using the Write tool.
     2. Wait for the user to review and approve the file creation.
     3. Only then execute the script via Bash (e.g., `python3 /tmp/script_<descriptive_name>.py`).
@@ -40,6 +39,7 @@ When operating as an autonomous coding agent via the Claude Code CLI, adhere to 
     - True single-statement invocations (e.g., `python3 -c "print(1)"`) are acceptable, but must not contain `;`, `\n`,
       or any other statement/line separators that smuggle multiple statements into a single-line form. If more than one
       statement is needed, use the write-to-`/tmp/` workflow above.
+
 - **Git Commits:**
   - The user prefers to handle all `git commit` (and its variants) operations herself.
   - Avoid running `git commit` (or any variant including `git commit --amend`, `git commit -m`, etc.).
@@ -57,8 +57,8 @@ When operating as an autonomous coding agent via the Claude Code CLI, adhere to 
 ## Cost Tracking
 
 - After completing a multi-step task, run `/cost_` to extract and log the current session's cost data.
-  - The `/cost_` Skill runs `~/.claude/extract_cost.py` which parses session JSONL files for real
-    token usage from assistant message `usage` fields and calculates cost via Anthropic API pricing.
+  - The `/cost_` Skill runs `~/.claude/extract_cost.py` which parses session JSONL files for real token usage from
+    assistant message `usage` fields and calculates cost via Anthropic API pricing.
   - Logs are written as JSONL to `~/.claude/cost-log/` with filenames like `YYYY-MM-DD_HHmm_{session}.jsonl`.
 - Run `/cost-opt` periodically to compact logs and review optimization suggestions.
 
@@ -81,7 +81,7 @@ When operating as an autonomous coding agent via the Claude Code CLI, adhere to 
   - Cleanup is managed by the main agent: After a sub-agent finishes, the main agent auto-compacts the individual memory
     file, updating the `COMBINED.md` file.
   - Each sub-agent: Creates and updates only its own memory file in `shared/` with a detailed log, actively reads all
-    files in the directory, and *never* modifies `COMBINED.md`.
+    files in the directory, and _never_ modifies `COMBINED.md`.
 
 ## Tasks, Planning, and Execution
 
@@ -146,7 +146,7 @@ rendering constraints:
 
 - **Pattern:** Strictly enforce a layered architecture separating concerns: Routers (API), Services (Business Logic),
   and Repositories (Data Access).
-- **Rule of Thumb:** A FastAPI endpoint (`@app.get`) should *never* contain raw business logic or DB queries. It only
+- **Rule of Thumb:** A FastAPI endpoint (`@app.get`) should _never_ contain raw business logic or DB queries. It only
   parses inputs, calls a service, and returns a response.
 
 ## Directory Structure
@@ -184,7 +184,7 @@ rendering constraints:
 
 ## Behave Standards (BDD)
 
-- Write declarative Gherkin scenarios focused on *what* the user does, not *how*.
+- Write declarative Gherkin scenarios focused on _what_ the user does, not _how_.
 - Keep step definitions DRY using parameter injection (e.g., `@given('I have {count:d} items')`).
 - Pass state via `context`; clean up in `environment.py`.
 
