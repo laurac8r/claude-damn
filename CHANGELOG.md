@@ -16,7 +16,9 @@ The plugin packaging phase: introducing `uv`, `pyproject.toml`, a real test tree
   - `tests/` tree with `conftest.py` and shared helpers.
 
 - **Harness test coverage**
-  - `tests/test_extract_cost.py` — session JSONL parsing and Anthropic-pricing cost math, including fast-mode pricing
+  - `tests/test_extract_cost.py` — session JSONL parsing and Anthropic-pricing
+    cost math, including fast-mode pricing branches.
+  - `tests/test_checkpoint_archive.bats` — checkpoint archive rotation across
     branches.
   - `tests/test_checkpoint_archive.bats` — checkpoint archive rotation across branches.
   - `tests/test_hook_inline_scripts.py` — pre-tool hook that blocks multiline non-Bash scripts from the Bash tool.
