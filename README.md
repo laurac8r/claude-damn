@@ -190,6 +190,20 @@ Run the full suite including live/expensive tests:
 uv run pytest -m ""
 ```
 
+### Parallel execution
+
+For the slower suites (`performance/`, `smoke/`, or `-m ""`), run tests in
+parallel with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/):
+
+```bash
+uv add --dev pytest-xdist # one-time install
+uv run pytest -n auto # auto = one worker per CPU core
+uv run pytest -n 4 -m performance # pin worker count for the 125-combo stress matrix
+```
+
+Skip `-n` for the default suite — it runs in ~0.5s, and xdist worker startup
+adds more overhead than it saves.
+
 ## License
 
 [MIT](LICENSE)
