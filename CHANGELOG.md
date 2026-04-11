@@ -20,9 +20,6 @@ The plugin packaging phase: introducing `uv`, `pyproject.toml`, a real test tree
     cost math, including fast-mode pricing branches.
   - `tests/test_checkpoint_archive.bats` — checkpoint archive rotation across
     branches.
-  - `tests/test_checkpoint_archive.bats` — checkpoint archive rotation across branches.
-  - `tests/test_hook_inline_scripts.py` — pre-tool hook that blocks multiline non-Bash scripts from the Bash tool.
-  - `tests/test_permissions.py` — `settings.json` allow/ask/deny permission lists.
   - `tests/test_hook_inline_scripts.py` — pre-tool hook that blocks multiline
     non-Bash scripts from the Bash tool.
   - `tests/test_permissions.py` — `settings.json` allow/ask/deny permission
