@@ -9,10 +9,11 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-Currently on branch `feat/transition-to-plugin` — converting the flat `~/.claude` layout into a proper plugin package
-with tests, `pyproject.toml`, and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition plan and
-[`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and implementation plans live in
-`docs/superpowers/{specs,plans}/`.
+Currently on branch `feat/transition-to-plugin` — converting the flat
+`~/.claude` layout into a proper plugin package with tests, `pyproject.toml`,
+and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition
+plan and [`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and
+implementation plans live in `docs/superpowers/{specs,plans}/`.
 
 ## What's in the box
 
