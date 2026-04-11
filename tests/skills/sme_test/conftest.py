@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 import yaml
 
-
 SKILL_ROOT = (
     Path(__file__).resolve().parent.parent.parent.parent / "skills" / "sme-test"
 )
