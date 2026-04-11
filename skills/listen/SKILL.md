@@ -8,8 +8,8 @@ user-invocable: true
 # Listen for Skill Usage
 
 Perform the following instructions and enforce using all the skills referenced
-in the skills used.
-Perform the following instructions and listen for all the skills referenced in the skills used, invoking each one.
+in the skills used. Perform the following instructions and listen for all the
+skills referenced in the skills used, invoking each one.
 
 **Instructions:** "$ARGUMENTS"
 
@@ -42,10 +42,13 @@ Before executing the instructions above, you MUST:
   adds the guarantee that they are all used, but does not override how each
   skill operates.
 
-- If the instructions reference a compositional skill (e.g., `/super-duper-cat`), invoke that skill directly —
-  do not decompose it into its primitives unless the skill itself does so.
-- If the instructions contain no skill references, execute them normally without this enforcement overhead.
-- If a referenced skill fails or is denied by the user, note it explicitly in your output rather than silently
-  skipping it.
-- Follow the invoked skills' own instructions exactly — this enforcement layer adds the guarantee that they
-  are all used, but does not override how each skill operates.
+- If the instructions reference a compositional skill (e.g.,
+  `/super-duper-cat`), invoke that skill directly — do not decompose it into its
+  primitives unless the skill itself does so.
+- If the instructions contain no skill references, execute them normally without
+  this enforcement overhead.
+- If a referenced skill fails or is denied by the user, note it explicitly in
+  your output rather than silently skipping it.
+- Follow the invoked skills' own instructions exactly — this enforcement layer
+  adds the guarantee that they are all used, but does not override how each
+  skill operates.
