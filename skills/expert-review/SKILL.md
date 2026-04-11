@@ -1,7 +1,9 @@
 ---
 name: expert-review
 description: Expert-level multi-language code review, simplification, debugging, and security audit
-allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
+allowed-tools:
+  Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(git blame:*), Bash(git remote show:*),
+  Bash(gh pr:*), Bash(gh issue:*), Read, Glob, Grep, LS, Task, Edit, Write
 argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
@@ -34,50 +36,51 @@ user-invocable: true
 
 1. Parse arguments to identify requested review aspects and target:
 
-  - `help` — Display all available scopes and usage, then stop
-  - `security` — Security-focused vulnerability assessment
-  - `simplify` — Code simplification for clarity and maintainability
-  - `review` — General code review for bugs, patterns, CLAUDE.md compliance
-  - `debug` — Systematic debugging of a specific issue
-  - `types` — Type design analysis (encapsulation, invariants, enforcement)
-  - `errors` — Silent failure hunting and error handling audit
-  - `architect` — Architecture analysis and implementation blueprint
-  - `custom` — User-defined review focus; remaining arguments specify the criteria (e.g.
-    `custom "check for N+1 queries in src/repositories/"`)
-  - `all` — Run all applicable reviews (default)
-  - A file path, directory, or PR number as target
+- `help` — Display all available scopes and usage, then stop
+- `security` — Security-focused vulnerability assessment
+- `simplify` — Code simplification for clarity and maintainability
+- `review` — General code review for bugs, patterns, CLAUDE.md compliance
+- `debug` — Systematic debugging of a specific issue
+- `types` — Type design analysis (encapsulation, invariants, enforcement)
+- `errors` — Silent failure hunting and error handling audit
+- `architect` — Architecture analysis and implementation blueprint
+- `custom` — User-defined review focus; remaining arguments specify the criteria (e.g.
+  `custom "check for N+1 queries in src/repositories/"`)
+- `all` — Run all applicable reviews (default)
+- A file path, directory, or PR number as target
 
 If scope is `help`, print this list and exit without running any review phases.
 
 2. Gather context:
+
    ```
    git status
    git diff --name-only origin/HEAD... 2>/dev/null || git diff --name-only HEAD~1
    git log --oneline -10
    ```
 
-2. Identify the language(s) in scope and apply language-specific expertise:
+3. Identify the language(s) in scope and apply language-specific expertise:
 
-   - **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest conventions
-   - **Swift**: Protocol-oriented design, value types vs reference types, memory management, Concurrency (async/await)
-   - **TypeScript**: Strict mode, discriminated unions, utility types, ES module patterns
-   - **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
-   - **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns, unsafe blocks
-   - **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal, RSpec patterns
-   - **Java**: Generics, checked exceptions, concurrency (java.util.concurrent), Spring/Jakarta conventions, GC tuning
-     awareness
-   - **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior, resource cleanup
-   - **C++**: RAII, smart pointers, move semantics, template safety, STL usage
+- **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest conventions
+- **Swift**: Protocol-oriented design, value types vs reference types, memory management, Concurrency (async/await)
+- **TypeScript**: Strict mode, discriminated unions, utility types, ES module patterns
+- **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
+- **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns, unsafe blocks
+- **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal, RSpec patterns
+- **Java**: Generics, checked exceptions, concurrency (java.util.concurrent), Spring/Jakarta conventions, GC tuning
+  awareness
+- **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior, resource cleanup
+- **C++**: RAII, smart pointers, move semantics, template safety, STL usage
 
 3. If cloud infrastructure code is detected (Terraform, CloudFormation, CDK, Bicep, ARM templates, Pulumi, serverless
    configs), apply cloud-specific expertise:
 
-   - **GCP**: IAM bindings vs policies, service account key management, VPC Service Controls, Cloud Armor, audit logging,
-     org policy constraints, workload identity
-   - **AWS**: IAM least-privilege, S3 bucket policies, security group rules, Lambda concurrency/timeout, VPC design,
-     encryption at rest/in transit, CloudTrail logging, resource tagging
-   - **Azure**: RBAC role assignments, managed identity usage, NSG rules, Key Vault references, diagnostic settings,
-     policy assignments, private endpoints
+- **GCP**: IAM bindings vs policies, service account key management, VPC Service Controls, Cloud Armor, audit logging,
+  org policy constraints, workload identity
+- **AWS**: IAM least-privilege, S3 bucket policies, security group rules, Lambda concurrency/timeout, VPC design,
+  encryption at rest/in transit, CloudTrail logging, resource tagging
+- **Azure**: RBAC role assignments, managed identity usage, NSG rules, Key Vault references, diagnostic settings, policy
+  assignments, private endpoints
 
 4. Read any CLAUDE.md files in the project root and affected directories for project-specific conventions.
 
@@ -271,10 +274,10 @@ Analyze recently modified code and apply refinements that:
   `google_project_iam_policy` or member blocks, prefer workload identity over service account keys, use modules for
   repeated patterns
 - **AWS CloudFormation/CDK**: Replace inline policies with managed policies where appropriate, use `!Sub` over
-  `!Join`/`Fn::Join` for string interpolation, consolidate duplicate IAM statements, prefer CDK L2/L3 constructs over
-  L1 (Cfn*) when available
-- **Azure Bicep/ARM**: Prefer Bicep over raw ARM templates, use modules for repeated resource patterns, consolidate
-  role assignments, use `existing` keyword instead of `reference()`, prefer user-assigned managed identity over
+  `!Join`/`Fn::Join` for string interpolation, consolidate duplicate IAM statements, prefer CDK L2/L3 constructs over L1
+  (Cfn\*) when available
+- **Azure Bicep/ARM**: Prefer Bicep over raw ARM templates, use modules for repeated resource patterns, consolidate role
+  assignments, use `existing` keyword instead of `reference()`, prefer user-assigned managed identity over
   system-assigned when shared across resources
 - **General IaC**: Remove redundant default values that match provider defaults, extract repeated values into variables/
   parameters, ensure consistent tagging/labeling strategy, prefer declarative over imperative patterns
@@ -357,7 +360,7 @@ For every new or modified type definition:
 ### Language-Specific Type Concerns
 
 - **TypeScript**: Discriminated unions over type assertions, branded types for domain IDs
-- **Python**: Frozen dataclasses for immutable value objects, __post_init__ validation
+- **Python**: Frozen dataclasses for immutable value objects, **post_init** validation
 - **Rust**: Newtype pattern for domain primitives, non_exhaustive for future-proof enums
 - **Swift**: Structs with let properties for value types, protocol witnesses
 - **Dart**: Freezed for immutable data, sealed classes for union types
@@ -399,12 +402,12 @@ When architect scope is requested:
 
 When `custom` scope is requested:
 
-1. **Parse the user-supplied criteria** from the remaining arguments — treat them as a natural-language review
-   directive (e.g. "check for N+1 queries", "audit thread safety", "verify no blocking I/O in async paths").
-2. **Scope the review** to the files or paths implied by the directive or by `$ARGUMENTS`; fall back to the diff
-   if no target is specified.
-3. **Apply the same rigor as the built-in phases**: gather context, launch parallel sub-agents if the criteria
-   decompose into independent checks, apply the >= 80 confidence filter, and exclude false positives per Phase 1 rules.
+1. **Parse the user-supplied criteria** from the remaining arguments — treat them as a natural-language review directive
+   (e.g. "check for N+1 queries", "audit thread safety", "verify no blocking I/O in async paths").
+2. **Scope the review** to the files or paths implied by the directive or by `$ARGUMENTS`; fall back to the diff if no
+   target is specified.
+3. **Apply the same rigor as the built-in phases**: gather context, launch parallel sub-agents if the criteria decompose
+   into independent checks, apply the >= 80 confidence filter, and exclude false positives per Phase 1 rules.
 4. **Report findings** using the Code Review output format below, with the `[Category]` field set to a short label
    derived from the custom directive (e.g. `N+1`, `ThreadSafety`, `BlockingIO`).
 
@@ -453,11 +456,11 @@ Use this scope when the built-in phases do not cover the specific concern the us
 ```markdown
 # Vuln N: [Category]: `file:line`
 
-* Severity: High|Medium
-* Confidence: X/10
-* Description: [what is wrong]
-* Exploit Scenario: [concrete attack path]
-* Recommendation: [specific fix with code example]
+- Severity: High|Medium
+- Confidence: X/10
+- Description: [what is wrong]
+- Exploit Scenario: [concrete attack path]
+- Recommendation: [specific fix with code example]
 ```
 
 ### For Type Analysis
@@ -497,9 +500,9 @@ Use this scope when the built-in phases do not cover the specific concern the us
 10. **Aggregate and present** results in the output format above, organized by severity
 11. **Generate summary table** — produce a consolidated findings table as the final output
 
-Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself dispatch parallel sub-agents when the
-custom directive decomposes into independent checks. Each sub-agent should include the full context of its phase
-instructions above.
+Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself dispatch parallel sub-agents when the custom
+directive decomposes into independent checks. Each sub-agent should include the full context of its phase instructions
+above.
 
 **Final reminder:** Focus on HIGH and MEDIUM findings only. Every finding should be something a senior engineer would
 confidently raise. Cite specific file:line references. Provide concrete fixes, not vague suggestions.
@@ -513,15 +516,15 @@ As the very last section of your output, produce a consolidated table of all fin
 ```markdown
 ## Findings Summary
 
-| #   | Phase    | Severity | Category       | File:Line          | Description                      | Confidence |
-| --- | -------- | -------- | -------------- | ------------------ | -------------------------------- | ---------- |
-| 1   | Review   | Critical | Bug            | `src/foo.py:42`    | Off-by-one in loop bound         | 92/100     |
-| 2   | Security | High     | Injection      | `src/api.py:15`    | Unsanitized SQL parameter        | 9/10       |
-| 3   | Errors   | High     | Silent failure | `src/svc.py:88`    | Broad except swallows TypeError  | 85/100     |
-| …   | …        | …        | …              | …                  | …                                | …          |
+| #   | Phase    | Severity | Category       | File:Line       | Description                     | Confidence |
+| --- | -------- | -------- | -------------- | --------------- | ------------------------------- | ---------- |
+| 1   | Review   | Critical | Bug            | `src/foo.py:42` | Off-by-one in loop bound        | 92/100     |
+| 2   | Security | High     | Injection      | `src/api.py:15` | Unsanitized SQL parameter       | 9/10       |
+| 3   | Errors   | High     | Silent failure | `src/svc.py:88` | Broad except swallows TypeError | 85/100     |
+| …   | …        | …        | …              | …               | …                               | …          |
 
-**Totals:** X critical · Y high · Z medium · W simplification opportunities
-**Recommended action:** [1-2 sentence prioritized next step]
+**Totals:** X critical · Y high · Z medium · W simplification opportunities **Recommended action:** [1-2 sentence
+prioritized next step]
 ```
 
 Include every reported finding in the table — this serves as a quick-reference index for the full review above.
@@ -536,7 +539,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 ### Language References
 
 | Language   | Style & Conventions                                                                 | Security                                                                        |
-|------------|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Python     | https://peps.python.org/pep-0008/                                                   | https://cheatsheetseries.owasp.org/cheatsheets/Python_Security_Cheat_Sheet.html |
 | TypeScript | https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html | https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html |
 | Rust       | https://doc.rust-lang.org/nomicon/                                                  | https://rustsec.org/advisories/                                                 |
@@ -550,7 +553,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 ### Security References
 
 | Topic                    | URL                                                                                                   |
-|--------------------------|-------------------------------------------------------------------------------------------------------|
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
 | OWASP Top 10             | https://owasp.org/Top10/                                                                              |
 | OWASP Cheat Sheet Series | https://cheatsheetseries.owasp.org/index.html                                                         |
 | CWE Top 25               | https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html                                          |
@@ -569,7 +572,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 **AWS:**
 
 | Topic              | URL                                                                                |
-|--------------------|------------------------------------------------------------------------------------|
+| ------------------ | ---------------------------------------------------------------------------------- |
 | IAM Best Practices | https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html               |
 | S3 Security        | https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html |
 | Lambda Security    | https://docs.aws.amazon.com/lambda/latest/dg/lambda-security.html                  |
@@ -581,7 +584,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 **GCP:**
 
 | Topic                   | URL                                                                                     |
-|-------------------------|-----------------------------------------------------------------------------------------|
+| ----------------------- | --------------------------------------------------------------------------------------- |
 | IAM Best Practices      | https://cloud.google.com/iam/docs/using-iam-securely                                    |
 | Security Foundations    | https://cloud.google.com/architecture/security-foundations                              |
 | VPC Service Controls    | https://cloud.google.com/vpc-service-controls/docs/overview                             |
@@ -593,7 +596,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 **Azure:**
 
 | Topic                | URL                                                                                          |
-|----------------------|----------------------------------------------------------------------------------------------|
+| -------------------- | -------------------------------------------------------------------------------------------- |
 | Security Baseline    | https://learn.microsoft.com/en-us/security/benchmark/azure/overview                          |
 | Identity (Entra ID)  | https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview |
 | Key Vault            | https://learn.microsoft.com/en-us/azure/key-vault/general/best-practices                     |
@@ -605,7 +608,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 ### Infrastructure as Code
 
 | Topic                    | URL                                                                        |
-|--------------------------|----------------------------------------------------------------------------|
+| ------------------------ | -------------------------------------------------------------------------- |
 | Terraform Best Practices | https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices |
 | Terraform Style Guide    | https://developer.hashicorp.com/terraform/language/style                   |
 | CDK Patterns             | https://cdkpatterns.com/                                                   |
@@ -615,7 +618,7 @@ These are canonical, LLM-optimized sources — prefer them over general web sear
 ### Error Handling & Type Design
 
 | Topic                        | URL                                                                            |
-|------------------------------|--------------------------------------------------------------------------------|
+| ---------------------------- | ------------------------------------------------------------------------------ |
 | Error Handling (OWASP)       | https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html |
 | Logging (OWASP)              | https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html        |
 | Algebraic Data Types         | https://doc.rust-lang.org/book/ch06-00-enums.html                              |

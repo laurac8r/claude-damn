@@ -1,6 +1,8 @@
 ---
 name: checkpoint-resume
-description: Use when resuming paused work, starting a session where a CHECKPOINT.md exists, or when the user says "continue from checkpoint", "resume", or "pick up where we left off"
+description:
+  Use when resuming paused work, starting a session where a CHECKPOINT.md exists, or when the user says "continue from
+  checkpoint", "resume", or "pick up where we left off"
 user-invocable: true
 ---
 
@@ -53,16 +55,16 @@ Apply the first matching case:
 
 **Case A — CHECKPOINT.md present, branch matches current**
 
-`CHECKPOINT.md` exists at CWD and its `**Branch:**` line matches the current git branch.
-→ Resume it. This is the normal case. Proceed to Step 5.
+`CHECKPOINT.md` exists at CWD and its `**Branch:**` line matches the current git branch. → Resume it. This is the normal
+case. Proceed to Step 5.
 
 **Case B — CHECKPOINT.md present, branch differs from current**
 
-`CHECKPOINT.md` exists at CWD but its `**Branch:**` line is for a different branch than the one you are currently on.
-→ Flag the drift and prompt the user:
+`CHECKPOINT.md` exists at CWD but its `**Branch:**` line is for a different branch than the one you are currently on. →
+Flag the drift and prompt the user:
 
-> `CHECKPOINT.md` is for branch `<X>`, but you are currently on `<Y>`.
-> How would you like to proceed?
+> `CHECKPOINT.md` is for branch `<X>`, but you are currently on `<Y>`. How would you like to proceed?
+>
 > - **(a)** Resume it as-is (stay on current branch, use the checkpoint from `<X>`)
 > - **(b)** Archive it to `.checkpoints/<X-slug>.md` first, then pick a checkpoint from the archive
 > - **(c)** Resume a specific archived checkpoint — list the archive contents so I can pick
@@ -71,35 +73,32 @@ Wait for the user's response before continuing.
 
 **Case C — No CHECKPOINT.md at CWD, archive has `<current-slug>.md`**
 
-`CHECKPOINT.md` does not exist at CWD, but `$ARCHIVE/<current-slug>.md` does exist.
-→ Offer to restore it:
+`CHECKPOINT.md` does not exist at CWD, but `$ARCHIVE/<current-slug>.md` does exist. → Offer to restore it:
 
 > Found an archived checkpoint for the current branch (`<current-slug>`). Restore it to continue work?
 
 On user confirmation: **move** (not copy) `$ARCHIVE/<current-slug>.md` to `CHECKPOINT.md` at CWD, then proceed to Step
+
 5. On user decline: stop and report no active checkpoint to resume.
 
 **Case D — No CHECKPOINT.md at CWD, no slug match, archive non-empty**
 
 `CHECKPOINT.md` does not exist at CWD, `$ARCHIVE/<current-slug>.md` does not exist, but the archive contains other `.md`
-files (excluding `*.prev.md`).
-→ List the archive contents and ask the user to pick:
+files (excluding `*.prev.md`). → List the archive contents and ask the user to pick:
 
 > No checkpoint found for the current branch. The following archived checkpoints are available:
 >
 > 1. `.checkpoints/<slug-1>.md`
-> 2. `.checkpoints/<slug-2>.md`
-     > ...
+> 2. `.checkpoints/<slug-2>.md` ...
 >
 > Enter the number of the checkpoint to restore, or press Enter to cancel.
 
-On pick: **move** (not copy) the chosen file to `CHECKPOINT.md` at CWD, then proceed to Step 5.
-On cancel: stop and report no checkpoint restored.
+On pick: **move** (not copy) the chosen file to `CHECKPOINT.md` at CWD, then proceed to Step 5. On cancel: stop and
+report no checkpoint restored.
 
 **Case E — No CHECKPOINT.md and empty archive**
 
-`CHECKPOINT.md` does not exist at CWD and the archive has no `.md` files (excluding `*.prev.md`).
-→ Report:
+`CHECKPOINT.md` does not exist at CWD and the archive has no `.md` files (excluding `*.prev.md`). → Report:
 
 > No checkpoint found — neither a local `CHECKPOINT.md` nor any archived checkpoints exist. Nothing to resume.
 

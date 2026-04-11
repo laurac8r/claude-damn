@@ -1,6 +1,8 @@
 ---
 name: checkpoint-save
-description: Use when pausing work that will be resumed later, when switching contexts, or when the user asks to save a checkpoint. Creates a CHECKPOINT.md that captures full resumption context.
+description:
+  Use when pausing work that will be resumed later, when switching contexts, or when the user asks to save a checkpoint.
+  Creates a CHECKPOINT.md that captures full resumption context.
 user-invocable: true
 ---
 
@@ -16,9 +18,8 @@ Create `CHECKPOINT.md` in the project root (or working directory) with:
 ```markdown
 # Checkpoint: [Brief Title]
 
-**Date:** [today's date]
-**Branch:** `[current git branch]`
-**Session context:** [1-2 sentence summary of what we were doing]
+**Date:** [today's date] **Branch:** `[current git branch]` **Session context:** [1-2 sentence summary of what we were
+doing]
 
 ## Current State
 
@@ -58,8 +59,8 @@ Create `CHECKPOINT.md` in the project root (or working directory) with:
 
 ### Step 1 — Compute current-branch slug
 
-Run `git branch --show-current` to get the current branch name. If the output is empty (detached HEAD), fall back to
-the basename of CWD (`basename "$PWD"`). Apply slug rules to produce `<slug>`:
+Run `git branch --show-current` to get the current branch name. If the output is empty (detached HEAD), fall back to the
+basename of CWD (`basename "$PWD"`). Apply slug rules to produce `<slug>`:
 
 1. Lowercase.
 2. Replace `/` with `-`.
@@ -88,9 +89,9 @@ archive.
 
 ### Step 3 — Verify `.gitignore` coverage
 
-Check whether `.checkpoints/` is listed in the main checkout's `.gitignore` (the `.gitignore` at `$(dirname
-"$COMMON_DIR")/.gitignore`). If the line is absent, append `.checkpoints/` to that `.gitignore` and report to the
-user:
+Check whether `.checkpoints/` is listed in the main checkout's `.gitignore` (the `.gitignore` at
+`$(dirname "$COMMON_DIR")/.gitignore`). If the line is absent, append `.checkpoints/` to that `.gitignore` and report to
+the user:
 
 > "Added `.checkpoints/` to `.gitignore` in the main checkout. Please review and commit that change when ready."
 
@@ -100,14 +101,12 @@ Do NOT auto-commit — the user handles all git commits.
 
 If `CHECKPOINT.md` exists at CWD, parse its `**Branch:**` line and apply one of the three cases below:
 
-**Case A — Same branch as current:**
-Copy the existing file to `.checkpoints/<slug>.prev.md` (overwrite any prior `.prev.md`). This is a rolling
-single-slot backup before the same-branch overwrite.
+**Case A — Same branch as current:** Copy the existing file to `.checkpoints/<slug>.prev.md` (overwrite any prior
+`.prev.md`). This is a rolling single-slot backup before the same-branch overwrite.
 
-**Case B — Different branch:**
-The existing checkpoint belongs to a different effort. Derive `<old-slug>` from the `**Branch:**` value in the
-existing file (apply the same slug rules). Move (not copy) the existing `CHECKPOINT.md` to `.checkpoints/<old-slug>.md`.
-On collision (file already exists), append `-2`, `-3`, etc. until the name is free.
+**Case B — Different branch:** The existing checkpoint belongs to a different effort. Derive `<old-slug>` from the
+`**Branch:**` value in the existing file (apply the same slug rules). Move (not copy) the existing `CHECKPOINT.md` to
+`.checkpoints/<old-slug>.md`. On collision (file already exists), append `-2`, `-3`, etc. until the name is free.
 
 **Before proceeding to Step 5, verify the `mv` succeeded.** If it fails (permissions, disk full, cross-device), abort:
 **"Failed to archive existing CHECKPOINT.md. The old checkpoint is still at CWD. Resolve the mv failure before
@@ -117,9 +116,8 @@ Report to the user:
 
 > "Archived previous checkpoint (branch: `<old-branch>`) to `.checkpoints/<old-slug>.md`."
 
-**Case C — Branch line missing or unparseable:**
-The `**Branch:**` line cannot be found or its value is empty/malformed. Get the file's modification time as a timestamp
-(`YYYYMMDD-HHMMSS`):
+**Case C — Branch line missing or unparseable:** The `**Branch:**` line cannot be found or its value is empty/malformed.
+Get the file's modification time as a timestamp (`YYYYMMDD-HHMMSS`):
 
 - **macOS:** `stat -f "%Sm" -t "%Y%m%d-%H%M%S" CHECKPOINT.md`
 - **Linux:** `date -r CHECKPOINT.md +%Y%m%d-%H%M%S`

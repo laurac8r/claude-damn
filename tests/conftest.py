@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 
-
 SETTINGS_PATH = Path(__file__).parent.parent / "settings.json"
 
 

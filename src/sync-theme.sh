@@ -47,7 +47,7 @@ if command -v jq &>/dev/null; then
       exit 1
     fi
 
-    printf '%s\n' "$CONTENT" > "$SETTINGS"
+    printf '%s\n' "$CONTENT" >"$SETTINGS"
 
     # Verify file is still valid after write
     if ! jq empty "$SETTINGS" &>/dev/null; then
