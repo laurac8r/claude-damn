@@ -1,6 +1,7 @@
 ---
 name: cat
-description: Subagent-driven development (alias for /subagent-driven-development)
+description:
+  Subagent-driven development (alias for /subagent-driven-development)
 user-invocable: true
 ---
 

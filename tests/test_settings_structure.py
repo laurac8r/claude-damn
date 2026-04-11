@@ -90,13 +90,14 @@ class TestPluginDefaults:
         "plugin",
         [
             "code-review@claude-plugins-official",
+            "commit-commands@claude-plugins-official",
             "pr-review-toolkit@claude-plugins-official",
             "security-guidance@claude-plugins-official",
             "hookify@claude-plugins-official",
         ],
     )
     def test_critical_plugins_enabled(
-        self, enabled_plugins: dict[str, bool], plugin: str
+            self, enabled_plugins: dict[str, bool], plugin: str
     ) -> None:
         assert enabled_plugins.get(plugin) is True, f"{plugin} must be enabled"
 
@@ -108,7 +109,7 @@ class TestPluginDefaults:
         ],
     )
     def test_noisy_plugins_not_enabled(
-        self, enabled_plugins: dict[str, bool], plugin: str
+            self, enabled_plugins: dict[str, bool], plugin: str
     ) -> None:
         # These plugins should either be absent or explicitly False
         assert enabled_plugins.get(plugin) is not True, f"{plugin} must not be enabled"
