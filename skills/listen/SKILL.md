@@ -1,13 +1,13 @@
 ---
-name: enforce
-description: Execute instructions while strictly enforcing invocation of every skill referenced within them
+name: listen
+description: Execute instructions while listening for and invoking every skill referenced within them
 argument-hint: "<instructions containing /skill references>"
 user-invocable: true
 ---
 
-# Enforce Skill Usage
+# Listen for Skill Usage
 
-Perform the following instructions and enforce using all the skills referenced in the skills used.
+Perform the following instructions and listen for all the skills referenced in the skills used, invoking each one.
 
 **Instructions:** "$ARGUMENTS"
 
