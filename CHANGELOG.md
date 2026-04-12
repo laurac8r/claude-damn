@@ -12,8 +12,9 @@ tree, and the first spec-plan-test skill (`sme-test`).
 ### Added
 
 - **Plugin scaffolding**
-   - `pyproject.toml` + `uv.lock` — uv-managed `.venv`, Python ≥ 3.14, `pytest` +
-     `ruff` + `pyyaml`.
+   - `pyproject.toml` + `uv.lock` — uv-managed `.venv`, Python ≥ 3.14. All
+     test/dev packages (`pytest`, `pyyaml`, `pytest-xdist`, `ruff`) in
+     `[dependency-groups] dev`, no runtime dependencies.
    - `tests/` tree with `conftest.py` and shared helpers.
 
 - **Harness test coverage**
@@ -50,10 +51,19 @@ tree, and the first spec-plan-test skill (`sme-test`).
    - `ROADMAP.md` — 4-phase plugin transition plan.
    - `CHANGELOG.md` — this file.
 
+- **PR review fixes** (PR #7 feedback)
+   - `tests/test_pyproject.py` — regression test asserting test-only packages
+     stay in dev dependency group.
+   - `tests/skills/expert_review/` — structural tests for expert-review SKILL.md
+     (duplicate bullet, Phase 0 numbering).
+   - `scripts/test-isolated.sh` — error guards on worktree setup commands.
+
 ### Changed
 
 - `expert-review` guidelines — added Java plus comprehensive language, security,
   and cloud specialization references.
+- `expert-review` SKILL.md — removed duplicate "You combine the roles of..."
+  bullet; fixed Phase 0 step numbering (1-5 sequential).
 - `CLAUDE.md` — clarified agent directives: model routing, batch operations, no
   inline non-Bash scripts via heredocs, git-commit opt-out.
 
