@@ -23,6 +23,11 @@ jobs:
       # If you don't clone the repository in your setup steps, Copilot will do this for you automatically after the steps complete.
       contents: read
 
-#    # You can define any steps you want, and they will run before the agent starts.
-#    # If you do not check out your code, Copilot will do this for you.
-#    steps:
+    # You can define any steps you want, and they will run before the agent starts.
+    # If you do not check out your code, Copilot will do this for you.
+    steps:
+      - name: Install uv and Python 3.14
+        run: |
+          pip install uv
+          uv python install 3.14
+          uv sync
