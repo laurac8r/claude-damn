@@ -1,5 +1,6 @@
 """Regression tests: block-inline-scripts.py hook behavior."""
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -193,6 +194,37 @@ class TestStatementLimit:
         assert "3" in msg  # max is 3
         assert "BLOCKED" in msg
 
+    # --- Fix A: SEPARATOR_PATTERN must not double-count >> and << ---
+
+    def test_double_right_redirect_pattern_counts_as_one(self) -> None:
+        """Unit test: SEPARATOR_PATTERN.findall treats '>>' as one token."""
+        spec = importlib.util.spec_from_file_location(
+            "block_inline_scripts",
+            Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
+        )
+        assert spec is not None and spec.loader is not None
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        assert mod.SEPARATOR_PATTERN.findall("a >> b") == [">>"]
+
+    def test_double_left_redirect_pattern_counts_as_one(self) -> None:
+        """Unit test: SEPARATOR_PATTERN.findall treats '<<' as one token."""
+        spec = importlib.util.spec_from_file_location(
+            "block_inline_scripts",
+            Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
+        )
+        assert spec is not None and spec.loader is not None
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        assert mod.SEPARATOR_PATTERN.findall("a << b") == ["<<"]
+
+    def test_double_right_redirect_allowed_at_limit(self) -> None:
+        """Integration: 'echo a >> f1 >> f2 >> f3' has 3 >> tokens = 3 separators."""
+        command = "echo a >> f1 >> f2 >> f3"
+        output = run_hook("Bash", command)
+        # 3 '>>' = 3 separators — at the limit, must be ALLOWED
+        assert output == {}, f"Should allow: {command!r}"
+
 
 class TestMultipleViolations:
     """Commands tripping multiple rules report all violations."""
@@ -271,3 +303,47 @@ class TestHookMalformedInput:
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert "systemMessage" in output  # graceful error
+
+    # --- Fix B: non-string / non-dict inputs must coerce to empty, not error ---
+
+    def test_null_command_is_allowed(self) -> None:
+        """null command coerces to '' → no rules fire → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": None}})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        assert result.returncode == 0
+        output = json.loads(result.stdout)
+        assert output == {}, f"Expected {{}}, got {output!r}"
+
+    def test_non_string_command_is_allowed(self) -> None:
+        """Integer command coerces to '' → no rules fire → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": 42}})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        assert result.returncode == 0
+        output = json.loads(result.stdout)
+        assert output == {}, f"Expected {{}}, got {output!r}"
+
+    def test_non_dict_tool_input_is_allowed(self) -> None:
+        """Non-dict tool_input coerces to {} → command = '' → no rules → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": "oops"})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        assert result.returncode == 0
+        output = json.loads(result.stdout)
+        assert output == {}, f"Expected {{}}, got {output!r}"
