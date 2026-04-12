@@ -1,152 +1,160 @@
-"""CLI entrypoint for the /sync skill.
+"""CLI entrypoint for /sync.
 
-Usage::
-
-    uv run python -m skills.sync.scripts.sync [--from PATH] <target> [options]
-    uv run python -m skills.sync.scripts.sync --to PATH    [options]
+Invoked as ``python -m skills.sync.scripts.sync`` or via the /sync skill.
+Parses arguments, builds a SyncPlan, optionally prompts for interactive
+approval, then applies the plan via rsync.
 """
 
 import argparse
+import dataclasses
 import sys
 from pathlib import Path
 
 from skills.sync.scripts.apply import ApplyOptions, run_apply
-from skills.sync.scripts.exceptions import SyncError
+from skills.sync.scripts.exceptions import (
+    RsyncFailedError,
+    SourceNotFoundError,
+    SyncError,
+)
 from skills.sync.scripts.plan import PlanOptions, build_plan
 from skills.sync.scripts.prompt import PromptOptions, approve_ops
 from skills.sync.scripts.render import render_plan
 from skills.sync.scripts.types import SyncPlan
 
 
-def _parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
-        prog="sync",
-        description="Sync files between two local directories.",
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="sync", description="Sync files between directories."
     )
-    p.add_argument(
+    parser.add_argument(
         "target",
         nargs="?",
-        help="Target directory (alternative to --to).",
+        default=None,
+        help="Target directory (positional).",
     )
-    p.add_argument(
+    parser.add_argument(
         "--from",
-        dest="source",  # "from" is a Python keyword; dest= maps it to a valid name
+        dest="source",
+        type=Path,
+        default=None,
         metavar="PATH",
-        help="Source directory (default: $PWD).",
+        help="Source directory (default: cwd).",
     )
-    p.add_argument(
+    parser.add_argument(
         "--to",
-        dest="target_flag",
+        dest="to",
+        type=Path,
+        default=None,
         metavar="PATH",
-        help="Target directory (alternative to positional arg).",
+        help="Target directory (alternative to positional).",
     )
-    p.add_argument(
+    parser.add_argument(
         "--mode",
         choices=["plan", "interactive", "push", "pull", "mirror"],
         default="plan",
         help="Sync mode (default: plan).",
     )
-    p.add_argument(
+    parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Print what would happen; write nothing.",
+        help="Show what would be done without copying anything.",
     )
-    p.add_argument("--yes", "-y", action="store_true", help="Auto-approve all prompts.")
-    p.add_argument(
-        "--limit", type=int, default=None, metavar="N", help="Cap operations at N."
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Approve all operations without prompting.",
     )
-    p.add_argument(
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Limit the number of operations applied.",
+    )
+    parser.add_argument(
         "--include",
         action="append",
-        default=[],
+        default=None,
         metavar="GLOB",
-        help="Include only matching paths.",
+        help="Glob pattern to include (repeatable).",
     )
-    p.add_argument(
+    parser.add_argument(
         "--exclude",
         action="append",
-        default=[],
+        default=None,
         metavar="GLOB",
-        help="Exclude matching paths.",
+        help="Glob pattern to exclude (repeatable).",
     )
-    p.add_argument(
-        "--no-gitignore", action="store_true", help="Disable .gitignore filtering."
+    parser.add_argument(
+        "--no-gitignore",
+        action="store_true",
+        help="Ignore .gitignore rules.",
     )
-    p.add_argument(
+    parser.add_argument(
         "--delete",
         action="store_true",
-        help="Remove target-only files (orphan deletion).",
+        help="Delete target-only files after sync.",
     )
-    p.add_argument(
+    parser.add_argument(
         "--claude",
         action="store_true",
-        help="Carry over Claude-workflow files despite gitignore.",
+        help="Include CLAUDE.md and allowlisted files even if gitignored.",
     )
-    return p
+    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+    """Parse arguments and run the sync pipeline. Returns an exit code."""
+    parser = _build_parser()
+    args = parser.parse_args(argv)
 
-    source = Path(args.source) if args.source else Path.cwd()
-    target_str = args.target_flag or args.target
-    if not target_str:
-        print(
-            "error: a target directory is required (positional arg or --to)",
-            file=sys.stderr,
-        )
-        return 2
-    target = Path(target_str)
+    # Resolve target: exactly one of positional or --to must be given.
+    if args.target is not None and args.to is not None:
+        parser.error("target: use positional or --to, not both")
+    if args.target is None and args.to is None:
+        parser.error("target required (positional or --to)")
 
-    plan_opts = PlanOptions(
-        mode=args.mode,
-        respect_gitignore=not args.no_gitignore,
-        include=tuple(args.include),
-        exclude=tuple(args.exclude),
-        claude=args.claude,
+    effective_target: Path = (
+        Path(args.target).resolve() if args.target else Path(args.to).resolve()
+    )
+    effective_source: Path = (
+        Path(args.source).resolve() if args.source else Path.cwd().resolve()
     )
 
     try:
-        plan = build_plan(source=source, target=target, opts=plan_opts)
-    except SyncError as exc:
-        print(f"error: {exc}", file=sys.stderr)
-        return 1
+        if not effective_source.is_dir():
+            raise SourceNotFoundError(f"source not found: {effective_source}")
 
-    print(render_plan(plan))
+        plan_opts = PlanOptions(
+            mode=args.mode,
+            respect_gitignore=not args.no_gitignore,
+            include=tuple(args.include or ()),
+            exclude=tuple(args.exclude or ()),
+            claude=args.claude,
+        )
+        plan: SyncPlan = build_plan(effective_source, effective_target, plan_opts)
+        print(render_plan(plan))
 
-    if args.mode == "plan":
+        if args.mode == "plan":
+            return 0
+
+        if args.mode == "interactive":
+            approved = approve_ops(
+                plan.ops, PromptOptions(yes=args.yes, limit=args.limit)
+            )
+            plan = dataclasses.replace(plan, ops=approved)
+
+        run_apply(plan, ApplyOptions(dry_run=args.dry_run, delete=args.delete))
         return 0
 
-    apply_opts = ApplyOptions(dry_run=args.dry_run, delete=args.delete)
-
-    if args.mode == "interactive" and not args.yes:
-        prompt_opts = PromptOptions(yes=False, limit=args.limit)
-        try:
-            approved_ops = approve_ops(plan.ops, prompt_opts)
-        except KeyboardInterrupt:
-            print("\nAborted.", file=sys.stderr)
-            return 1
-        plan = SyncPlan(
-            source=plan.source,
-            target=plan.target,
-            mode=plan.mode,
-            ops=approved_ops,
-        )
-    elif args.limit is not None:
-        plan = SyncPlan(
-            source=plan.source,
-            target=plan.target,
-            mode=plan.mode,
-            ops=plan.ops[: args.limit],
-        )
-
-    try:
-        run_apply(plan, apply_opts)
-    except SyncError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+    except RsyncFailedError as exc:
+        print(f"/sync: {exc}", file=sys.stderr)
+        if exc.stderr:
+            print(exc.stderr, file=sys.stderr)
         return 1
-
-    return 0
+    except SyncError as exc:
+        print(f"/sync: {exc}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
