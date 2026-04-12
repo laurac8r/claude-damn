@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-SETTINGS_PATH = Path(__file__).parent.parent / "settings.json"
+SETTINGS_PATH = Path(__file__).parent / "fixtures" / "settings.json"
 
 
 @pytest.fixture(scope="session")

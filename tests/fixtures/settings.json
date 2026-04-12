@@ -1,0 +1,79 @@
+{
+  "respectGitignore": true,
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm run test *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
+      "Bash(ls *)",
+      "Bash(uv run pytest*)",
+      "Bash(uv run ruff check*)",
+      "Bash(uv run ruff format*)",
+      "Bash(uv sync*)",
+      "Bash(bats *)",
+      "Bash(flutter test*)",
+      "Read(~/.claude/**)",
+      "Write(~/.claude/cost-log/**)",
+      "Search(~/.claude/**)"
+    ],
+    "ask": [
+      "Bash(gh api*)",
+      "Bash(find*-delete*)",
+      "Bash(find*-exec*)",
+      "Bash(sed*-i*)"
+    ],
+    "deny": [
+      "Bash(*git commit *)",
+      "Bash(*gh pr create*)",
+      "Bash(*gh pr merge*)",
+      "Bash(*gh pr close*)",
+      "Bash(*gh issue create*)",
+      "Bash(*gh issue close*)",
+      "Bash(*gh issue delete*)",
+      "Bash(gh repo create*)",
+      "Bash(gh repo delete*)",
+      "Bash(gh release create*)",
+      "Bash(gh release delete*)",
+      "Bash(gh gist create*)",
+      "Bash(gh gist delete*)",
+      "Bash(gh api *-X POST*)",
+      "Bash(gh api *-X PUT*)",
+      "Bash(gh api *-X PATCH*)",
+      "Bash(gh api *-X DELETE*)",
+      "Bash(gh api *--method POST*)",
+      "Bash(gh api *--method PUT*)",
+      "Bash(gh api *--method PATCH*)",
+      "Bash(gh api *--method DELETE*)"
+    ],
+    "defaultMode": "default"
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/block-inline-scripts.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true
+  }
+}

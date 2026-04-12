@@ -9,6 +9,12 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
+Currently on branch `feat/transition-to-plugin` — converting the flat
+`~/.claude` layout into a proper plugin package with tests, `pyproject.toml`,
+and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition
+plan and [`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and
+implementation plans live in `docs/superpowers/{specs,plans}/`.
+
 ## What's in the box
 
 ### Skills (slash commands)
@@ -35,7 +41,7 @@ These combine into four skill families:
 
 Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`,
 `/check-yourself`, `/cost_`, `/cost-opt`, `/fast-pr-feedback-to-me`,
-`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, and more.
+`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, `/sync`, and more.
 
 See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 
