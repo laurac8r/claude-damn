@@ -22,3 +22,7 @@ worktrees/
 CHECKPOINT.md
 .claude
 docs/superpowers
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
