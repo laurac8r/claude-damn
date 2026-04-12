@@ -60,11 +60,17 @@ for suite in "${suites[@]}"; do
   }
   wt="$TMP_BASE-$suite"
   rm -rf "$wt"
-  git -C "$REPO_ROOT" worktree add --detach "$wt" "$REF" >/dev/null
+  git -C "$REPO_ROOT" worktree add --detach "$wt" "$REF" >/dev/null || {
+    echo "FATAL: failed to create worktree for $suite at $wt" >&2
+    exit 1
+  }
   # Propagate uncommitted working-tree changes (staged + unstaged + untracked)
   # so the worktree reflects what's actually being tested, not just HEAD.
   if ! git -C "$REPO_ROOT" diff HEAD --quiet; then
-    git -C "$REPO_ROOT" diff HEAD --binary | git -C "$wt" apply --whitespace=nowarn
+    git -C "$REPO_ROOT" diff HEAD --binary | git -C "$wt" apply --whitespace=nowarn || {
+      echo "FATAL: failed to apply working-tree changes to $suite worktree" >&2
+      exit 1
+    }
   fi
   # Copy untracked-but-not-ignored files too (e.g. new test files).
   while IFS= read -r f; do
