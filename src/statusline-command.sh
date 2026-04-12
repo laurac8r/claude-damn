@@ -16,29 +16,29 @@ transcript=$(echo "$input" | jq -r '.transcript_path // ""')
 # tokens from the context_window field (same as the old behaviour).
 # ---------------------------------------------------------------------------
 if [ -z "$transcript" ] || [ ! -f "$transcript" ]; then
-    model_id=$(echo "$input" | jq -r '.model.id // ""')
-    total_input=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
-    total_output=$(echo "$input" | jq -r '.context_window.current_usage.output_tokens // 0')
-    cache_read=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
-    cache_create=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
+  model_id=$(echo "$input" | jq -r '.model.id // ""')
+  total_input=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
+  total_output=$(echo "$input" | jq -r '.context_window.current_usage.output_tokens // 0')
+  cache_read=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
+  cache_create=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
 
-    case "$model_id" in
-    *opus*) read p_in p_out p_cr p_cc <<<"15.00 75.00 1.50 18.75" ;;
-    *haiku*) read p_in p_out p_cr p_cc <<<"0.80 4.00 0.08 1.00" ;;
-    *) read p_in p_out p_cr p_cc <<<"3.00 15.00 0.30 3.75" ;;
-    esac
+  case "$model_id" in
+  *opus*) read p_in p_out p_cr p_cc <<<"15.00 75.00 1.50 18.75" ;;
+  *haiku*) read p_in p_out p_cr p_cc <<<"0.80 4.00 0.08 1.00" ;;
+  *) read p_in p_out p_cr p_cc <<<"3.00 15.00 0.30 3.75" ;;
+  esac
 
-    if [ "$total_input" -eq 0 ] 2>/dev/null && [ "$total_output" -eq 0 ] 2>/dev/null; then
-        printf "%s" "$model_name"
-    else
-        cost=$(awk -v i="$total_input" -v o="$total_output" \
-            -v cr="$cache_read" -v cc="$cache_create" \
-            -v pi="$p_in" -v po="$p_out" \
-            -v pcr="$p_cr" -v pcc="$p_cc" \
-            'BEGIN { printf "%.4f", (i/1000000)*pi + (o/1000000)*po + (cr/1000000)*pcr + (cc/1000000)*pcc }')
-        printf "%s  \$%s" "$model_name" "$cost"
-    fi
-    exit 0
+  if [ "$total_input" -eq 0 ] 2>/dev/null && [ "$total_output" -eq 0 ] 2>/dev/null; then
+    printf "%s" "$model_name"
+  else
+    cost=$(awk -v i="$total_input" -v o="$total_output" \
+      -v cr="$cache_read" -v cc="$cache_create" \
+      -v pi="$p_in" -v po="$p_out" \
+      -v pcr="$p_cr" -v pcc="$p_cc" \
+      'BEGIN { printf "%.4f", (i/1000000)*pi + (o/1000000)*po + (cr/1000000)*pcr + (cc/1000000)*pcc }')
+    printf "%s  \$%s" "$model_name" "$cost"
+  fi
+  exit 0
 fi
 
 # ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@ cost=$(jq -r '
     ]
   | join("\t")
 ' "$transcript" 2>/dev/null |
-    awk '
+  awk '
 BEGIN { total = 0 }
 {
     model = $1
@@ -89,7 +89,7 @@ END { printf "%.4f", total }
 ')
 
 if [ -z "$cost" ] || [ "$cost" = "0.0000" ]; then
-    printf "%s" "$model_name"
+  printf "%s" "$model_name"
 else
-    printf "%s  \$%s" "$model_name" "$cost"
+  printf "%s  \$%s" "$model_name" "$cost"
 fi

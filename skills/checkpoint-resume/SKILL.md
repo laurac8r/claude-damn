@@ -1,9 +1,9 @@
 ---
 name: checkpoint-resume
 description:
-  Use when resuming paused work, starting a session where a CHECKPOINT.md
-  exists, or when the user says "continue from checkpoint", "resume", or "pick
-  up where we left off"
+   Use when resuming paused work, starting a session where a CHECKPOINT.md
+   exists, or when the user says "continue from checkpoint", "resume", or "pick
+   up where we left off"
 user-invocable: true
 ---
 
@@ -73,11 +73,11 @@ branch than the one you are currently on. → Flag the drift and prompt the user
 > you like to proceed?
 >
 > - **(a)** Resume it as-is (stay on current branch, use the checkpoint from
-> `<X>`)
+>   `<X>`)
 > - **(b)** Archive it to `.checkpoints/<X-slug>.md` first, then pick a
-> checkpoint from the archive
+>   checkpoint from the archive
 > - **(c)** Resume a specific archived checkpoint — list the archive contents so
-> I can pick
+>   I can pick
 
 Wait for the user's response before continuing.
 

@@ -10,7 +10,6 @@ from tests._skill_helpers import invoke_skill
 
 pytestmark = pytest.mark.performance
 
-
 SIMPLE_PROMPTS = {
     "0_subagents": (
         '/listen /tdd : say "TDD_OK"',
