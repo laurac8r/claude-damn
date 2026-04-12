@@ -169,6 +169,47 @@ You should see the skill content expand in your session.
     └── superpowers/           # Design specs
 ```
 
+## Running tests
+
+Tests are organized by fidelity level. Default `uv run pytest` runs everything
+except `smoke` and `performance` (see `pyproject.toml` markers).
+
+| Kind        | Location             | What it checks                                          | Command                                                              |
+| ----------- | -------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| Structural  | `tests/structural/`  | Files, dirs, frontmatter — cheap existence checks       | `uv run pytest tests/structural/`                                    |
+| Behavioral  | `tests/behavioral/`  | Skill body content and protocol rules                   | `uv run pytest tests/behavioral/`                                    |
+| Integration | `tests/integration/` | Repo-wide references and cross-file consistency         | `uv run pytest tests/integration/`                                   |
+| Harness     | `tests/test_*.py`    | `settings.json`, permissions, hooks, cost extraction    | `uv run pytest tests/test_*.py`                                      |
+| Bats        | `tests/*.bats`       | Shell scripts (`checkpoint-archive`, `sync-theme`)      | `bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats` |
+| Smoke       | `tests/smoke/`       | Live skill invocation (costs tokens, non-deterministic) | `uv run pytest -m smoke`                                             |
+| Performance | `tests/performance/` | Stress matrix (18 combos, expensive, non-deterministic) | `uv run pytest -m performance`                                       |
+
+Run everything cheap and deterministic:
+
+```bash
+uv run pytest
+```
+
+Run the full suite including live/expensive tests:
+
+```bash
+uv run pytest -m ""
+```
+
+### Parallel execution
+
+For the slower suites (`performance/`, `smoke/`, or `-m ""`), run tests in
+parallel with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/):
+
+```bash
+uv add --dev pytest-xdist # one-time install
+uv run pytest -n auto # auto = one worker per CPU core
+uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress matrix
+```
+
+Skip `-n` for the default suite — it runs in ~0.5s, and xdist worker startup
+adds more overhead than it saves.
+
 ## License
 
 [MIT](LICENSE)

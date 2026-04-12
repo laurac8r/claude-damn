@@ -1,8 +1,11 @@
 """Tests for extract_cost.py — fast mode pricing support."""
 
+import json
+from pathlib import Path
+
 import pytest
 
-from src.extract_cost import PRICING, calc_cost, model_key
+from src.extract_cost import PRICING, calc_cost, model_key, parse_session
 
 
 class TestFastModePricing:
@@ -70,3 +73,40 @@ class TestCalcCostFastMode:
         }
         cost = calc_cost("claude-opus-4-6-fast", usage)
         assert cost == pytest.approx(30.00)
+
+
+class TestParseSessionModelsShape:
+    """parse_session models dict must include cost_usd and mirror token totals."""
+
+    def _make_jsonl(self, tmp_path: Path, lines: list[dict]) -> Path:
+        p = tmp_path / "session.jsonl"
+        with p.open("w", encoding="utf-8") as f:
+            for line in lines:
+                f.write(json.dumps(line) + "\n")
+        return p
+
+    def test_models_dict_has_cost_usd(self, tmp_path: Path) -> None:
+        """Each model entry in the output must carry a cost_usd field."""
+        record = {
+            "type": "assistant",
+            "timestamp": "2026-01-01T00:00:00Z",
+            "message": {
+                "model": "claude-opus-4-6",
+                "usage": {
+                    "input_tokens": 1_000_000,
+                    "output_tokens": 0,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation_input_tokens": 0,
+                },
+            },
+        }
+        path = self._make_jsonl(tmp_path, [record])
+        result = parse_session(path)
+
+        assert "models" in result
+        model_entry = result["models"]["claude-opus-4-6"]
+        assert "cost_usd" in model_entry
+        # 1M input tokens at default pricing should produce a positive cost
+        assert model_entry["cost_usd"] > 0
+        # token totals should be preserved alongside cost_usd
+        assert model_entry["input_tokens"] == 1_000_000
