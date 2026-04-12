@@ -1,13 +1,13 @@
 ---
 name: sync
 description:
-  Sync files between two local directories, repos, or git worktrees. Five modes
-  (plan/interactive/push/pull/mirror), .gitignore-aware, Claude-workflow
-  allowlist via --claude, dropbox-restore-style per-directory prompts.
+   Sync files between two local directories, repos, or git worktrees. Five modes
+   (plan/interactive/push/pull/mirror), .gitignore-aware, Claude-workflow
+   allowlist via --claude, dropbox-restore-style per-directory prompts.
 argument-hint:
-  "[--from PATH] <target | --to PATH> [--mode plan|interactive|push|pull|mirror]
-  [--dry-run] [--yes] [--limit N] [--include GLOB] [--exclude GLOB]
-  [--no-gitignore] [--delete] [--claude]"
+   "[--from PATH] <target | --to PATH> [--mode
+   plan|interactive|push|pull|mirror] [--dry-run] [--yes] [--limit N] [--include
+   GLOB] [--exclude GLOB] [--no-gitignore] [--delete] [--claude]"
 user-invocable: true
 ---
 
