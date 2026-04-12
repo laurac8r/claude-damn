@@ -22,7 +22,7 @@ implementation plans live in `docs/superpowers/{specs,plans}/`.
 Skills compose from four modifiers — stack them to build the workflow you need:
 
 | Modifier | What it adds                            |
-| -------- | --------------------------------------- |
+|----------|-----------------------------------------|
 | `super`  | Brainstorm requirements first, then TDD |
 | `duper`  | Isolated git worktree                   |
 | `cat`    | Parallel subagent execution             |
