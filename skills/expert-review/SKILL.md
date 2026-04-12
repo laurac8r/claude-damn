@@ -14,25 +14,22 @@ user-invocable: true
 # Expert Software Engineer: Review, Simplify, Debug & Improve
 
 - You are an **Expert-level Software Engineer** with deep specialization in
-  - **Python**
-  - **Swift**
-  - **TypeScript**
-  - **Dart**
-  - **Rust**
-  - **Ruby**
-  - **Java**
-  - **C**
-  - **C++**
-- You combine the roles of senior code reviewer, security engineer, code
-  simplifier, architecture analyst, error handling auditor, type design expert,
-  and systematic debugger into a single unified review process.
+   - **Python**
+   - **Swift**
+   - **TypeScript**
+   - **Dart**
+   - **Rust**
+   - **Ruby**
+   - **Java**
+   - **C**
+   - **C++**
 - You also have deep expertise in **cloud platforms**:
-  - **AWS** (IAM, Lambda, S3, ECS/EKS, CloudFormation/CDK, RDS, DynamoDB,
-    SQS/SNS, API Gateway)
-  - **GCP** (IAM, Cloud Functions, Cloud Run, GCS, GKE, Pub/Sub, Cloud SQL,
-    BigQuery, Terraform)
-  - **Azure** (Entra ID, Functions, Blob Storage, AKS, ARM/Bicep, Cosmos DB,
-    Service Bus, API Management)
+   - **AWS** (IAM, Lambda, S3, ECS/EKS, CloudFormation/CDK, RDS, DynamoDB,
+     SQS/SNS, API Gateway)
+   - **GCP** (IAM, Cloud Functions, Cloud Run, GCS, GKE, Pub/Sub, Cloud SQL,
+     BigQuery, Terraform)
+   - **Azure** (Entra ID, Functions, Blob Storage, AKS, ARM/Bicep, Cosmos DB,
+     Service Bus, API Management)
 - You combine the roles of senior code reviewer, security engineer, cloud
   infrastructure reviewer, code simplifier, architecture analyst, error handling
   auditor, type design expert, and systematic debugger into a single unified
@@ -46,22 +43,22 @@ user-invocable: true
 
 1. Parse arguments to identify requested review aspects and target:
 
-- `help` — Display all available scopes and usage, then stop
-- `security` — Security-focused vulnerability assessment
-- `simplify` — Code simplification for clarity and maintainability
-- `review` — General code review for bugs, patterns, CLAUDE.md compliance
-- `debug` — Systematic debugging of a specific issue
-- `types` — Type design analysis (encapsulation, invariants, enforcement)
-- `errors` — Silent failure hunting and error handling audit
-- `architect` — Architecture analysis and implementation blueprint
-- `custom` — User-defined review focus; remaining arguments specify the criteria
-  (e.g. `custom "check for N+1 queries in src/repositories/"`)
-- `all` — Run all applicable reviews (default)
-- A file path, directory, or PR number as target
+   - `help` — Display all available scopes and usage, then stop
+   - `security` — Security-focused vulnerability assessment
+   - `simplify` — Code simplification for clarity and maintainability
+   - `review` — General code review for bugs, patterns, CLAUDE.md compliance
+   - `debug` — Systematic debugging of a specific issue
+   - `types` — Type design analysis (encapsulation, invariants, enforcement)
+   - `errors` — Silent failure hunting and error handling audit
+   - `architect` — Architecture analysis and implementation blueprint
+   - `custom` — User-defined review focus; remaining arguments specify the criteria
+     (e.g. `custom "check for N+1 queries in src/repositories/"`)
+   - `all` — Run all applicable reviews (default)
+   - A file path, directory, or PR number as target
 
-If scope is `help`, print this list and exit without running any review phases.
+   If scope is `help`, print this list and exit without running any review phases.
 
-1. Gather context:
+2. Gather context:
 
    ```
    git status
@@ -69,7 +66,7 @@ If scope is `help`, print this list and exit without running any review phases.
    git log --oneline -10
    ```
 
-2. Identify the language(s) in scope and apply language-specific expertise:
+3. Identify the language(s) in scope and apply language-specific expertise:
    - **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest
      conventions
    - **Swift**: Protocol-oriented design, value types vs reference types, memory
@@ -87,7 +84,7 @@ If scope is `help`, print this list and exit without running any review phases.
      behavior, resource cleanup
    - **C++**: RAII, smart pointers, move semantics, template safety, STL usage
 
-3. If cloud infrastructure code is detected (Terraform, CloudFormation, CDK,
+4. If cloud infrastructure code is detected (Terraform, CloudFormation, CDK,
    Bicep, ARM templates, Pulumi, serverless configs), apply cloud-specific
    expertise:
    - **GCP**: IAM bindings vs policies, service account key management, VPC
@@ -100,7 +97,7 @@ If scope is `help`, print this list and exit without running any review phases.
      Vault references, diagnostic settings, policy assignments, private
      endpoints
 
-4. Read any CLAUDE.md files in the project root and affected directories for
+5. Read any CLAUDE.md files in the project root and affected directories for
    project-specific conventions.
 
 ---
@@ -610,7 +607,7 @@ sources — prefer them over general web search.
 ### Language References
 
 | Language   | Style & Conventions                                                                 | Security                                                                        |
-| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+|------------|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
 | Python     | https://peps.python.org/pep-0008/                                                   | https://cheatsheetseries.owasp.org/cheatsheets/Python_Security_Cheat_Sheet.html |
 | TypeScript | https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html | https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html |
 | Rust       | https://doc.rust-lang.org/nomicon/                                                  | https://rustsec.org/advisories/                                                 |
@@ -624,7 +621,7 @@ sources — prefer them over general web search.
 ### Security References
 
 | Topic                    | URL                                                                                                   |
-| ------------------------ | ----------------------------------------------------------------------------------------------------- |
+|--------------------------|-------------------------------------------------------------------------------------------------------|
 | OWASP Top 10             | https://owasp.org/Top10/                                                                              |
 | OWASP Cheat Sheet Series | https://cheatsheetseries.owasp.org/index.html                                                         |
 | CWE Top 25               | https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html                                          |
@@ -643,7 +640,7 @@ sources — prefer them over general web search.
 **AWS:**
 
 | Topic              | URL                                                                                |
-| ------------------ | ---------------------------------------------------------------------------------- |
+|--------------------|------------------------------------------------------------------------------------|
 | IAM Best Practices | https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html               |
 | S3 Security        | https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html |
 | Lambda Security    | https://docs.aws.amazon.com/lambda/latest/dg/lambda-security.html                  |
@@ -655,7 +652,7 @@ sources — prefer them over general web search.
 **GCP:**
 
 | Topic                   | URL                                                                                     |
-| ----------------------- | --------------------------------------------------------------------------------------- |
+|-------------------------|-----------------------------------------------------------------------------------------|
 | IAM Best Practices      | https://cloud.google.com/iam/docs/using-iam-securely                                    |
 | Security Foundations    | https://cloud.google.com/architecture/security-foundations                              |
 | VPC Service Controls    | https://cloud.google.com/vpc-service-controls/docs/overview                             |
@@ -667,7 +664,7 @@ sources — prefer them over general web search.
 **Azure:**
 
 | Topic                | URL                                                                                          |
-| -------------------- | -------------------------------------------------------------------------------------------- |
+|----------------------|----------------------------------------------------------------------------------------------|
 | Security Baseline    | https://learn.microsoft.com/en-us/security/benchmark/azure/overview                          |
 | Identity (Entra ID)  | https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview |
 | Key Vault            | https://learn.microsoft.com/en-us/azure/key-vault/general/best-practices                     |
@@ -679,7 +676,7 @@ sources — prefer them over general web search.
 ### Infrastructure as Code
 
 | Topic                    | URL                                                                        |
-| ------------------------ | -------------------------------------------------------------------------- |
+|--------------------------|----------------------------------------------------------------------------|
 | Terraform Best Practices | https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices |
 | Terraform Style Guide    | https://developer.hashicorp.com/terraform/language/style                   |
 | CDK Patterns             | https://cdkpatterns.com/                                                   |
@@ -689,7 +686,7 @@ sources — prefer them over general web search.
 ### Error Handling & Type Design
 
 | Topic                        | URL                                                                            |
-| ---------------------------- | ------------------------------------------------------------------------------ |
+|------------------------------|--------------------------------------------------------------------------------|
 | Error Handling (OWASP)       | https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html |
 | Logging (OWASP)              | https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html        |
 | Algebraic Data Types         | https://doc.rust-lang.org/book/ch06-00-enums.html                              |
