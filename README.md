@@ -105,7 +105,7 @@ remember             # Session handoff notes
 ### 3. Clone this repo
 
 ```bash
-git clone <repo-url > claude-damn
+git clone <repo-url> claude-damn
 cd claude-damn
 ```
 
