@@ -6,8 +6,6 @@ combinations. Non-deterministic. 90% pass rate is the quality gate.
 
 import pytest
 
-from tests._skill_helpers import invoke_skill
-
 pytestmark = pytest.mark.performance
 
 SIMPLE_PROMPTS = {
@@ -90,6 +88,7 @@ class TestListenMatrix:
         model: str,
         prompt: str,
         expected_phrases: list[str],
+        invoke_skill,
     ) -> None:
         result = invoke_skill(prompt, model=model, timeout=180)
 
