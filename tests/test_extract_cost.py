@@ -1,7 +1,6 @@
 """Tests for extract_cost.py — fast mode pricing support."""
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -79,16 +78,14 @@ class TestCalcCostFastMode:
 class TestParseSessionModelsShape:
     """parse_session models dict must include cost_usd and mirror token totals."""
 
-    def _make_jsonl(self, lines: list[dict]) -> Path:
-        tmp = tempfile.NamedTemporaryFile(
-            suffix=".jsonl", mode="w", delete=False, encoding="utf-8"
-        )
-        for line in lines:
-            tmp.write(json.dumps(line) + "\n")
-        tmp.close()
-        return Path(tmp.name)
+    def _make_jsonl(self, tmp_path: Path, lines: list[dict]) -> Path:
+        p = tmp_path / "session.jsonl"
+        with p.open("w", encoding="utf-8") as f:
+            for line in lines:
+                f.write(json.dumps(line) + "\n")
+        return p
 
-    def test_models_dict_has_cost_usd(self) -> None:
+    def test_models_dict_has_cost_usd(self, tmp_path: Path) -> None:
         """Each model entry in the output must carry a cost_usd field."""
         record = {
             "type": "assistant",
@@ -103,7 +100,7 @@ class TestParseSessionModelsShape:
                 },
             },
         }
-        path = self._make_jsonl([record])
+        path = self._make_jsonl(tmp_path, [record])
         result = parse_session(path)
 
         assert "models" in result
