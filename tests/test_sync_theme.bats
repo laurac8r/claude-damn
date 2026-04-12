@@ -6,7 +6,7 @@
 # If SETTINGS is set, it uses that path; otherwise defaults to
 # $HOME/.claude/settings.json.
 
-SCRIPT="$BATS_TEST_DIRNAME/../sync-theme.sh"
+SCRIPT="$BATS_TEST_DIRNAME/../src/sync-theme.sh"
 REAL_JQ="$(command -v jq)"
 
 setup() {

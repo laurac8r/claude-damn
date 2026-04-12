@@ -9,6 +9,12 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
+Currently on branch `feat/transition-to-plugin` — converting the flat
+`~/.claude` layout into a proper plugin package with tests, `pyproject.toml`,
+and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition
+plan and [`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and
+implementation plans live in `docs/superpowers/{specs,plans}/`.
+
 ## What's in the box
 
 ### Skills (slash commands)
@@ -16,7 +22,7 @@ plugin.
 Skills compose from four modifiers — stack them to build the workflow you need:
 
 | Modifier | What it adds                            |
-| -------- | --------------------------------------- |
+|----------|-----------------------------------------|
 | `super`  | Brainstorm requirements first, then TDD |
 | `duper`  | Isolated git worktree                   |
 | `cat`    | Parallel subagent execution             |

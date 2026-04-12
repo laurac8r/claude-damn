@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+SETTINGS_PATH = Path(__file__).parent / "fixtures" / "settings.json"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SETTINGS_PATH = PROJECT_ROOT / "settings.json"
 

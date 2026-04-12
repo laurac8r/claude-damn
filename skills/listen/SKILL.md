@@ -1,4 +1,8 @@
 ---
+name: enforce
+description:
+   Execute instructions while strictly enforcing invocation of every skill
+   referenced within them
 name: listen
 description: Execute instructions while listening for and invoking every skill referenced within them
 argument-hint: "<instructions containing /skill references>"

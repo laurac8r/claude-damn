@@ -1,9 +1,9 @@
 ---
 name: checkpoint-save
 description:
-  Use when pausing work that will be resumed later, when switching contexts, or
-  when the user asks to save a checkpoint. Creates a CHECKPOINT.md that captures
-  full resumption context.
+   Use when pausing work that will be resumed later, when switching contexts, or
+   when the user asks to save a checkpoint. Creates a CHECKPOINT.md that
+   captures full resumption context.
 user-invocable: true
 ---
 

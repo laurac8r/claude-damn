@@ -10,109 +10,111 @@ these operational directives:
   `uv run ruff format`, and `uv run pytest` to verify your changes before
   reporting completion.
 - **Cost Optimization & Model Routing:**
-  - Offload routine work (boilerplate, repetitive CRUD, test stubs, file
-    exploration) to Sonnet/Haiku subagents.
-  - Reserve Opus for architectural decisions, complex debugging, and business
-    logic.
-  - Be aware of when to recommend a manual switch of models:
-    - **Suggest `/model opus`** when the task requires sustained deep reasoning
-      throughout execution, not just planning — e.g., debugging a subtle runtime
-      bug across many files, or a large refactor where every step requires
-      cross-cutting context. Say: _"This task would benefit from full Opus — run
-      `/model opus` to switch."_
-    - **Suggest `/model sonnet`** when the session is primarily reads, searches,
-      config edits, or short Q&A with no complex logic — Sonnet alone will
-      suffice and cost significantly less.
-  - **Model selection by task type** (data-driven from cost logs):
-    - **Use Sonnet for:** config file editing, dotfile management, `~/.claude`
-      work, short exploratory sessions (<10 turns), git operations, file
-      scaffolding, search/read-heavy research, and any task where the main
-      deliverable is information rather than novel logic.
-    - **Use Opus for:** multi-file refactors with cross-cutting concerns,
-      debugging subtle runtime bugs, designing new APIs or data models, and
-      tasks requiring deep contextual reasoning across >3 files.
-  - **Subagent delegation target:** In sessions exceeding 20 turns, aim to
-    delegate ≥30% of turns to Sonnet/Haiku subagents. Actively look for
-    opportunities: file reads, glob/grep searches, test execution, boilerplate
-    generation, and commit preparation are all Sonnet-appropriate.
-  - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus session
-    costs ~$0.15-0.35 in cache creation alone. If the task is a quick lookup,
-    config tweak, or single-file edit, prefer Sonnet.
+   - Offload routine work (boilerplate, repetitive CRUD, test stubs, file
+     exploration) to Sonnet/Haiku subagents.
+   - Reserve Opus for architectural decisions, complex debugging, and business
+     logic.
+   - Be aware of when to recommend a manual switch of models:
+      - **Suggest `/model opus`** when the task requires sustained deep
+        reasoning throughout execution, not just planning — e.g., debugging a
+        subtle runtime bug across many files, or a large refactor where every
+        step requires cross-cutting context. Say: _"This task would benefit from
+        full Opus — run `/model opus` to switch."_
+      - **Suggest `/model sonnet`** when the session is primarily reads,
+        searches, config edits, or short Q&A with no complex logic — Sonnet
+        alone will suffice and cost significantly less.
+   - **Model selection by task type** (data-driven from cost logs):
+      - **Use Sonnet for:** config file editing, dotfile management, `~/.claude`
+        work, short exploratory sessions (<10 turns), git operations, file
+        scaffolding, search/read-heavy research, and any task where the main
+        deliverable is information rather than novel logic.
+      - **Use Opus for:** multi-file refactors with cross-cutting concerns,
+        debugging subtle runtime bugs, designing new APIs or data models, and
+        tasks requiring deep contextual reasoning across >3 files.
+   - **Subagent delegation target:** In sessions exceeding 20 turns, aim to
+     delegate ≥30% of turns to Sonnet/Haiku subagents. Actively look for
+     opportunities: file reads, glob/grep searches, test execution, boilerplate
+     generation, and commit preparation are all Sonnet-appropriate.
+   - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus
+     session costs ~$0.15-0.35 in cache creation alone. If the task is a quick
+     lookup, config tweak, or single-file edit, prefer Sonnet.
 - **No Inline Non-Bash Scripts in Bash:**
-  - Never execute multiline code in another programming language (Python, Ruby,
-    Node, Perl, etc.) directly inside the Bash tool via heredocs (`<<EOF`,
-    `<<'EOF'`), `-c` strings, or piped stdin.
-  - Instead:
-    1. Write the script to a file in `/tmp/` (e.g.,
-       `/tmp/script_<descriptive_name>.py`) using the Write tool.
-    2. Wait for the user to review and approve the file creation.
-    3. Only then execute the script via Bash (e.g.,
-       `python3 /tmp/script_<descriptive_name>.py`).
+   - Never execute multiline code in another programming language (Python, Ruby,
+     Node, Perl, etc.) directly inside the Bash tool via heredocs (`<<EOF`,
+     `<<'EOF'`), `-c` strings, or piped stdin.
+   - Instead:
+      1. Write the script to a file in `/tmp/` (e.g.,
+         `/tmp/script_<descriptive_name>.py`) using the Write tool.
+      2. Wait for the user to review and approve the file creation.
+      3. Only then execute the script via Bash (e.g.,
+         `python3 /tmp/script_<descriptive_name>.py`).
 
-  - This applies to **both the main agent and all subagents**.
-    - True single-statement invocations (e.g., `python3 -c "print(1)"`) are
-      acceptable, but must not contain `;`, `\n`, or any other statement/line
-      separators that smuggle multiple statements into a single-line form. If
-      more than one statement is needed, use the write-to-`/tmp/` workflow
-      above.
+   - This applies to **both the main agent and all subagents**.
+      - True single-statement invocations (e.g., `python3 -c "print(1)"`) are
+        acceptable, but must not contain `;`, `\n`, or any other statement/line
+        separators that smuggle multiple statements into a single-line form. If
+        more than one statement is needed, use the write-to-`/tmp/` workflow
+        above.
 
 - **Git Commits:**
-  - The user prefers to handle all `git commit` (and its variants) operations
-    herself.
-  - Avoid running `git commit` (or any variant including `git commit --amend`,
-    `git commit -m`, etc.).
-  - You may stage files with `git add` and prepare commit messages, but stop
-    before committing, ideally.
-  - Prepared commit messages may only be for each single file, or each single
-    script-test pair.
-    - Multiple, atomic commits are the standard the user abides by.
+   - The user prefers to handle all `git commit` (and its variants) operations
+     herself.
+   - Avoid running `git commit` (or any variant including `git commit --amend`,
+     `git commit -m`, etc.).
+   - You may stage files with `git add` and prepare commit messages, but stop
+     before committing, ideally.
+   - Prepared commit messages may only be for each single file, or each single
+     script-test pair.
+      - Multiple, atomic commits are the standard the user abides by.
 - **Batch Operations:**
-  - Group related work into a single session.
-  - Read all necessary context upfront before executing writes to minimize
-    context-switching tokens.
+   - Group related work into a single session.
+   - Read all necessary context upfront before executing writes to minimize
+     context-switching tokens.
 - **Provide SDK Docs:**
-  - When working with external SDKs, prompt the user to provide API docs or
-    attach type stubs via context rather than attempting to guess platform APIs.
-  - Generate your own if the user is not sure or cannot provide them, and
-    reference those for the project from now on.
+   - When working with external SDKs, prompt the user to provide API docs or
+     attach type stubs via context rather than attempting to guess platform
+     APIs.
+   - Generate your own if the user is not sure or cannot provide them, and
+     reference those for the project from now on.
 
 ## Cost Tracking
 
 - After completing a multi-step task, run `/cost_` to extract and log the
   current session's cost data.
-  - The `/cost_` Skill runs `~/.claude/extract_cost.py` which parses session
-    JSONL files for real token usage from assistant message `usage` fields and
-    calculates cost via Anthropic API pricing.
-  - Logs are written as JSONL to `~/.claude/cost-log/` with filenames like
-    `YYYY-MM-DD_HHmm_{session}.jsonl`.
+   - The `/cost_` Skill runs `~/.claude/extract_cost.py` which parses session
+     JSONL files for real token usage from assistant message `usage` fields and
+     calculates cost via Anthropic API pricing.
+   - Logs are written as JSONL to `~/.claude/cost-log/` with filenames like
+     `YYYY-MM-DD_HHmm_{session}.jsonl`.
 - Run `/cost-opt` periodically to compact logs and review optimization
   suggestions.
 
 ## Memory & Context Management
 
 - **Incremental Context (Git-Driven):**
-  - Rely heavily on `git status` and `git diff` to understand the current
-    workspace state.
-  - Do not read entire files into context if a diff will suffice.
+   - Rely heavily on `git status` and `git diff` to understand the current
+     workspace state.
+   - Do not read entire files into context if a diff will suffice.
 - **Targeted Reads:**
-  - When exploring large files, use terminal tools like `grep`, `rg` (ripgrep),
-    or read specific line ranges rather than loading the entire file into active
-    memory.
+   - When exploring large files, use terminal tools like `grep`, `rg` (ripgrep),
+     or read specific line ranges rather than loading the entire file into
+     active memory.
 - **State Summarization:**
-  - After completing a complex task, summarize the architectural decisions and
-    changes, then clear the conversational context to prevent token bloat.
+   - After completing a complex task, summarize the architectural decisions and
+     changes, then clear the conversational context to prevent token bloat.
 - **Long-Term Memory:**
-  - For persistent project knowledge that must survive context clears, log key
-    decisions and active TODOs briefly in `docs/ARCHITECTURE.md` or `MEMORY.md`.
+   - For persistent project knowledge that must survive context clears, log key
+     decisions and active TODOs briefly in `docs/ARCHITECTURE.md` or
+     `MEMORY.md`.
 - **Shared-Agent Memory:**
-  - Agents share a `shared/` memory directory that they actively update and
-    read.
-  - Cleanup is managed by the main agent: After a sub-agent finishes, the main
-    agent auto-compacts the individual memory file, updating the `COMBINED.md`
-    file.
-  - Each sub-agent: Creates and updates only its own memory file in `shared/`
-    with a detailed log, actively reads all files in the directory, and _never_
-    modifies `COMBINED.md`.
+   - Agents share a `shared/` memory directory that they actively update and
+     read.
+   - Cleanup is managed by the main agent: After a sub-agent finishes, the main
+     agent auto-compacts the individual memory file, updating the `COMBINED.md`
+     file.
+   - Each sub-agent: Creates and updates only its own memory file in `shared/`
+     with a detailed log, actively reads all files in the directory, and _never_
+     modifies `COMBINED.md`.
 
 ## Tasks, Planning, and Execution
 

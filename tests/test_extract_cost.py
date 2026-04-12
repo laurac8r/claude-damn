@@ -58,12 +58,20 @@ class TestCalcCostFastMode:
         assert cost == pytest.approx(150.00)
 
     def test_cost_cache_read_no_discount(self) -> None:
-        usage = {"input_tokens": 0, "output_tokens": 0, "cache_read_input_tokens": 1_000_000}
+        usage = {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 1_000_000,
+        }
         cost = calc_cost("claude-opus-4-6-fast", usage)
         assert cost == pytest.approx(30.00)
 
     def test_cost_cache_create_no_discount(self) -> None:
-        usage = {"input_tokens": 0, "output_tokens": 0, "cache_creation_input_tokens": 1_000_000}
+        usage = {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_creation_input_tokens": 1_000_000,
+        }
         cost = calc_cost("claude-opus-4-6-fast", usage)
         assert cost == pytest.approx(30.00)
 

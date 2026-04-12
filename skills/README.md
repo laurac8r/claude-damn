@@ -57,7 +57,6 @@ skill:
 | `/expert-super-duper-cat-review` | expert + super + duper + tdd + cat | /expert-review + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
 
 ## Other Skills
-
 | Skill                         | Purpose                                                               |
 | ----------------------------- | --------------------------------------------------------------------- |
 | `/checkpoint-save`            | Save a resumable work checkpoint                                      |

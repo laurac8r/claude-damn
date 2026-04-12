@@ -81,10 +81,10 @@ def calc_cost(model: str, usage: dict) -> float:
     cache_create = usage.get("cache_creation_input_tokens", 0)
 
     cost = (
-            (input_tokens / 1_000_000) * prices["input"]
-            + (output_tokens / 1_000_000) * prices["output"]
-            + (cache_read / 1_000_000) * prices["cache_read"]
-            + (cache_create / 1_000_000) * prices["cache_create"]
+        (input_tokens / 1_000_000) * prices["input"]
+        + (output_tokens / 1_000_000) * prices["output"]
+        + (cache_read / 1_000_000) * prices["cache_read"]
+        + (cache_create / 1_000_000) * prices["cache_create"]
     )
     return cost
 
@@ -176,7 +176,20 @@ def parse_session(jsonl_path: Path) -> dict:
         "turns": turn_count,
         "total_cost_usd": round(total_cost, 4),
         "models": {
-            m: {**v, "cost_usd": round(calc_cost(m, v), 4)}
+            m: {
+                **v,
+                "cost_usd": round(
+                    calc_cost(
+                        m,
+                        {
+                            k: val
+                            for k, val in v.items()
+                            if k not in ("turns", "cost_usd")
+                        },
+                    ),
+                    4,
+                ),
+            }
             for m, v in totals.items()
         },
         "last_prompt": (last_prompt or "")[:120],
