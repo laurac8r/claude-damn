@@ -209,3 +209,29 @@ def test_write_log_entry_creates_named_file(
 
     # File must be inside the monkeypatched log dir
     assert fpath.parent == log_dir
+
+
+def test_write_log_entry_handles_malformed_timestamp(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """write_log_entry should not crash when last_ts is unparseable."""
+    log_dir = tmp_path / "cost-log"
+    monkeypatch.setattr(extract_cost, "COST_LOG_DIR", log_dir)
+
+    data = {
+        "session_id": "badbadba",
+        "turns": 1,
+        "total_cost_usd": 0.01,
+        "last_ts": "not-a-timestamp",
+        "models": {},
+        "first_ts": None,
+        "project": "/tmp/x",
+        "last_prompt": "",
+    }
+
+    fpath = write_log_entry(data)
+
+    assert fpath.exists()
+    written = json.loads(fpath.read_text().strip())
+    assert written["session_id"] == "badbadba"
