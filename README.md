@@ -41,7 +41,7 @@ These combine into four skill families:
 
 Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`,
 `/check-yourself`, `/cost_`, `/cost-opt`, `/fast-pr-feedback-to-me`,
-`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, and more.
+`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, `/sync`, and more.
 
 See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 
