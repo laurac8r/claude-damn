@@ -91,3 +91,40 @@ def test_unwritable_target_raises(sandboxed_worktree: Path) -> None:
             run_apply(plan, ApplyOptions())
     finally:
         tgt.chmod(0o700)
+
+
+def test_pull_checks_source_writable(sandboxed_worktree: Path) -> None:
+    """In pull mode (tgt→src ops) run_apply must check source writability."""
+    src, tgt = _make_trees(sandboxed_worktree)
+    (tgt / "a.txt").write_text("a")
+    src.chmod(0o500)
+    plan = SyncPlan(
+        source=src,
+        target=tgt,
+        mode="pull",
+        ops=(FileOp(Path("a.txt"), "add", "tgt→src", "only in target"),),
+    )
+    try:
+        with pytest.raises((TargetNotWritableError, RsyncFailedError)):
+            run_apply(plan, ApplyOptions())
+    finally:
+        src.chmod(0o700)
+
+
+def test_delete_skips_git_internals(sandboxed_worktree: Path) -> None:
+    """_delete_orphans must never touch .git/ contents in the target."""
+    src, tgt = _make_trees(sandboxed_worktree)
+    (src / "a.txt").write_text("a")
+    (tgt / "a.txt").write_text("a")
+    git_dir = tgt / ".git"
+    git_dir.mkdir()
+    git_file = git_dir / "HEAD"
+    git_file.write_text("ref: refs/heads/main\n")
+    plan = SyncPlan(
+        source=src,
+        target=tgt,
+        mode="push",
+        ops=(FileOp(Path("a.txt"), "add", "src→tgt", "only in source"),),
+    )
+    run_apply(plan, ApplyOptions(delete=True))
+    assert git_file.exists(), ".git/HEAD must not be deleted by orphan removal"

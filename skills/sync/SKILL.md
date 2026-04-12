@@ -5,16 +5,16 @@ description:
   (plan/interactive/push/pull/mirror), .gitignore-aware, Claude-workflow
   allowlist via --claude, dropbox-restore-style per-directory prompts.
 argument-hint:
-  "[target] [--mode plan|interactive|push|pull|mirror] [--from PATH] [--dry-run]
-  [--yes] [--limit N] [--include GLOB] [--exclude GLOB] [--no-gitignore]
-  [--delete] [--claude]"
+  "[--from PATH] <target | --to PATH> [--mode plan|interactive|push|pull|mirror]
+  [--dry-run] [--yes] [--limit N] [--include GLOB] [--exclude GLOB]
+  [--no-gitignore] [--delete] [--claude]"
 user-invocable: true
 ---
 
 # /sync
 
-Sync files between two local directories. Source defaults to `$PWD`. Target is
-the first positional argument or `--to`.
+Sync files between two local directories. Source defaults to `$PWD` (or set
+explicitly with `--from`). Target is the first positional argument or `--to`.
 
 ## When the user types `/sync ...`
 

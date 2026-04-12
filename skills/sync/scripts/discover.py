@@ -28,11 +28,18 @@ class DiscoverOptions:
 def discover(root: Path, opts: DiscoverOptions) -> Iterator[Path]:
     """Yield relative paths under `root` that pass all filters."""
     gi = GitignoreFilter(root=root) if opts.respect_gitignore else None
-    for absolute in _walk_files(root):
-        rel = absolute.relative_to(root)
+
+    all_rels = [absolute.relative_to(root) for absolute in _walk_files(root)]
+
+    # Batch gitignore check: one subprocess call for the whole tree.
+    ignored: frozenset[Path] = (
+        gi.batch_ignored(all_rels) if gi is not None else frozenset()
+    )
+
+    for rel in all_rels:
         if _first_part(rel) == ".git":
             continue
-        if gi is not None and gi.is_ignored(rel):
+        if gi is not None and rel in ignored:
             if opts.claude_allowlist is None or not opts.claude_allowlist.matches(rel):
                 continue
         if opts.include and not any(fnmatch.fnmatch(str(rel), g) for g in opts.include):

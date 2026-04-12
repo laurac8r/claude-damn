@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from skills.sync.scripts.diff import diff_ops
+from skills.sync.scripts.exceptions import InvalidModeError
 from skills.sync.scripts.types import FileOp
 
 
@@ -102,3 +103,9 @@ def test_mirror_target_only_adds_to_source(trees: tuple[Path, Path]) -> None:
     ops = diff_ops(src, tgt, mode="mirror", src_paths=set(), tgt_paths={Path("a.txt")})
     assert ops[0].direction == "tgt→src"
     assert ops[0].action == "add"
+
+
+def test_unsupported_mode_raises_invalid_mode_error(trees: tuple[Path, Path]) -> None:
+    src, tgt = trees
+    with pytest.raises(InvalidModeError):
+        diff_ops(src, tgt, mode="bogus", src_paths=set(), tgt_paths=set())  # type: ignore[arg-type]

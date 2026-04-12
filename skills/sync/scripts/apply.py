@@ -25,10 +25,15 @@ class ApplyOptions:
 def run_apply(plan: SyncPlan, opts: ApplyOptions) -> None:
     if not plan.ops:
         return
-    _check_target_writable(plan.target)
 
     src_to_tgt = tuple(op for op in plan.ops if op.direction == "src→tgt")
     tgt_to_src = tuple(op for op in plan.ops if op.direction == "tgt→src")
+
+    # Preflight: check every destination we will actually write into.
+    if src_to_tgt:
+        _check_target_writable(plan.target)
+    if tgt_to_src:
+        _check_target_writable(plan.source)
 
     if src_to_tgt:
         _rsync(plan.source, plan.target, src_to_tgt, opts)
@@ -52,12 +57,18 @@ def _check_target_writable(target: Path) -> None:
 
 
 def _delete_orphans(src: Path, dst: Path, ops: tuple[FileOp, ...]) -> None:
-    """Remove files in dst that don't exist in src's synced set."""
+    """Remove files in dst that don't exist in src's synced set.
+
+    Only considers files that were part of the synced path set; ``.git/``
+    internals and other excluded paths are never touched.
+    """
     synced = {op.path for op in ops}
     for child in sorted(dst.rglob("*")):
         if not child.is_file():
             continue
         rel = child.relative_to(dst)
+        if rel.parts and rel.parts[0] == ".git":
+            continue
         if rel not in synced and not (src / rel).exists():
             child.unlink()
 

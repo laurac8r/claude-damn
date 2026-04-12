@@ -3,6 +3,7 @@
 import hashlib
 from pathlib import Path
 
+from skills.sync.scripts.exceptions import InvalidModeError
 from skills.sync.scripts.types import FileOp, Mode
 
 
@@ -20,7 +21,7 @@ def diff_ops(
         return _flip(_diff_push(target, source, tgt_paths, src_paths))
     if mode == "mirror":
         return _diff_mirror(source, target, src_paths, tgt_paths)
-    raise ValueError(f"unsupported mode: {mode}")
+    raise InvalidModeError(f"unsupported mode: {mode}")
 
 
 def _diff_push(
