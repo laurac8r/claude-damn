@@ -7,4 +7,7 @@ requires-python = ">=3.14"
 dependencies = ["pytest>=9.0.2"]
 
 [dependency-groups]
-dev = ["pyyaml>=6.0.3"]
+dev = ["pyyaml>=6.0.3", "pytest-mock>=3.14"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
