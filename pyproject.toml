@@ -4,14 +4,16 @@ version = "0.1.0"
 description = "Claude Code superpowers plugin"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = [
-    "pytest>=9.0.2",
-    "pyyaml>=6.0.3",
-]
+dependencies = []
 
 
 [dependency-groups]
-dev = ["pytest-xdist>=3.8.0", "ruff>=0.9.0"]
+dev = [
+    "pytest>=9.0.2",
+    "pyyaml>=6.0.3",
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.9.0",
+]
 
 
 [tool.pytest.ini_options]
