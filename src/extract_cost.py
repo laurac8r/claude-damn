@@ -179,11 +179,13 @@ def parse_session(jsonl_path: Path) -> dict:
             m: {
                 **v,
                 "cost_usd": round(
-                    sum(
-                        calc_cost(
-                            m, {k: v[k] for k in v if k != "turns" and k != "cost_usd"}
-                        )
-                        for _ in [1]  # just calc once from totals
+                    calc_cost(
+                        m,
+                        {
+                            k: val
+                            for k, val in v.items()
+                            if k not in ("turns", "cost_usd")
+                        },
                     ),
                     4,
                 ),
