@@ -1,8 +1,8 @@
 ---
 name: fast-pr-final-self-review
 description:
-  Self-review to verify all PR peer feedback has been addressed on current
-  branch
+   Self-review to verify all PR peer feedback has been addressed on current
+   branch
 user-invocable: true
 ---
 

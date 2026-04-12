@@ -1,7 +1,7 @@
 ---
 name: expert-cat-review
 description:
-  Expert-level review with each phase dispatched as a parallel subagent
+   Expert-level review with each phase dispatched as a parallel subagent
 user-invocable: true
 ---
 

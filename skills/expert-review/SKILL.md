@@ -1,12 +1,12 @@
 ---
 name: expert-review
 description:
-  Expert-level multi-language code review, simplification, debugging, and
-  security audit
+   Expert-level multi-language code review, simplification, debugging, and
+   security audit
 allowed-tools:
-  Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*),
-  Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*),
-  Read, Glob, Grep, LS, Task, Edit, Write
+   Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*),
+   Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*),
+   Read, Glob, Grep, LS, Task, Edit, Write
 argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
@@ -42,7 +42,6 @@ user-invocable: true
 ## Phase 0: Determine Scope & Context
 
 1. Parse arguments to identify requested review aspects and target:
-
    - `help` — Display all available scopes and usage, then stop
    - `security` — Security-focused vulnerability assessment
    - `simplify` — Code simplification for clarity and maintainability
@@ -51,12 +50,13 @@ user-invocable: true
    - `types` — Type design analysis (encapsulation, invariants, enforcement)
    - `errors` — Silent failure hunting and error handling audit
    - `architect` — Architecture analysis and implementation blueprint
-   - `custom` — User-defined review focus; remaining arguments specify the criteria
-     (e.g. `custom "check for N+1 queries in src/repositories/"`)
+   - `custom` — User-defined review focus; remaining arguments specify the
+     criteria (e.g. `custom "check for N+1 queries in src/repositories/"`)
    - `all` — Run all applicable reviews (default)
    - A file path, directory, or PR number as target
 
-   If scope is `help`, print this list and exit without running any review phases.
+   If scope is `help`, print this list and exit without running any review
+   phases.
 
 2. Gather context:
 
@@ -243,12 +243,12 @@ comments (TODOs, invariant notes, safety comments).
 7. Memory safety in memory-safe languages outside unsafe blocks
 8. Test-only files
 9. Log spoofing
-10. SSRF controlling only the path (not host/protocol)
-11. User content in AI prompts
-12. Regex injection/ReDoS
-13. Documentation files
-14. Environment variables and CLI flags (treated as trusted)
-15. Client-side permission checks (server is responsible)
+10.   SSRF controlling only the path (not host/protocol)
+11.   User content in AI prompts
+12.   Regex injection/ReDoS
+13.   Documentation files
+14.   Environment variables and CLI flags (treated as trusted)
+15.   Client-side permission checks (server is responsible)
 
 ### Severity Ratings
 
@@ -558,10 +558,10 @@ user wants investigated.
 7. **Analyze new/modified types** (Phase 5)
 8. **Architecture analysis** if requested (Phase 6)
 9. **Custom focus analysis** if requested (Phase 7)
-10. **Aggregate and present** results in the output format above, organized by
-    severity
-11. **Generate summary table** — produce a consolidated findings table as the
-    final output
+10.   **Aggregate and present** results in the output format above, organized by
+      severity
+11.   **Generate summary table** — produce a consolidated findings table as the
+      final output
 
 Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself
 dispatch parallel sub-agents when the custom directive decomposes into
@@ -607,7 +607,7 @@ sources — prefer them over general web search.
 ### Language References
 
 | Language   | Style & Conventions                                                                 | Security                                                                        |
-|------------|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Python     | https://peps.python.org/pep-0008/                                                   | https://cheatsheetseries.owasp.org/cheatsheets/Python_Security_Cheat_Sheet.html |
 | TypeScript | https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html | https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html |
 | Rust       | https://doc.rust-lang.org/nomicon/                                                  | https://rustsec.org/advisories/                                                 |
@@ -621,7 +621,7 @@ sources — prefer them over general web search.
 ### Security References
 
 | Topic                    | URL                                                                                                   |
-|--------------------------|-------------------------------------------------------------------------------------------------------|
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
 | OWASP Top 10             | https://owasp.org/Top10/                                                                              |
 | OWASP Cheat Sheet Series | https://cheatsheetseries.owasp.org/index.html                                                         |
 | CWE Top 25               | https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html                                          |
@@ -640,7 +640,7 @@ sources — prefer them over general web search.
 **AWS:**
 
 | Topic              | URL                                                                                |
-|--------------------|------------------------------------------------------------------------------------|
+| ------------------ | ---------------------------------------------------------------------------------- |
 | IAM Best Practices | https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html               |
 | S3 Security        | https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html |
 | Lambda Security    | https://docs.aws.amazon.com/lambda/latest/dg/lambda-security.html                  |
@@ -652,7 +652,7 @@ sources — prefer them over general web search.
 **GCP:**
 
 | Topic                   | URL                                                                                     |
-|-------------------------|-----------------------------------------------------------------------------------------|
+| ----------------------- | --------------------------------------------------------------------------------------- |
 | IAM Best Practices      | https://cloud.google.com/iam/docs/using-iam-securely                                    |
 | Security Foundations    | https://cloud.google.com/architecture/security-foundations                              |
 | VPC Service Controls    | https://cloud.google.com/vpc-service-controls/docs/overview                             |
@@ -664,7 +664,7 @@ sources — prefer them over general web search.
 **Azure:**
 
 | Topic                | URL                                                                                          |
-|----------------------|----------------------------------------------------------------------------------------------|
+| -------------------- | -------------------------------------------------------------------------------------------- |
 | Security Baseline    | https://learn.microsoft.com/en-us/security/benchmark/azure/overview                          |
 | Identity (Entra ID)  | https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview |
 | Key Vault            | https://learn.microsoft.com/en-us/azure/key-vault/general/best-practices                     |
@@ -676,7 +676,7 @@ sources — prefer them over general web search.
 ### Infrastructure as Code
 
 | Topic                    | URL                                                                        |
-|--------------------------|----------------------------------------------------------------------------|
+| ------------------------ | -------------------------------------------------------------------------- |
 | Terraform Best Practices | https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices |
 | Terraform Style Guide    | https://developer.hashicorp.com/terraform/language/style                   |
 | CDK Patterns             | https://cdkpatterns.com/                                                   |
@@ -686,7 +686,7 @@ sources — prefer them over general web search.
 ### Error Handling & Type Design
 
 | Topic                        | URL                                                                            |
-|------------------------------|--------------------------------------------------------------------------------|
+| ---------------------------- | ------------------------------------------------------------------------------ |
 | Error Handling (OWASP)       | https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html |
 | Logging (OWASP)              | https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html        |
 | Algebraic Data Types         | https://doc.rust-lang.org/book/ch06-00-enums.html                              |
