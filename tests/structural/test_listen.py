@@ -25,7 +25,9 @@ class TestSkillFileExists:
         assert SKILL_PATH.exists(), f"Expected skill at {SKILL_PATH}"
 
     def test_enforce_skill_removed(self) -> None:
-        assert not OLD_SKILL_PATH.exists(), f"Old skill should not exist at {OLD_SKILL_PATH}"
+        assert not OLD_SKILL_PATH.exists(), (
+            f"Old skill should not exist at {OLD_SKILL_PATH}"
+        )
 
 
 class TestFrontmatter:
@@ -35,24 +37,22 @@ class TestFrontmatter:
     def frontmatter(self) -> dict:
         return _parse_frontmatter(SKILL_PATH)
 
-    def test_has_name(self, frontmatter: dict) -> None:
-        assert "name" in frontmatter
+    @pytest.mark.parametrize(
+        "key,expected",
+        [
+            ("name", "listen"),
+            ("description", None),
+            ("argument-hint", None),
+            ("user-invocable", True),
+        ],
+    )
+    def test_frontmatter_key(
+        self, frontmatter: dict, key: str, expected: object
+    ) -> None:
+        assert key in frontmatter, f"Missing frontmatter key: {key!r}"
+        if expected is not None:
+            assert frontmatter[key] == expected
 
-    def test_name_is_listen(self, frontmatter: dict) -> None:
-        assert frontmatter["name"] == "listen"
-
-    def test_has_description(self, frontmatter: dict) -> None:
-        assert "description" in frontmatter
-
-    def test_has_argument_hint(self, frontmatter: dict) -> None:
-        assert "argument-hint" in frontmatter
-
-    def test_has_user_invocable(self, frontmatter: dict) -> None:
-        assert "user-invocable" in frontmatter
-
-    def test_user_invocable_is_true(self, frontmatter: dict) -> None:
-        assert frontmatter["user-invocable"] is True
-
-    def test_frontmatter_parses_without_error(self) -> None:
+    def test_parses_without_error(self) -> None:
         fm = _parse_frontmatter(SKILL_PATH)
         assert isinstance(fm, dict)
