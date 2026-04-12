@@ -2,8 +2,7 @@
 
 ## Naming Convention
 
-Skills are composed from modifiers. Each modifier maps to a specific underlying
-skill:
+Skills are composed from modifiers. Each modifier maps to a specific underlying skill:
 
 | Modifier | Skill invoked                  | What it adds                                                    |
 |----------|--------------------------------|-----------------------------------------------------------------|
