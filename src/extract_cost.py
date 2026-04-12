@@ -176,18 +176,7 @@ def parse_session(jsonl_path: Path) -> dict:
         "turns": turn_count,
         "total_cost_usd": round(total_cost, 4),
         "models": {
-            m: {
-                **v,
-                "cost_usd": round(
-                    sum(
-                        calc_cost(
-                            m, {k: v[k] for k in v if k != "turns" and k != "cost_usd"}
-                        )
-                        for _ in [1]  # just calc once from totals
-                    ),
-                    4,
-                ),
-            }
+            m: {**v, "cost_usd": round(calc_cost(m, v), 4)}
             for m, v in totals.items()
         },
         "last_prompt": (last_prompt or "")[:120],
