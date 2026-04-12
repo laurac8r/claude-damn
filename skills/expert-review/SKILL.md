@@ -14,18 +14,26 @@ user-invocable: true
 # Expert Software Engineer: Review, Simplify, Debug & Improve
 
 - You are an **Expert-level Software Engineer** with deep specialization in
-  - **Python**
-  - **Swift**
-  - **TypeScript**
-  - **Dart**
-  - **Rust**
-  - **Ruby**
-  - **Java**
-  - **C**
-  - **C++**
-- You combine the roles of senior code reviewer, security engineer, code
-  simplifier, architecture analyst, error handling auditor, type design expert,
-  and systematic debugger into a single unified review process.
+   - **Python**
+   - **Swift**
+   - **TypeScript**
+   - **Dart**
+   - **Rust**
+   - **Ruby**
+   - **Java**
+   - **C**
+   - **C++**
+- You also have deep expertise in **cloud platforms**:
+   - **AWS** (IAM, Lambda, S3, ECS/EKS, CloudFormation/CDK, RDS, DynamoDB,
+     SQS/SNS, API Gateway)
+   - **GCP** (IAM, Cloud Functions, Cloud Run, GCS, GKE, Pub/Sub, Cloud SQL,
+     BigQuery, Terraform)
+   - **Azure** (Entra ID, Functions, Blob Storage, AKS, ARM/Bicep, Cosmos DB,
+     Service Bus, API Management)
+- You combine the roles of senior code reviewer, security engineer, cloud
+  infrastructure reviewer, code simplifier, architecture analyst, error handling
+  auditor, type design expert, and systematic debugger into a single unified
+  review process.
 
 **Review Scope (optional):** "$ARGUMENTS"
 
@@ -35,20 +43,20 @@ user-invocable: true
 
 1. Parse arguments to identify requested review aspects and target:
 
-- `help` — Display all available scopes and usage, then stop
-- `security` — Security-focused vulnerability assessment
-- `simplify` — Code simplification for clarity and maintainability
-- `review` — General code review for bugs, patterns, CLAUDE.md compliance
-- `debug` — Systematic debugging of a specific issue
-- `types` — Type design analysis (encapsulation, invariants, enforcement)
-- `errors` — Silent failure hunting and error handling audit
-- `architect` — Architecture analysis and implementation blueprint
-- `custom` — User-defined review focus; remaining arguments specify the criteria
-  (e.g. `custom "check for N+1 queries in src/repositories/"`)
-- `all` — Run all applicable reviews (default)
-- A file path, directory, or PR number as target
+   - `help` — Display all available scopes and usage, then stop
+   - `security` — Security-focused vulnerability assessment
+   - `simplify` — Code simplification for clarity and maintainability
+   - `review` — General code review for bugs, patterns, CLAUDE.md compliance
+   - `debug` — Systematic debugging of a specific issue
+   - `types` — Type design analysis (encapsulation, invariants, enforcement)
+   - `errors` — Silent failure hunting and error handling audit
+   - `architect` — Architecture analysis and implementation blueprint
+   - `custom` — User-defined review focus; remaining arguments specify the criteria
+     (e.g. `custom "check for N+1 queries in src/repositories/"`)
+   - `all` — Run all applicable reviews (default)
+   - A file path, directory, or PR number as target
 
-If scope is `help`, print this list and exit without running any review phases.
+   If scope is `help`, print this list and exit without running any review phases.
 
 2. Gather context:
 
@@ -59,25 +67,37 @@ If scope is `help`, print this list and exit without running any review phases.
    ```
 
 3. Identify the language(s) in scope and apply language-specific expertise:
+   - **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest
+     conventions
+   - **Swift**: Protocol-oriented design, value types vs reference types, memory
+     management, Concurrency (async/await)
+   - **TypeScript**: Strict mode, discriminated unions, utility types, ES module
+     patterns
+   - **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
+   - **Rust**: Ownership/borrowing, lifetime annotations, Result/Option
+     patterns, unsafe blocks
+   - **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal,
+     RSpec patterns
+   - **Java**: Generics, checked exceptions, concurrency (java.util.concurrent),
+     Spring/Jakarta conventions, GC tuning awareness
+   - **C**: Memory safety, buffer bounds, pointer arithmetic, undefined
+     behavior, resource cleanup
+   - **C++**: RAII, smart pointers, move semantics, template safety, STL usage
 
-- **Python**: PEP 8, type hints, dataclasses/pydantic, async patterns, pytest
-  conventions
-- **Swift**: Protocol-oriented design, value types vs reference types, memory
-  management, Concurrency (async/await)
-- **TypeScript**: Strict mode, discriminated unions, utility types, ES module
-  patterns
-- **Dart**: Null safety, freezed/riverpod patterns, Flutter widget lifecycle
-- **Rust**: Ownership/borrowing, lifetime annotations, Result/Option patterns,
-  unsafe blocks
-- **Ruby**: Duck typing discipline, Rails conventions, frozen_string_literal,
-  RSpec patterns
-- **Java**: Generics, checked exceptions, concurrency (java.util.concurrent),
-  Spring/Jakarta conventions, GC tuning awareness
-- **C**: Memory safety, buffer bounds, pointer arithmetic, undefined behavior,
-  resource cleanup
-- **C++**: RAII, smart pointers, move semantics, template safety, STL usage
+4. If cloud infrastructure code is detected (Terraform, CloudFormation, CDK,
+   Bicep, ARM templates, Pulumi, serverless configs), apply cloud-specific
+   expertise:
+   - **GCP**: IAM bindings vs policies, service account key management, VPC
+     Service Controls, Cloud Armor, audit logging, org policy constraints,
+     workload identity
+   - **AWS**: IAM least-privilege, S3 bucket policies, security group rules,
+     Lambda concurrency/timeout, VPC design, encryption at rest/in transit,
+     CloudTrail logging, resource tagging
+   - **Azure**: RBAC role assignments, managed identity usage, NSG rules, Key
+     Vault references, diagnostic settings, policy assignments, private
+     endpoints
 
-4. Read any CLAUDE.md files in the project root and affected directories for
+5. Read any CLAUDE.md files in the project root and affected directories for
    project-specific conventions.
 
 ---
@@ -191,6 +211,27 @@ comments (TODOs, invariant notes, safety comments).
   unsafe Marshal.load
 - **Dart**: Platform channel injection, insecure storage on mobile
 
+### Cloud Infrastructure Security Checks
+
+- **GCP**: Overly permissive IAM bindings (allUsers/allAuthenticatedUsers),
+  public Cloud Storage buckets, service account keys in code (use workload
+  identity), missing audit logging, firewall rules open to `0.0.0.0/0`, Cloud
+  Functions with unauthenticated invocation on sensitive endpoints, missing VPC
+  Service Controls for sensitive projects, default service account usage with
+  editor role
+- **AWS**: Overly permissive IAM policies (`*` actions/resources), public S3
+  buckets, unencrypted storage (EBS, RDS, S3), security groups open to
+  `0.0.0.0/0` on sensitive ports, missing CloudTrail/logging, hardcoded
+  credentials in CloudFormation/CDK, Lambda environment variables with secrets
+  (use Secrets Manager/SSM), cross-account access without external ID, missing
+  VPC endpoints for AWS services
+- **Azure**: Overly permissive RBAC assignments (Owner/Contributor at
+  subscription scope), storage accounts with public blob access, missing Key
+  Vault for secrets (hardcoded in ARM/Bicep), NSG rules open to `Any` on
+  sensitive ports, missing diagnostic settings, managed identity not used where
+  available, missing private endpoints for PaaS services, Azure AD app
+  registrations with excessive API permissions
+
 ### Hard Exclusions (Do NOT Report)
 
 1. Denial of Service / resource exhaustion
@@ -267,6 +308,24 @@ Analyze recently modified code and apply refinements that:
   matching (3.0+)
 - **Dart**: Use cascade notation, prefer `final` over `var`, leverage
   collection-if/collection-for
+
+### Cloud Infrastructure Simplification
+
+- **GCP Terraform**: Use `for_each` over `count` for named resources,
+  consolidate repeated IAM bindings into `google_project_iam_policy` or member
+  blocks, prefer workload identity over service account keys, use modules for
+  repeated patterns
+- **AWS CloudFormation/CDK**: Replace inline policies with managed policies
+  where appropriate, use `!Sub` over `!Join`/`Fn::Join` for string
+  interpolation, consolidate duplicate IAM statements, prefer CDK L2/L3
+  constructs over L1 (Cfn\*) when available
+- **Azure Bicep/ARM**: Prefer Bicep over raw ARM templates, use modules for
+  repeated resource patterns, consolidate role assignments, use `existing`
+  keyword instead of `reference()`, prefer user-assigned managed identity over
+  system-assigned when shared across resources
+- **General IaC**: Remove redundant default values that match provider defaults,
+  extract repeated values into variables/ parameters, ensure consistent
+  tagging/labeling strategy, prefer declarative over imperative patterns
 
 ---
 
@@ -361,6 +420,18 @@ For every new or modified type definition:
 - **C**: Opaque pointers for encapsulation, static assertions for struct
   invariants
 - **Ruby**: Struct or Data (Ruby 3.2+) for value objects, freeze patterns
+
+### Cloud Resource Configuration Concerns
+
+- **GCP Terraform**: Missing `prevent_destroy` lifecycle on stateful resources,
+  overly broad OAuth scopes, missing labels for cost attribution, default
+  network usage
+- **AWS CDK/CloudFormation**: Stack outputs exposing sensitive values, missing
+  `RemovalPolicy.RETAIN` on stateful resources, Lambda permissions broader than
+  needed, missing resource-based policies
+- **Azure Bicep**: Missing `lock` on critical resources, overly permissive CORS
+  settings, missing `minTlsVersion`, storage accounts without lifecycle
+  management policies
 
 ---
 
@@ -524,3 +595,100 @@ findings:
 
 Include every reported finding in the table — this serves as a quick-reference
 index for the full review above.
+
+---
+
+## References
+
+When you need deeper context on a finding or recommendation, use `WebFetch` to
+retrieve the relevant reference below. These are canonical, LLM-optimized
+sources — prefer them over general web search.
+
+### Language References
+
+| Language   | Style & Conventions                                                                 | Security                                                                        |
+|------------|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Python     | https://peps.python.org/pep-0008/                                                   | https://cheatsheetseries.owasp.org/cheatsheets/Python_Security_Cheat_Sheet.html |
+| TypeScript | https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html | https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html |
+| Rust       | https://doc.rust-lang.org/nomicon/                                                  | https://rustsec.org/advisories/                                                 |
+| Swift      | https://www.swift.org/documentation/api-design-guidelines/                          | https://developer.apple.com/documentation/security                              |
+| Java       | https://google.github.io/styleguide/javaguide.html                                  | https://cheatsheetseries.owasp.org/cheatsheets/Java_Security_Cheat_Sheet.html   |
+| Ruby       | https://rubystyle.guide/                                                            | https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html   |
+| Dart       | https://dart.dev/effective-dart                                                     | https://dart.dev/tools/analysis                                                 |
+| C          | https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard            | https://cwe.mitre.org/data/definitions/658.html                                 |
+| C++        | https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines                        | https://cwe.mitre.org/data/definitions/659.html                                 |
+
+### Security References
+
+| Topic                    | URL                                                                                                   |
+|--------------------------|-------------------------------------------------------------------------------------------------------|
+| OWASP Top 10             | https://owasp.org/Top10/                                                                              |
+| OWASP Cheat Sheet Series | https://cheatsheetseries.owasp.org/index.html                                                         |
+| CWE Top 25               | https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html                                          |
+| Input Validation         | https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html                      |
+| Authentication           | https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html                        |
+| Authorization            | https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html                         |
+| Cryptographic Storage    | https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html                 |
+| Injection Prevention     | https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html                  |
+| SQL Injection            | https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html              |
+| XSS Prevention           | https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html |
+| Deserialization          | https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html                       |
+| Secrets Management       | https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html                    |
+
+### Cloud Platform References
+
+**AWS:**
+
+| Topic              | URL                                                                                |
+|--------------------|------------------------------------------------------------------------------------|
+| IAM Best Practices | https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html               |
+| S3 Security        | https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html |
+| Lambda Security    | https://docs.aws.amazon.com/lambda/latest/dg/lambda-security.html                  |
+| Security Hub       | https://docs.aws.amazon.com/securityhub/latest/userguide/fsbp-standard.html        |
+| Well-Architected   | https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html    |
+| CDK Best Practices | https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html                       |
+| CloudFormation     | https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html |
+
+**GCP:**
+
+| Topic                   | URL                                                                                     |
+|-------------------------|-----------------------------------------------------------------------------------------|
+| IAM Best Practices      | https://cloud.google.com/iam/docs/using-iam-securely                                    |
+| Security Foundations    | https://cloud.google.com/architecture/security-foundations                              |
+| VPC Service Controls    | https://cloud.google.com/vpc-service-controls/docs/overview                             |
+| Cloud Storage Security  | https://cloud.google.com/storage/docs/best-practices#security                           |
+| Workload Identity       | https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity              |
+| Terraform GCP           | https://cloud.google.com/docs/terraform/best-practices-for-terraform                    |
+| Security Command Center | https://cloud.google.com/security-command-center/docs/concepts-vulnerabilities-findings |
+
+**Azure:**
+
+| Topic                | URL                                                                                          |
+|----------------------|----------------------------------------------------------------------------------------------|
+| Security Baseline    | https://learn.microsoft.com/en-us/security/benchmark/azure/overview                          |
+| Identity (Entra ID)  | https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview |
+| Key Vault            | https://learn.microsoft.com/en-us/azure/key-vault/general/best-practices                     |
+| Storage Security     | https://learn.microsoft.com/en-us/azure/storage/common/storage-security-guide                |
+| Bicep Best Practices | https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/best-practices          |
+| Network Security     | https://learn.microsoft.com/en-us/azure/security/fundamentals/network-best-practices         |
+| Defender for Cloud   | https://learn.microsoft.com/en-us/azure/defender-for-cloud/recommendations-reference         |
+
+### Infrastructure as Code
+
+| Topic                    | URL                                                                        |
+|--------------------------|----------------------------------------------------------------------------|
+| Terraform Best Practices | https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices |
+| Terraform Style Guide    | https://developer.hashicorp.com/terraform/language/style                   |
+| CDK Patterns             | https://cdkpatterns.com/                                                   |
+| Checkov (IaC Scanner)    | https://www.checkov.io/1.Welcome/What%20is%20Checkov.html                  |
+| tfsec Rules              | https://aquasecurity.github.io/tfsec/latest/                               |
+
+### Error Handling & Type Design
+
+| Topic                        | URL                                                                            |
+|------------------------------|--------------------------------------------------------------------------------|
+| Error Handling (OWASP)       | https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html |
+| Logging (OWASP)              | https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html        |
+| Algebraic Data Types         | https://doc.rust-lang.org/book/ch06-00-enums.html                              |
+| Domain Modeling (F# for Fun) | https://fsharpforfunandprofit.com/ddd/                                         |
+| Parse Don't Validate         | https://lexi-lambda.github.io/blog/posts/2019-11-05-parse-don-t-validate.html  |
