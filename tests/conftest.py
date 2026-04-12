@@ -1,11 +1,41 @@
-"""Shared fixtures for settings.json regression tests."""
+"""Shared fixtures for settings.json regression tests and xdist worktrees."""
 
 import json
+import os
+import subprocess
 from pathlib import Path
 
 import pytest
 
-SETTINGS_PATH = Path(__file__).parent.parent / "settings.json"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SETTINGS_PATH = PROJECT_ROOT / "settings.json"
+
+
+@pytest.fixture(scope="session")
+def worker_worktree(tmp_path_factory) -> Path | None:
+    """Yield an ephemeral git worktree for the current xdist worker.
+
+    Returns ``None`` when not running under xdist (``pytest -n``),
+    making the fixture a no-op for default single-process runs.
+    """
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER")
+    if worker_id is None:
+        yield None
+        return
+    wt_path = tmp_path_factory.mktemp(f"pytest-{worker_id}")
+    subprocess.run(
+        ["git", "worktree", "add", "--detach", str(wt_path), "HEAD"],
+        check=True,
+        cwd=str(PROJECT_ROOT),
+    )
+    try:
+        yield wt_path
+    finally:
+        subprocess.run(
+            ["git", "worktree", "remove", "--force", str(wt_path)],
+            check=False,
+            cwd=str(PROJECT_ROOT),
+        )
 
 
 @pytest.fixture(scope="session")
