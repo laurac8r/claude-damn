@@ -120,6 +120,6 @@ class TestAdapterContractCompleteness:
     ) -> None:
         content = read_skill_file(skill_root, adapter)
         sections = extract_sections(content)
-        assert any(
-            capability in s for s in sections
-        ), f"{adapter} missing ## {capability} section"
+        assert any(capability in s for s in sections), (
+            f"{adapter} missing ## {capability} section"
+        )

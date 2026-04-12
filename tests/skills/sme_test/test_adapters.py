@@ -30,9 +30,9 @@ class TestAdapterContract:
         self, adapter_content: tuple[str, str], capability: str
     ) -> None:
         adapter, content = adapter_content
-        assert (
-            capability in content
-        ), f"Adapter '{adapter}' missing capability '{capability}'"
+        assert capability in content, (
+            f"Adapter '{adapter}' missing capability '{capability}'"
+        )
 
 
 class TestPythonAdapter:

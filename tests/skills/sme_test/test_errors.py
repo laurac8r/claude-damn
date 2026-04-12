@@ -27,9 +27,9 @@ class TestErrorClasses:
 
     @pytest.mark.parametrize("error_class", ERROR_CLASSES)
     def test_error_class_documented(self, content: str, error_class: str) -> None:
-        assert (
-            error_class in content.lower()
-        ), f"Error class '{error_class}' not found in error-handlers.md"
+        assert error_class in content.lower(), (
+            f"Error class '{error_class}' not found in error-handlers.md"
+        )
 
     def test_every_error_class_has_recovery_section(self, content: str) -> None:
         """Each error class section must contain a Recovery heading or keyword."""
