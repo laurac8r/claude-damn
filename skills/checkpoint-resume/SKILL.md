@@ -73,11 +73,11 @@ branch than the one you are currently on. → Flag the drift and prompt the user
 > you like to proceed?
 >
 > - **(a)** Resume it as-is (stay on current branch, use the checkpoint from
-    > `<X>`)
+> `<X>`)
 > - **(b)** Archive it to `.checkpoints/<X-slug>.md` first, then pick a
-    > checkpoint from the archive
+> checkpoint from the archive
 > - **(c)** Resume a specific archived checkpoint — list the archive contents so
-    > I can pick
+> I can pick
 
 Wait for the user's response before continuing.
 
