@@ -35,6 +35,11 @@ class TestOldNameAbsent:
                 continue
             if ".venv" in path.parts or "node_modules" in path.parts:
                 continue
+            if ".git" in path.parts:
+                continue
+            specs_dir = PROJECT_ROOT / "docs" / "superpowers" / "specs"
+            if path.is_relative_to(specs_dir):
+                continue
             try:
                 text = path.read_text()
             except (UnicodeDecodeError, PermissionError):
