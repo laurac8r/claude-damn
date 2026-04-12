@@ -81,10 +81,10 @@ commands, skills, and tooling.
    - **TDD family:** `/tdd`, `/tdd-cat`, `/duper-tdd`, `/duper-tdd-cat`.
    - **Brainstorm + TDD:** `/super`, `/super-cat`, `/super-duper`,
      `/super-duper-cat`.
-   - **Debug + Brainstorm + TDD:** `/super-debug-and-fix` and the `duper` / `cat`
-     variants.
-   - **Expert Review:** `/expert-review` through `/expert-super-duper-cat-review`
-     (10 variants).
+   - **Debug + Brainstorm + TDD:** `/super-debug-and-fix` and the `duper` /
+     `cat` variants.
+   - **Expert Review:** `/expert-review` through
+     `/expert-super-duper-cat-review` (10 variants).
    - **Lifecycle:** `/checkpoint-save`, `/checkpoint-resume`, `/check-yourself`,
      `/continue`.
    - **PR feedback:** `/fast-pr-feedback-to-me`, `/fast-pr-feedback-to-others`,

@@ -12,8 +12,8 @@
         "parser": "markdown",
         "proseWrap": "always",
         "printWidth": 80,
-        "tabWidth": 2,
-        "useTabs": true,
+        "tabWidth": 3,
+        "useTabs": false,
         "embeddedLanguageFormatting": "auto",
         "htmlWhitespaceSensitivity": "css"
       }

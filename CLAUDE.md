@@ -15,14 +15,14 @@ these operational directives:
    - Reserve Opus for architectural decisions, complex debugging, and business
      logic.
    - Be aware of when to recommend a manual switch of models:
-      - **Suggest `/model opus`** when the task requires sustained deep reasoning
-        throughout execution, not just planning — e.g., debugging a subtle runtime
-        bug across many files, or a large refactor where every step requires
-        cross-cutting context. Say: _"This task would benefit from full Opus — run
-        `/model opus` to switch."_
-      - **Suggest `/model sonnet`** when the session is primarily reads, searches,
-        config edits, or short Q&A with no complex logic — Sonnet alone will
-        suffice and cost significantly less.
+      - **Suggest `/model opus`** when the task requires sustained deep
+        reasoning throughout execution, not just planning — e.g., debugging a
+        subtle runtime bug across many files, or a large refactor where every
+        step requires cross-cutting context. Say: _"This task would benefit from
+        full Opus — run `/model opus` to switch."_
+      - **Suggest `/model sonnet`** when the session is primarily reads,
+        searches, config edits, or short Q&A with no complex logic — Sonnet
+        alone will suffice and cost significantly less.
    - **Model selection by task type** (data-driven from cost logs):
       - **Use Sonnet for:** config file editing, dotfile management, `~/.claude`
         work, short exploratory sessions (<10 turns), git operations, file
@@ -35,9 +35,9 @@ these operational directives:
      delegate ≥30% of turns to Sonnet/Haiku subagents. Actively look for
      opportunities: file reads, glob/grep searches, test execution, boilerplate
      generation, and commit preparation are all Sonnet-appropriate.
-   - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus session
-     costs ~$0.15-0.35 in cache creation alone. If the task is a quick lookup,
-     config tweak, or single-file edit, prefer Sonnet.
+   - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus
+     session costs ~$0.15-0.35 in cache creation alone. If the task is a quick
+     lookup, config tweak, or single-file edit, prefer Sonnet.
 - **No Inline Non-Bash Scripts in Bash:**
    - Never execute multiline code in another programming language (Python, Ruby,
      Node, Perl, etc.) directly inside the Bash tool via heredocs (`<<EOF`,
@@ -72,7 +72,8 @@ these operational directives:
      context-switching tokens.
 - **Provide SDK Docs:**
    - When working with external SDKs, prompt the user to provide API docs or
-     attach type stubs via context rather than attempting to guess platform APIs.
+     attach type stubs via context rather than attempting to guess platform
+     APIs.
    - Generate your own if the user is not sure or cannot provide them, and
      reference those for the project from now on.
 
@@ -96,14 +97,15 @@ these operational directives:
    - Do not read entire files into context if a diff will suffice.
 - **Targeted Reads:**
    - When exploring large files, use terminal tools like `grep`, `rg` (ripgrep),
-     or read specific line ranges rather than loading the entire file into active
-     memory.
+     or read specific line ranges rather than loading the entire file into
+     active memory.
 - **State Summarization:**
    - After completing a complex task, summarize the architectural decisions and
      changes, then clear the conversational context to prevent token bloat.
 - **Long-Term Memory:**
    - For persistent project knowledge that must survive context clears, log key
-     decisions and active TODOs briefly in `docs/ARCHITECTURE.md` or `MEMORY.md`.
+     decisions and active TODOs briefly in `docs/ARCHITECTURE.md` or
+     `MEMORY.md`.
 - **Shared-Agent Memory:**
    - Agents share a `shared/` memory directory that they actively update and
      read.

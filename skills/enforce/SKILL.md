@@ -1,8 +1,8 @@
 ---
 name: enforce
 description:
-  Execute instructions while strictly enforcing invocation of every skill
-  referenced within them
+   Execute instructions while strictly enforcing invocation of every skill
+   referenced within them
 argument-hint: "<instructions containing /skill references>"
 user-invocable: true
 ---

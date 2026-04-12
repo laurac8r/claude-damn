@@ -1,8 +1,8 @@
 ---
 name: check-yourself
 description:
-  After each step/task, update the in-terminal task list and save a checkpoint.
-  Use proactively after completing any step during multi-step work.
+   After each step/task, update the in-terminal task list and save a checkpoint.
+   Use proactively after completing any step during multi-step work.
 user-invocable: true
 ---
 
