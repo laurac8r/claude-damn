@@ -7,9 +7,7 @@ import pytest
 import yaml
 
 SKILL_ROOT = (
-    Path(__file__).resolve().parent.parent.parent.parent
-    / "skills"
-    / "expert-review"
+    Path(__file__).resolve().parent.parent.parent.parent / "skills" / "expert-review"
 )
 
 

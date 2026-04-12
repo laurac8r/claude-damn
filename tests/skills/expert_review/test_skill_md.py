@@ -24,6 +24,4 @@ class TestExpertReviewSkillMd:
         numbers = re.findall(r"^(\d+)\.\s", phase0, re.MULTILINE)
         numbers = [int(n) for n in numbers]
         expected = list(range(1, len(numbers) + 1))
-        assert numbers == expected, (
-            f"Expected sequential {expected}, got {numbers}"
-        )
+        assert numbers == expected, f"Expected sequential {expected}, got {numbers}"

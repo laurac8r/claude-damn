@@ -33,8 +33,7 @@ class TestRuntimeDependencies:
     ) -> None:
         matches = [dep for dep in runtime_deps if dep.lower().startswith(package)]
         assert matches == [], (
-            f"{package!r} must not appear in [project.dependencies]; "
-            f"found: {matches}"
+            f"{package!r} must not appear in [project.dependencies]; found: {matches}"
         )
 
 
@@ -45,9 +44,7 @@ class TestDevDependencies:
         "package",
         ["pytest", "pyyaml", "pytest-xdist", "ruff"],
     )
-    def test_dev_package_in_dev_group(
-        self, package: str, dev_deps: list[str]
-    ) -> None:
+    def test_dev_package_in_dev_group(self, package: str, dev_deps: list[str]) -> None:
         normalised = [
             dep.lower().replace("-", "").replace("_", "").split(">")[0].split("=")[0]
             for dep in dev_deps

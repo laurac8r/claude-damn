@@ -242,7 +242,7 @@ def write_log_entry(data: dict) -> Path:
     # Parse timestamp for filename
     try:
         dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    except (ValueError, AttributeError):
+    except ValueError, AttributeError:
         dt = datetime.now(timezone.utc)
 
     # Build filename: YYYY-MM-DD_HHmm_{session_short}.jsonl
