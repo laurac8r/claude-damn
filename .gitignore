@@ -15,6 +15,7 @@ telemetry/
 security_warnings*.json
 history.jsonl
 settings.json
+!tests/fixtures/settings.json
 .worktrees/
 worktrees/
 .checkpoints/
