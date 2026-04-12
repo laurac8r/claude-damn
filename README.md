@@ -183,6 +183,7 @@ except `smoke` and `performance` (see `pyproject.toml` markers).
 | Bats        | `tests/*.bats`       | Shell scripts (`checkpoint-archive`, `sync-theme`)       | `bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats` |
 | Smoke       | `tests/smoke/`       | Live skill invocation (costs tokens, non-deterministic)  | `uv run pytest -m smoke`                                             |
 | Performance | `tests/performance/` | Stress matrix (125 combos, expensive, non-deterministic) | `uv run pytest -m performance`                                       |
+| Performance | `tests/performance/` | Stress matrix (18 combos, expensive, non-deterministic) | `uv run pytest -m performance`                                       |
 
 Run everything cheap and deterministic:
 
@@ -204,7 +205,7 @@ parallel with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/):
 ```bash
 uv add --dev pytest-xdist # one-time install
 uv run pytest -n auto # auto = one worker per CPU core
-uv run pytest -n 4 -m performance # pin worker count for the 125-combo stress matrix
+uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress matrix
 ```
 
 Skip `-n` for the default suite — it runs in ~0.5s, and xdist worker startup
