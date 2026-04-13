@@ -76,6 +76,7 @@
       "Bash(*git commit*)"
     ],
     "deny": [
+      "Bash(*git commit *)",
       "Bash(*gh pr create*)",
       "Bash(*gh pr merge*)",
       "Bash(*gh pr close*)",
@@ -155,6 +156,7 @@
     "hookify@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "remember@claude-plugins-official": true
+    "remember@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true
   }
 }
