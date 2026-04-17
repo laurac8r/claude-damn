@@ -46,6 +46,15 @@ tree, and the first spec-plan-test skill (`sme-test`).
      `docs/superpowers/specs/2026-04-05-sme-test-design.md` and 12-task
      implementation plan at `docs/superpowers/plans/2026-04-05-sme-test.md`.
 
+- **`/proceed` skill** at `skills/proceed/SKILL.md` — single-use
+  user-invocable signal that authorizes Claude to pass the current approval
+  gate only (design review, plan approval, risky-action confirmation). Body
+  carries the literal phrase "Aligned and approved" and an explicit
+  single-gate scope clarification so it does not grant standing authorization.
+   - 5-level regression coverage under `tests/{structural,behavioral,integration,smoke,performance}/test_proceed.py`
+     (23 default tests + 15 marker-gated smoke/performance cells). Mirrors the
+     `/listen` test pattern. Behavioral layer uses TDD mutation checks.
+
 - **Docs**
    - `README.md` — project overview, skill catalog, setup, project structure.
    - `ROADMAP.md` — 4-phase plugin transition plan.
