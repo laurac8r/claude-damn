@@ -64,7 +64,7 @@ MATRIX = _build_matrix()
     ids=[m[0] for m in MATRIX],
 )
 class TestProceedMatrix:
-    """Exercise /proceed across the 2×3 parameter matrix.
+    """Exercise /proceed across the complexity × prompt kind × model matrix.
 
     One invocation per cell; all assertions share the same result.
     """
