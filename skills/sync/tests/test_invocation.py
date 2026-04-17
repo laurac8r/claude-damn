@@ -1,6 +1,6 @@
 """Integration test: /sync invocation works from any directory.
 
-Verifies the SKILL.md-documented command (`PYTHONPATH=~/.claude python3 -m
+Verifies the SKILL.md-documented command (`PYTHONPATH="$HOME/.claude" python3 -m
 skills.sync.scripts.sync ...`) succeeds when run from a directory that does
 NOT contain a `skills/` package or a `pyproject.toml`.
 """

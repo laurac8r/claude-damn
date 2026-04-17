@@ -21,7 +21,7 @@ explicitly with `--from`). Target is the first positional argument or `--to`.
 1. Parse the user's arguments.
 2. Run from any directory:
    ```bash
-   PYTHONPATH=~/.claude python3 -m skills.sync.scripts.sync <args>
+   PYTHONPATH="$HOME/.claude" python3 -m skills.sync.scripts.sync <args>
    ```
 3. Show the output to the user.
 
