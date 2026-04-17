@@ -75,6 +75,16 @@ tree, and the first spec-plan-test skill (`sme-test`).
   bullet; fixed Phase 0 step numbering (1-5 sequential).
 - `CLAUDE.md` — clarified agent directives: model routing, batch operations, no
   inline non-Bash scripts via heredocs, git-commit opt-out.
+- `hooks/block-inline-scripts.py` — deny feedback moved from top-level
+  `systemMessage` (persistent `<system-reminder>`) to
+  `hookSpecificOutput.permissionDecisionReason` so the block message is scoped
+  to the denied Bash call and no longer leaks into subsequent unrelated tool
+  uses. Exception path now writes to stderr with exit 1 instead of emitting a
+  persistent `systemMessage`. Tests updated.
+- `CLAUDE.md` — documented the PreToolUse hook output contract (use
+  `permissionDecisionReason`, not `systemMessage`); noted the repo hook's Bash
+  limits (300 chars / 3 statement separators); documented the `.worktrees/`
+  convention and gitignored `CHECKPOINT.md`.
 
 ## [Baseline] — Pre-plugin (`~/.claude` dotfiles)
 
