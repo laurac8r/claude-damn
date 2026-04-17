@@ -72,6 +72,10 @@ tree, and the first spec-plan-test skill (`sme-test`).
   to the denied Bash call and no longer leaks into subsequent unrelated tool
   uses. Exception path now writes to stderr with exit 1 instead of emitting a
   persistent `systemMessage`. Tests updated.
+- `CLAUDE.md` — documented the PreToolUse hook output contract (use
+  `permissionDecisionReason`, not `systemMessage`); noted the repo hook's Bash
+  limits (300 chars / 3 statement separators); documented the `.worktrees/`
+  convention and gitignored `CHECKPOINT.md`.
 
 ## [Baseline] — Pre-plugin (`~/.claude` dotfiles)
 
