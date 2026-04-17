@@ -10,16 +10,16 @@ import dataclasses
 import sys
 from pathlib import Path
 
-from skills.sync.scripts.apply import ApplyOptions, run_apply
-from skills.sync.scripts.exceptions import (
+from .apply import ApplyOptions, run_apply
+from .exceptions import (
     RsyncFailedError,
     SourceNotFoundError,
     SyncError,
 )
-from skills.sync.scripts.plan import PlanOptions, build_plan
-from skills.sync.scripts.prompt import PromptOptions, approve_ops
-from skills.sync.scripts.render import render_plan
-from skills.sync.scripts.types import SyncPlan
+from .plan import PlanOptions, build_plan
+from .prompt import PromptOptions, approve_ops
+from .render import render_plan
+from .types import SyncPlan
 
 
 def _build_parser() -> argparse.ArgumentParser:

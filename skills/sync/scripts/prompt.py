@@ -4,7 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-from skills.sync.scripts.types import FileOp
+from .types import FileOp
 
 
 @dataclass(frozen=True)

@@ -3,8 +3,8 @@
 import hashlib
 from pathlib import Path
 
-from skills.sync.scripts.exceptions import InvalidModeError
-from skills.sync.scripts.types import FileOp, Mode
+from .exceptions import InvalidModeError
+from .types import FileOp, Mode
 
 
 def diff_ops(
