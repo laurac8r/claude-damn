@@ -4,7 +4,9 @@ version = "0.2.0"
 description = "Claude Code superpowers plugin"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "defusedxml>=0.7.1",
+]
 
 
 [dependency-groups]
