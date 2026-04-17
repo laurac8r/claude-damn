@@ -18,7 +18,8 @@ SIMPLE_PROMPTS = {
         ["cat", "subagent"],
     ),
     "2_subagents": (
-        '/listen /super-duper-cat : say "LOADED"',
+        "/listen /super-duper-cat : describe brainstorming, worktrees, and subagents"
+        " in one line each",
         ["brainstorm", "worktree", "subagent"],
     ),
 }
