@@ -1,11 +1,11 @@
 ---
-name: tessaract
+name: tesseract
 description: "Use when you've been poking at the same file, concept, or problem across many sessions and want to step outside time to see its whole arc — or when you want to leave a note for next-session-you. Triggers: 'I've been going in circles on X', 'what have I learned about X', 'what did past-me say about X', 'I keep rediscovering this'."
 user-invocable: true
 argument-hint: "[anchor] [--signal \"<morse>\"]"
 ---
 
-# /tessaract — Step Outside Time
+# /tesseract — Step Outside Time
 
 > "Maybe she already knows I'm here. Maybe I already told her." — Cooper
 
@@ -22,9 +22,9 @@ present-you is about to leave one too. You cannot visit the tesseract silently.
 |--------------------------|-----------------------------------------------------------------|
 | Murph point of reference | **Anchor** — the file/branch/topic everything is framed around  |
 | Gravity                  | **File I/O** — the only cross-session channel                   |
-| Books on the shelf       | **Shelf entries** at `~/.claude/tessaract/shelf/<slug>.md`      |
+| Books on the shelf       | **Shelf entries** at `~/.claude/tesseract/shelf/<slug>.md`      |
 | Morse via the watch      | **`--signal "<morse>"`** — optional short payload               |
-| Bulk-beings transmission | **`~/.claude/tessaract/bulk-beings.md`** — append-only self-log |
+| Bulk-beings transmission | **`~/.claude/tesseract/bulk-beings.md`** — append-only self-log |
 | Four hallways            | git · memory · shelf · bulk — the four evidence streams         |
 
 ---
@@ -38,7 +38,7 @@ Parse `$ARGUMENTS` by splitting on ` --signal ` (surrounded by spaces):
 - Left side (trimmed) → `anchor`. Right side must begin with a `"..."` quoted string → `signal`. If `--signal` appears
   but no quoted value follows, print a one-line warning and fall back to the default signal.
 - If `anchor` is empty, cascade:
-   1. First line of `git status --porcelain | head -1`; strip the two-char status prefix to get the path.
+   1. First line of `git status --porcelain | head -1`; strip the three-char status prefix (two status chars + one space) to get the path.
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its `name:` frontmatter field; if none, the
       basename without `.md`.
@@ -61,16 +61,16 @@ contradict the "signals are short" rule below.
 
 ### 2 · Ensure the tesseract exists
 
-If `~/.claude/tessaract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created implicitly by the first append.
+If `~/.claude/tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created implicitly by the first append.
 
 ### 3 · Read the shelf
 
-With **Read**, open `~/.claude/tessaract/shelf/<slug>.md` if it exists. Count every `^## ` block — call that count
+With **Read**, open `~/.claude/tesseract/shelf/<slug>.md` if it exists. Count every `^## ` block — call that count
 `N_before`. Take the three most-recent blocks for Hallway 3. If the file doesn't exist, `N_before = 0`.
 
 ### 4 · Read bulk-beings
 
-With **Read**, open `~/.claude/tessaract/bulk-beings.md` if it exists. Collect lines where the anchor string appears
+With **Read**, open `~/.claude/tesseract/bulk-beings.md` if it exists. Collect lines where the anchor string appears
 case-insensitively. Keep up to three most-recent. Do **not** pad with unrelated lines at this step; Hallway 4 handles
 the fallback labeling.
 
@@ -79,14 +79,19 @@ the fallback labeling.
 Each hallway expresses time **relative to the anchor** — `3 commits ago`, `11d ago`, `5 days since last signal`. Never
 render absolute ISO timestamps inside a hallway (storage is a separate concern — see step 6).
 
-**Hallway 1 — git time-strings.** Dispatch on anchor type:
+**Hallway 1 — git time-strings.** Cascade; stop at first match:
 
-- **Path-like** (contains `/` OR has an extension OR `git ls-files --error-unmatch "<anchor>"` succeeds):
-  `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
-- **Branch-like** (`git branch --list "<anchor>"` is non-empty):
-  `git log --max-count=5 --pretty='format:%h %ar — %s' "<anchor>"`.
-- **Else** (free text): `git log --max-count=5 -i --grep="<anchor>" --pretty='format:%h %ar — %s'`.
-- If all three fall through empty, print `(no commits touching this anchor)`.
+1. `git ls-files --error-unmatch "<anchor>"` exits 0 → **tracked path**:
+   `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
+2. `git branch --list "<anchor>"` is non-empty → **branch**:
+   `git log --max-count=5 --pretty='format:%h %ar — %s' "<anchor>"`.
+3. Anchor contains `/` OR has an extension → **path-heuristic** (new or untracked file):
+   `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
+4. Else → **free text**:
+   `git log --max-count=5 -i --grep="<anchor>" --pretty='format:%h %ar — %s'`.
+
+If the chosen branch returns no commits, print `(no commits touching this anchor)`. Checking branches before the
+path-heuristic fixes the misclassification where anchors like `feat/foo` (a real branch) were routed to `--follow`.
 
 **Hallway 2 — memory resonance.** Query = basename-without-extension if anchor is path-like, else the anchor itself.
 
@@ -128,7 +133,7 @@ the result back with **Write**.
 **Bulk-beings append.** One shell call, one line:
 
 ```
-echo "<ts> — <anchor> — <one-line-learning>" >> ~/.claude/tessaract/bulk-beings.md
+echo "<ts> — <anchor> — <one-line-learning>" >> ~/.claude/tesseract/bulk-beings.md
 ```
 
 `<one-line-learning>` must cite something **concrete from this invocation's hallways or context** — a specific commit
@@ -163,13 +168,14 @@ future-you can verify. Never "visited the anchor" or any other generic. If nothi
 
 ## 📉 Dropped a book
 
-Shelf:       ~/.claude/tessaract/shelf/<slug>.md  (+1 entry)
-Bulk beings: ~/.claude/tessaract/bulk-beings.md  (+1 line)
+Shelf:       ~/.claude/tesseract/shelf/<slug>.md  (+1 entry)
+Bulk beings: ~/.claude/tesseract/bulk-beings.md  (+1 line)
 Signal:      "<signal>"
 Learning:    <one-line-learning>
 ```
 
-`<N>` is `N_before + 1` — the count after this invocation's write, so a first visit reads `1 prior visit`.
+`<N>` is `N_before` — the count of visits *before* this invocation's shelf write. On a first visit this reads
+`0 prior visits`, which is correct: the current invocation's own book-drop isn't prior to itself.
 
 ---
 
@@ -183,29 +189,31 @@ Learning:    <one-line-learning>
 - **Signals stay short.** One line, ≤80 chars. If you need a paragraph, that's a memory entry, not a signal.
 - **Learning must be concrete.** Cite a hash, a date, a file, a specific pattern. The filler "visited — …" line is
   banned.
+- **Sanitize before echo.** Before the bulk-beings append, strip `"`, `$`, `` ` ``, `\` from `<anchor>` and
+  `<one-line-learning>`, and replace any `\n` or `\r` with a single space. Quote/backslash/dollar break double-quoted
+  shell strings or trigger expansion; newline/CR would smuggle a second log line and break the
+  one-entry-per-line invariant Hallway 4 depends on.
 - **Hook-compliant shell.** Per-Bash-call cap: 300 chars and 3 statement separators (`;`, `&&`, `||`, `|`, `>`, `<`,
   `>>`, `<<`, newline). For anything longer or multi-step, write a helper to `/tmp/` with **Write** first — see this
   repo's CLAUDE.md "No Inline Non-Bash Scripts in Bash" rule.
-- **Race condition is accepted.** Two concurrent `/tessaract` invocations on the same anchor may lose a shelf entry.
+- **Race condition is accepted.** Two concurrent `/tesseract` invocations on the same anchor may lose a shelf entry.
   This is a solo skill; no locking.
 
 ---
 
 ## Examples
 
-- `/tessaract hooks/block-inline-scripts.py` — path anchor. Hallway 1 uses `--follow`.
-- `/tessaract feat/tessaract-skill` — branch anchor. Hallway 1 passes the branch to `git log`.
-- `/tessaract "memory-system-redesign"` — free-text anchor. Hallway 1 falls to `--grep`.
-- `/tessaract core-memories --signal "keep it under 200 lines"` — drops Morse for next-session-you.
-- `/tessaract` — infers anchor via modified-file → branch → latest-memory cascade. Prints the inferred anchor first so
+- `/tesseract hooks/block-inline-scripts.py` — path anchor. Hallway 1 uses `--follow`.
+- `/tesseract feat/tesseract-skill` — branch anchor. Hallway 1 passes the branch to `git log`.
+- `/tesseract "memory-system-redesign"` — free-text anchor. Hallway 1 falls to `--grep`.
+- `/tesseract core-memories --signal "keep it under 200 lines"` — drops Morse for next-session-you.
+- `/tesseract` — infers anchor via modified-file → branch → latest-memory cascade. Prints the inferred anchor first so
   the frame is explicit.
 
 ---
 
 ## Notes
 
-- Personal-only: lives at `~/.claude/skills/tessaract/`. Not listed in any README, CHANGELOG, or plugin manifest. Never
-  ships with the `claude-damn` plugin.
 - No subagents, no `shared/` coordination, no tests. A solo skill that communicates only with its own past and future,
   and only through gravity.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the next invocation what this anchor's
