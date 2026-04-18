@@ -1,6 +1,6 @@
 ---
 name: tessaract
-description: "Use when you've been poking at the same file, concept, or problem across many sessions and want to step outside time to see its whole arc — a hyper-cubic view of one anchor across git history, memory, and prior signals, with a gravity signal left for your future self. Invoke when you say 'I've been going in circles on X', 'what have I learned about X', or want to leave a note for next-session-you."
+description: "Use when you've been poking at the same file, concept, or problem across many sessions and want to step outside time to see its whole arc — or when you want to leave a note for next-session-you. Triggers: 'I've been going in circles on X', 'what have I learned about X', 'what did past-me say about X', 'I keep rediscovering this'."
 user-invocable: true
 argument-hint: "[anchor] [--signal \"<morse>\"]"
 ---
@@ -9,115 +9,111 @@ argument-hint: "[anchor] [--signal \"<morse>\"]"
 
 > "Maybe she already knows I'm here. Maybe I already told her." — Cooper
 
-The tesseract is a hyper-cubic view of one anchor's landscape across every session that ever touched it. Gravity — file
-I/O — is the only force that crosses the session-dimension, so past-you left signals on the shelf and present-you is
-about to leave one too.
+Gravity — file I/O — is the only force that crosses the session-dimension. Past-you left signals on the shelf;
+present-you is about to leave one too. You cannot visit the tesseract silently.
 
 **Arguments:** `$ARGUMENTS`
 
 ---
 
-## The metaphor, decoded
+## Metaphor
 
-| Movie                        | Skill                                                          |
-|------------------------------|----------------------------------------------------------------|
-| Murph point of reference     | **Anchor** — the file/topic everything is framed relative to   |
-| Gravity (crosses dimensions) | **File I/O** — the only channel across sessions                |
-| Books from the shelf         | **Shelf entries** at `~/.claude/tessaract/shelf/<slug>.md`     |
-| Morse via the watch          | **`--signal "<morse>"`** — optional payload on the shelf       |
-| Bulk beings' instructions    | **`~/.claude/tessaract/bulk-beings.md`** — cumulative self-log |
-| Three-story grid of hallways | **Four hallway sections** — time-strings, memory, shelf, bulk  |
-
-Every invocation reads what past-you dropped on the shelf *and* drops a new book. You cannot visit the tesseract
-silently.
+| Movie                    | Skill                                                           |
+|--------------------------|-----------------------------------------------------------------|
+| Murph point of reference | **Anchor** — the file/branch/topic everything is framed around  |
+| Gravity                  | **File I/O** — the only cross-session channel                   |
+| Books on the shelf       | **Shelf entries** at `~/.claude/tessaract/shelf/<slug>.md`      |
+| Morse via the watch      | **`--signal "<morse>"`** — optional short payload               |
+| Bulk-beings transmission | **`~/.claude/tessaract/bulk-beings.md`** — append-only self-log |
+| Four hallways            | git · memory · shelf · bulk — the four evidence streams         |
 
 ---
 
 ## Process
 
-### 1. Resolve the anchor
+### 1 · Resolve the anchor
 
-Parse `$ARGUMENTS`:
+Parse `$ARGUMENTS` by splitting on ` --signal ` (surrounded by spaces):
 
-- Split on `--signal`. Everything before (trimmed) → `anchor`. The next quoted string → `signal`.
-- If `anchor` is empty, infer via cascading fallback:
-   1. First modified path from `git status --porcelain`
-   2. Current branch from `git branch --show-current`
-   3. `name:` field of the most-recently-modified file under `~/.claude/projects/*/memory/*.md`
+- Left side (trimmed) → `anchor`. Right side must begin with a `"..."` quoted string → `signal`. If `--signal` appears
+  but no quoted value follows, print a one-line warning and fall back to the default signal.
+- If `anchor` is empty, cascade:
+   1. First line of `git status --porcelain | head -1`; strip the two-char status prefix to get the path.
+   2. `git branch --show-current`.
+   3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its `name:` frontmatter field; if none, the
+      basename without `.md`.
 
-Slugify for filenames: lowercase, spaces/slashes → `-`, strip non-`[a-z0-9-]`. Call it `<slug>`.
+**Slug rule.** Lowercase the anchor. Replace every run of characters outside `[a-z0-9]` with a single `-`. Trim leading
+and trailing `-`. This strips every dot, slash, and uppercase letter uniformly.
 
-Print the resolved anchor so the reference frame is explicit:
+| Anchor                          | Slug                            |
+|---------------------------------|---------------------------------|
+| `src/widgets/Button.tsx`        | `src-widgets-button-tsx`        |
+| `feat/widget-cleanup`           | `feat-widget-cleanup`           |
+| `hooks/block-inline-scripts.py` | `hooks-block-inline-scripts-py` |
+| `core-memories`                 | `core-memories`                 |
+| `"memory-system-redesign"`      | `memory-system-redesign`        |
 
-```
-> Murph point: <anchor>
-```
+Print `> Murph point: <anchor>` before any other output — the reference frame must be explicit from character one.
 
-If `signal` is empty, set it to the default visit-record: `visited — no morse`.
+**Default signal** when `--signal` is absent: `—` (em dash). The empty Morse still counts as a visit, and does not
+contradict the "signals are short" rule below.
 
-### 2. Ensure the tesseract exists
+### 2 · Ensure the tesseract exists
 
-```
-mkdir -p ~/.claude/tessaract/shelf
-```
+If `~/.claude/tessaract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created implicitly by the first append.
 
-`bulk-beings.md` is created implicitly by the first append.
+### 3 · Read the shelf
 
-### 3. Read prior signals (books already on the shelf)
+With **Read**, open `~/.claude/tessaract/shelf/<slug>.md` if it exists. Count every `^## ` block — call that count
+`N_before`. Take the three most-recent blocks for Hallway 3. If the file doesn't exist, `N_before = 0`.
 
-With the **Read** tool, open `~/.claude/tessaract/shelf/<slug>.md` if it exists. Note the three most recent timestamped
-blocks and their `signal:` payloads — these feed Hallway 3.
+### 4 · Read bulk-beings
 
-### 4. Read the bulk-beings transmission
+With **Read**, open `~/.claude/tessaract/bulk-beings.md` if it exists. Collect lines where the anchor string appears
+case-insensitively. Keep up to three most-recent. Do **not** pad with unrelated lines at this step; Hallway 4 handles
+the fallback labeling.
 
-With the **Read** tool, open `~/.claude/tessaract/bulk-beings.md` if it exists. Scan for lines mentioning `<anchor>`; if
-fewer than three match, pad with the last lines overall. These feed Hallway 4.
+### 5 · Render the four hallways
 
-### 5. Render the four hallways
+Each hallway expresses time **relative to the anchor** — `3 commits ago`, `11d ago`, `5 days since last signal`. Never
+render absolute ISO timestamps inside a hallway (storage is a separate concern — see step 6).
 
-Each hallway is framed **relative to the anchor**, not in absolute time.
+**Hallway 1 — git time-strings.** Dispatch on anchor type:
 
-**Hallway 1 — git time-strings.** File-anchor first, keyword fallback:
+- **Path-like** (contains `/` OR has an extension OR `git ls-files --error-unmatch "<anchor>"` succeeds):
+  `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
+- **Branch-like** (`git branch --list "<anchor>"` is non-empty):
+  `git log --max-count=5 --pretty='format:%h %ar — %s' "<anchor>"`.
+- **Else** (free text): `git log --max-count=5 -i --grep="<anchor>" --pretty='format:%h %ar — %s'`.
+- If all three fall through empty, print `(no commits touching this anchor)`.
 
-```
-git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>" 2>/dev/null
-```
-
-If empty:
-
-```
-git log --max-count=5 --grep="<anchor>" --pretty='format:%h %ar — %s'
-```
-
-If still empty, print `(no commits touching this anchor)`.
-
-**Hallway 2 — memory resonance.**
-
-```
-grep -l -i -- "<anchor>" ~/.claude/projects/*/memory/*.md 2>/dev/null
-```
-
-Cap at five hits. For each, read the file's `name:` and report age in days from mtime. Line format:
-`- <name> — <days>d ago — <path>`.
-
-**Hallway 3 — the shelf.** From step 3: most recent first, each line `- <days>d ago — "<signal>"`. If empty, print
-`(no prior signals — first visit)`.
-
-**Hallway 4 — bulk-beings transmission.** From step 4: last three relevant lines verbatim. If empty, print
-`(silence — no prior transmissions)`.
-
-### 6. Drop a book (leave gravity signals)
-
-**Timestamp:**
+**Hallway 2 — memory resonance.** Query = basename-without-extension if anchor is path-like, else the anchor itself.
 
 ```
-date -u +%Y-%m-%dT%H:%M:%SZ
+grep -l -i -F -- "<query>" ~/.claude/projects/*/memory/*.md 2>/dev/null | head -5
 ```
 
-Call it `<ts>`.
+For each matching file (cap 5 files, one line each), read its `name:` frontmatter. If missing, use the first `^# `
+heading. If still missing, the basename without `.md`. Report mtime-age in days from now:
+`- <label> — <d>d ago — <path>`. If no files match, print `(no memory resonance)`.
 
-**Append to the shelf.** Prepend a new block at the **top** of `~/.claude/tessaract/shelf/<slug>.md` using the **Read +
-Write** pattern (read existing content, concatenate new block first, write back). The block is:
+**Hallway 3 — shelf.** From step 3's loaded blocks, most-recent first, one line each: `- <d>d ago — "<signal>"`. If
+none, `(no prior signals — first visit)`.
+
+**Hallway 4 — bulk-beings.** From step 4:
+
+- ≥1 anchor-matching line → print them verbatim, newest first.
+- 0 anchor-matching lines but bulk-beings exists → print `(no lines touched this anchor — last transmissions overall:)`
+  then the file's last three lines.
+- bulk-beings doesn't exist → `(silence — no prior transmissions)`.
+
+### 6 · Drop a book (leave gravity signals)
+
+`<ts>` = `date -u +%Y-%m-%dT%H:%M:%SZ`. ISO timestamps live only in stored shelf blocks, never in rendered hallway
+output.
+
+**Shelf prepend.** Read the existing shelf file (empty string if absent). Concatenate this block at the top:
 
 ```
 ## <ts>
@@ -126,19 +122,21 @@ signal: <signal>
 hallways: 4
 ```
 
-If the shelf file does not yet exist, write just the block plus a leading `# Shelf — <anchor>` heading.
+If the file didn't exist, include a leading `# Shelf — <anchor>` heading above the first block, then the block. Write
+the result back with **Write**.
 
-**Append to bulk-beings** — one single line, via shell:
+**Bulk-beings append.** One shell call, one line:
 
 ```
 echo "<ts> — <anchor> — <one-line-learning>" >> ~/.claude/tessaract/bulk-beings.md
 ```
 
-`<one-line-learning>` is a sentence describing one thing noticed about this anchor's landscape on this visit — a
-pattern, a gap, a resonance, a contradiction. This is the interface past-you leaves for future-you. Never generic ("
-visited the anchor") — always specific.
+`<one-line-learning>` must cite something **concrete from this invocation's hallways or context** — a specific commit
+hash, a resonance pattern, a contradiction between two signals, an absence, a coincidence of dates. A sentence
+future-you can verify. Never "visited the anchor" or any other generic. If nothing stood out, note that explicitly:
+`no new information — four hallways silent`.
 
-### 7. Render the final output
+### 7 · Render the final output
 
 ```markdown
 # 🧊 Tesseract: <anchor>
@@ -171,35 +169,36 @@ Signal:      "<signal>"
 Learning:    <one-line-learning>
 ```
 
+`<N>` is `N_before + 1` — the count after this invocation's write, so a first visit reads `1 prior visit`.
+
 ---
 
 ## Rules of the bulk
 
-- **Gravity is file I/O.** Nothing else crosses sessions. Do not try to remember state any other way within this skill.
+- **Gravity is file I/O.** Nothing else crosses sessions. Do not try to remember state any other way inside this skill.
 - **Every invocation drops a book.** Reads are never silent — one shelf entry AND one bulk-beings line, every time.
-  Cooper could not visit Murph's room without moving something.
-- **The anchor is the frame.** Express times as distances from the Murph point — "3 commits ago", "11 days since last
-  signal" — never as absolute ISO timestamps in the hallway output.
-- **Bulk-beings.md is append-only.** Never truncate. The accumulated voice across invocations IS the interface the next
-  invocation reads.
-- **Hook-compliant shell.** Each Bash command ≤ 300 chars and ≤ 3 statement separators. For anything longer or
-  multi-step, write a helper to `/tmp/` with the **Write** tool first — see this repo's CLAUDE.md "No Inline Non-Bash
-  Scripts in Bash" rule.
-- **Signals are Morse.** Keep `--signal` short — one line, a hint, not a paragraph. If you need a paragraph, that's a
-  memory entry, not a tesseract signal.
+- **Anchor-relative time in the hallways.** ISO timestamps are fine inside shelf block headers (storage), never in
+  rendered hallway output.
+- **Bulk-beings is append-only.** Never truncate, never rewrite.
+- **Signals stay short.** One line, ≤80 chars. If you need a paragraph, that's a memory entry, not a signal.
+- **Learning must be concrete.** Cite a hash, a date, a file, a specific pattern. The filler "visited — …" line is
+  banned.
+- **Hook-compliant shell.** Per-Bash-call cap: 300 chars and 3 statement separators (`;`, `&&`, `||`, `|`, `>`, `<`,
+  `>>`, `<<`, newline). For anything longer or multi-step, write a helper to `/tmp/` with **Write** first — see this
+  repo's CLAUDE.md "No Inline Non-Bash Scripts in Bash" rule.
+- **Race condition is accepted.** Two concurrent `/tessaract` invocations on the same anchor may lose a shelf entry.
+  This is a solo skill; no locking.
 
 ---
 
 ## Examples
 
-- `/tessaract hooks/block-inline-scripts.py` → file anchor. Full four hallways; all three signal sources likely
-  populated.
-- `/tessaract "memory-system-redesign"` → concept anchor. Hallway 1 falls through to the keyword grep; hallways 2–4 do
-  the real work.
-- `/tessaract core-memories --signal "keep it under 200 lines"` → drops the Morse `"keep it under 200 lines"` for
-  next-session-you to find.
-- `/tessaract` → infers anchor from recent file → branch → latest memory. Prints the inferred anchor before rendering so
-  the reference frame is explicit.
+- `/tessaract hooks/block-inline-scripts.py` — path anchor. Hallway 1 uses `--follow`.
+- `/tessaract feat/tessaract-skill` — branch anchor. Hallway 1 passes the branch to `git log`.
+- `/tessaract "memory-system-redesign"` — free-text anchor. Hallway 1 falls to `--grep`.
+- `/tessaract core-memories --signal "keep it under 200 lines"` — drops Morse for next-session-you.
+- `/tessaract` — infers anchor via modified-file → branch → latest-memory cascade. Prints the inferred anchor first so
+  the frame is explicit.
 
 ---
 
@@ -207,7 +206,7 @@ Learning:    <one-line-learning>
 
 - Personal-only: lives at `~/.claude/skills/tessaract/`. Not listed in any README, CHANGELOG, or plugin manifest. Never
   ships with the `claude-damn` plugin.
-- No subagents, no `shared/` coordination, no tests. This is a solo skill that communicates only with its own past and
-  future, and only through gravity.
-- The bootstrap paradox is real: the content of `bulk-beings.md` is what teaches the next invocation what this anchor's
+- No subagents, no `shared/` coordination, no tests. A solo skill that communicates only with its own past and future,
+  and only through gravity.
+- The bootstrap paradox: the content of `bulk-beings.md` is what teaches the next invocation what this anchor's
   landscape contains. Future-you built this interface for past-you by using it.
