@@ -144,13 +144,14 @@ def main() -> None:
                     "hookSpecificOutput": {
                         "hookEventName": "PreToolUse",
                         "permissionDecision": "deny",
+                        "permissionDecisionReason": combined,
                     },
-                    "systemMessage": combined,
                 }
             )
         )
     except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
-        print(json.dumps({"systemMessage": f"Hook error: {e}"}))
+        print(f"Hook error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
