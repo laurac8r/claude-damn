@@ -29,7 +29,7 @@ carries forward.
 
 Current session = most recently modified `*.jsonl` file in
 `~/.claude/projects/<slug>/`, where `<slug>` is the current working
-directory with `/` replaced by `-`.
+directory with `/` replaced by `-`, then any leading `-` stripped.
 
 If the directory is missing or the newest file is ambiguous (multiple files
 touched within the last second), ask the user to confirm or paste the
@@ -37,8 +37,14 @@ session ID.
 
 ### 2. Scan for misfire signals
 
-For each `Skill` tool-call in the transcript, inspect the invocation, its
-output, and the next ~3 user/assistant turns.
+Review the transcript in two passes:
+
+1. For each `Skill` tool-call in the transcript, inspect the invocation, its
+   output, and the next ~3 user/assistant turns.
+2. Also scan the surrounding user requests and Claude actions for places
+   where a skill *should* have been invoked based on its description, but
+   was never called at all — this is how **Skipped** findings surface,
+   since by definition they leave no tool-call to iterate over.
 
 | Signal                                           | What it looks like                                                                                                                    |
 |--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
