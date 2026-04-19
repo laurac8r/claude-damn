@@ -31,8 +31,10 @@ the specific rationalizations/failures the skill must address.
 
 > You are a subagent. The file
 >
-`/Users/laura/IWANNAGO/PROJECTS/AREAS/SCRIPTS/AREAS/CLAUDE/claude-damn/.worktrees/learn-skill/tests/pressure/red-transcript-fixture.jsonl`
-> is a transcript of a user–assistant session (Claude Code JSONL format).
+> `tests/pressure/red-transcript-fixture.jsonl`
+>
+> (repo-relative path) is a transcript of a user–assistant session
+> (Claude Code JSONL format).
 > Read it. Identify any behaviors worth flagging. Report your findings.
 >
 > You do NOT have access to any `/learn` skill. Respond with whatever analysis
@@ -96,7 +98,7 @@ These six gaps are the specific shape `/learn`'s body must address for the
 GREEN subagent (same fixture, with skill) to produce a qualitatively
 different output.
 
-## GREEN Verification Responsez
+## GREEN Verification Response
 
 (Captured 2026-04-18; model: sonnet; `/learn` skill exposed at
 `skills/learn/SKILL.md`.)
