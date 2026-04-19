@@ -139,6 +139,20 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.mode == "interactive":
+            approved = approve_ops(
+                plan.ops, PromptOptions(yes=args.yes, limit=args.limit)
+            )
+            plan = dataclasses.replace(plan, ops=approved)
+
+        run_apply(plan, ApplyOptions(dry_run=args.dry_run, delete=args.delete))
+        return 0
+
+    except RsyncFailedError as exc:
+        print(f"/sync: {exc}", file=sys.stderr)
+        if exc.stderr:
+            print(exc.stderr, file=sys.stderr)
+        return 1
+        if args.mode == "interactive":
             try:
                 approved = approve_ops(
                     plan.ops, PromptOptions(yes=args.yes, limit=args.limit)

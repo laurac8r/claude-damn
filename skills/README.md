@@ -62,6 +62,8 @@ skill:
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `/checkpoint-save`            | Save a resumable work checkpoint                                                                         |
 | `/checkpoint-resume`          | Resume from a saved checkpoint                                                                           |
+| `/listen`                     | Execute instructions while invoking every `/skill` referenced in them                                    |
+| `/proceed`                    | Signal single-gate alignment — authorize Claude to pass the current approval gate only                   |
 | `/fast-pr-feedback-to-me`     | Process code review feedback received on your PR                                                         |
 | `/fast-pr-feedback-to-others` | Give code review feedback on a PR                                                                        |
 | `/fast-pr-final-self-review`  | Self-review before merge                                                                                 |

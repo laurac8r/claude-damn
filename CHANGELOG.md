@@ -46,6 +46,15 @@ tree, and the first spec-plan-test skill (`sme-test`).
      `docs/superpowers/specs/2026-04-05-sme-test-design.md` and 12-task
      implementation plan at `docs/superpowers/plans/2026-04-05-sme-test.md`.
 
+- **`/proceed` skill** at `skills/proceed/SKILL.md` — single-use
+  user-invocable signal that authorizes Claude to pass the current approval
+  gate only (design review, plan approval, risky-action confirmation). Body
+  carries the literal phrase "Aligned and approved" and an explicit
+  single-gate scope clarification so it does not grant standing authorization.
+   - 5-level regression coverage under `tests/{structural,behavioral,integration,smoke,performance}/test_proceed.py`
+     (23 default tests + 15 marker-gated smoke/performance cells). Mirrors the
+     `/listen` test pattern. Behavioral layer uses TDD mutation checks.
+
 - **Docs**
    - `README.md` — project overview, skill catalog, setup, project structure.
    - `ROADMAP.md` — 4-phase plugin transition plan.
@@ -58,6 +67,14 @@ tree, and the first spec-plan-test skill (`sme-test`).
      (duplicate bullet, Phase 0 numbering).
    - `scripts/test-isolated.sh` — error guards on worktree setup commands.
 
+- **PR review fixes** (PR #19 feedback)
+   - `tests/performance/test_proceed.py` — corrected matrix docstring
+     (actual matrix is complexity × prompt kind × model, not 2×3).
+   - `tests/smoke/test_proceed.py` — tightened
+     `test_not_standing_authorization` to require explicit negation of
+     "standing" or a current-gate-only phrase in proximity, so the test no
+     longer passes on incidental occurrences of "current"/"single"/"only".
+
 ### Changed
 
 - `expert-review` guidelines — added Java plus comprehensive language, security,
@@ -66,6 +83,16 @@ tree, and the first spec-plan-test skill (`sme-test`).
   bullet; fixed Phase 0 step numbering (1-5 sequential).
 - `CLAUDE.md` — clarified agent directives: model routing, batch operations, no
   inline non-Bash scripts via heredocs, git-commit opt-out.
+- `hooks/block-inline-scripts.py` — deny feedback moved from top-level
+  `systemMessage` (persistent `<system-reminder>`) to
+  `hookSpecificOutput.permissionDecisionReason` so the block message is scoped
+  to the denied Bash call and no longer leaks into subsequent unrelated tool
+  uses. Exception path now writes to stderr with exit 1 instead of emitting a
+  persistent `systemMessage`. Tests updated.
+- `CLAUDE.md` — documented the PreToolUse hook output contract (use
+  `permissionDecisionReason`, not `systemMessage`); noted the repo hook's Bash
+  limits (300 chars / 3 statement separators); documented the `.worktrees/`
+  convention and gitignored `CHECKPOINT.md`.
 
 ## [Baseline] — Pre-plugin (`~/.claude` dotfiles)
 

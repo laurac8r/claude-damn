@@ -1,16 +1,17 @@
 ---
-name: enforce
+name: listen
 description:
-   Execute instructions while strictly enforcing invocation of every skill
-   referenced within them
+   Execute instructions while listening for and invoking every skill referenced
+   within them
 argument-hint: "<instructions containing /skill references>"
 user-invocable: true
 ---
 
-# Enforce Skill Usage
+# Listen for Skill Usage
 
 Perform the following instructions and enforce using all the skills referenced
-in the skills used.
+in the skills used. Perform the following instructions and listen for all the —
+whether referenced directly or transitively through other skills.
 
 **Instructions:** "$ARGUMENTS"
 
@@ -31,6 +32,17 @@ Before executing the instructions above, you MUST:
    must have been invoked. If any skill was skipped, go back and invoke it now.
 
 ### Rules
+
+- If the instructions reference a compositional skill (e.g.,
+  `/super-duper-cat`), invoke that skill directly — do not decompose it into its
+  primitives unless the skill itself does so.
+- If the instructions contain no skill references, execute them normally without
+  this enforcement overhead.
+- If a referenced skill fails or is denied by the user, note it explicitly in
+  your output rather than silently skipping it.
+- Follow the invoked skills' own instructions exactly — this enforcement layer
+  adds the guarantee that they are all used, but does not override how each
+  skill operates.
 
 - If the instructions reference a compositional skill (e.g.,
   `/super-duper-cat`), invoke that skill directly — do not decompose it into its
