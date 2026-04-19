@@ -1,15 +1,18 @@
 """Structural and regression tests for skills/tesseract/SKILL.md.
 
-Each `test_<n>_regression_*` covers a bug fixed in PR #21 (Copilot inline
-comments + expert-review findings). The `pre_fix_skill_md` fixture loads
-SKILL.md as it was at HEAD; once the fixes are committed it returns the
-current file and the RED-against-pre-fix sanity checks become trivially
-satisfied — that's expected, the RED state is recorded in commit history.
+`TestTesseractRegressions` guards against re-introducing the four bugs fixed
+in PR #21 (Copilot inline comments + expert-review findings). Each test's
+RED state was proven against pre-fix HEAD content via direct grep checks
+at write-time; assertions here verify the post-fix state.
+
+`TestTesseractStructure` guards against accidental section deletions or
+spec drift (frontmatter fields, hallway count, slug-name/dir alignment).
 """
 
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 
 class TestTesseractRegressions:
@@ -96,7 +99,7 @@ class TestTesseractStructure:
         assert "argument-hint" in frontmatter
 
     def test_skill_dir_name_matches_frontmatter_name(
-        self, skill_root, frontmatter: dict
+        self, skill_root: Path, frontmatter: dict
     ) -> None:
         """Skill directory name must match the frontmatter `name:` field —
         otherwise the slash-command name and the on-disk path diverge,
