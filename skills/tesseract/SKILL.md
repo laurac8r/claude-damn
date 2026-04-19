@@ -37,11 +37,20 @@ Parse `$ARGUMENTS` by splitting on ` --signal ` (surrounded by spaces):
 
 - Left side (trimmed) → `anchor`. Right side must begin with a `"..."` quoted string → `signal`. If `--signal` appears
   but no quoted value follows, print a one-line warning and fall back to the default signal.
+- If the left side starts with `--anchor `, strip that prefix and treat the remainder as the anchor value. Lets
+  `/tesseract --anchor foo --signal "bar"` resolve to `anchor=foo` without literally naming the flag.
 - If `anchor` is empty, cascade:
-   1. First line of `git status --porcelain | head -1`; strip the three-char status prefix (two status chars + one space) to get the path.
+   1. First line of `git status --porcelain | head -1`; strip the three-char status prefix (two status chars + one
+      space) to get the path.
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its `name:` frontmatter field; if none, the
       basename without `.md`.
+   4. `ls -t ~/.claude/tesseract/shelf/*.md 2>/dev/null | head -1` → filename stem. Past-you's last anchor, recovered
+      from the shelf itself.
+   5. `basename "$PWD"`. Where you are when history is empty.
+
+  If every step yields nothing (first-ever invocation outside any repo with empty memory and empty shelf), use the
+  literal string `(unknown)` as the anchor and call that out in the one-line-learning.
 
 **Slug rule.** Lowercase the anchor. Replace every run of characters outside `[a-z0-9]` with a single `-`. Trim leading
 and trailing `-`. This strips every dot, slash, and uppercase letter uniformly.
@@ -136,6 +145,10 @@ the result back with **Write**.
 echo "<ts> — <anchor> — <one-line-learning>" >> ~/.claude/tesseract/bulk-beings.md
 ```
 
+If the full `echo` command would exceed the 300-char hook cap (see "Rules of the bulk"), **do not shorten the
+learning** — it's load-bearing for future-you. Fall back to **Read + Write** like the shelf: read `bulk-beings.md`,
+append the new line to the end, write back in a single atomic write.
+
 `<one-line-learning>` must cite something **concrete from this invocation's hallways or context** — a specific commit
 hash, a resonance pattern, a contradiction between two signals, an absence, a coincidence of dates. A sentence
 future-you can verify. Never "visited the anchor" or any other generic. If nothing stood out, note that explicitly:
@@ -214,6 +227,11 @@ Learning:    <one-line-learning>
 
 ## Notes
 
+- **Code ships, data doesn't.** The skill itself — `SKILL.md` and any supporting scripts under `skills/tesseract/` — is
+  safe to ship with the `claude-damn` plugin. The gravity signals at `~/.claude/tesseract/shelf/*.md` and
+  `~/.claude/tesseract/bulk-beings.md` are personal and must **never** be committed. Any repo that mirrors `~/.claude`
+  should gitignore `~/.claude/tesseract/` entirely. Don't bake specific anchors, signals, or paths into source — read
+  the shelf at runtime.
 - No subagents, no `shared/` coordination, no tests. A solo skill that communicates only with its own past and future,
   and only through gravity.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the next invocation what this anchor's
