@@ -9,9 +9,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 SKILL_PATH = PROJECT_ROOT / "skills" / "learn" / "SKILL.md"
 
 
-def _parse_frontmatter(path: Path) -> dict:
+def _parse_frontmatter(path: Path) -> dict[str, object]:
     """Extract YAML frontmatter from a SKILL.md file."""
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     parts = text.split("---", 2)
     assert len(parts) >= 3, "SKILL.md must have --- delimited frontmatter"
     return yaml.safe_load(parts[1])
