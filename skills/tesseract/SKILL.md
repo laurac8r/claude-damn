@@ -41,7 +41,8 @@ Parse `$ARGUMENTS` by splitting on ` --signal ` (surrounded by spaces):
   `/tesseract --anchor foo --signal "bar"` resolve to `anchor=foo` without literally naming the flag.
 - If `anchor` is empty, cascade:
    1. First line of `git status --porcelain | head -1`; strip the three-char status prefix (two status chars + one
-      space) to get the path.
+      space) to get the path. For rename/copy entries (status code `R` or `C`), the path-section is
+      `old -> new` — use the part after ` -> ` (the destination path).
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its `name:` frontmatter field; if none, the
       basename without `.md`.
@@ -53,7 +54,8 @@ Parse `$ARGUMENTS` by splitting on ` --signal ` (surrounded by spaces):
   literal string `(unknown)` as the anchor and call that out in the one-line-learning.
 
 **Slug rule.** Lowercase the anchor. Replace every run of characters outside `[a-z0-9]` with a single `-`. Trim leading
-and trailing `-`. This strips every dot, slash, and uppercase letter uniformly.
+and trailing `-`. This lowercases letters and collapses every run of non-`[a-z0-9]` characters (dots, slashes, spaces,
+etc.) into a single `-`.
 
 | Anchor                          | Slug                            |
 |---------------------------------|---------------------------------|
@@ -97,7 +99,7 @@ render absolute ISO timestamps inside a hallway (storage is a separate concern �
 3. Anchor contains `/` OR has an extension → **path-heuristic** (new or untracked file):
    `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
 4. Else → **free text**:
-   `git log --max-count=5 -i --grep="<anchor>" --pretty='format:%h %ar — %s'`.
+   `git log --max-count=5 -i -F --grep="<anchor>" --pretty='format:%h %ar — %s'`.
 
 If the chosen branch returns no commits, print `(no commits touching this anchor)`. Checking branches before the
 path-heuristic fixes the misclassification where anchors like `feat/foo` (a real branch) were routed to `--follow`.
@@ -142,10 +144,10 @@ the result back with **Write**.
 **Bulk-beings append.** One shell call, one line:
 
 ```
-echo "<ts> — <anchor> — <one-line-learning>" >> ~/.claude/tesseract/bulk-beings.md
+printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.claude/tesseract/bulk-beings.md
 ```
 
-If the full `echo` command would exceed the 300-char hook cap (see "Rules of the bulk"), **do not shorten the
+If the full append command would exceed the 300-char hook cap (see "Rules of the bulk"), **do not shorten the
 learning** — it's load-bearing for future-you. Fall back to **Read + Write** like the shelf: read `bulk-beings.md`,
 append the new line to the end, write back in a single atomic write.
 
@@ -202,10 +204,10 @@ Learning:    <one-line-learning>
 - **Signals stay short.** One line, ≤80 chars. If you need a paragraph, that's a memory entry, not a signal.
 - **Learning must be concrete.** Cite a hash, a date, a file, a specific pattern. The filler "visited — …" line is
   banned.
-- **Sanitize before echo.** Before the bulk-beings append, strip `"`, `$`, `` ` ``, `\` from `<anchor>` and
-  `<one-line-learning>`, and replace any `\n` or `\r` with a single space. Quote/backslash/dollar break double-quoted
-  shell strings or trigger expansion; newline/CR would smuggle a second log line and break the
-  one-entry-per-line invariant Hallway 4 depends on.
+- **Strip newlines before append.** Before the bulk-beings append, replace any `\n` or `\r` in `<anchor>` and
+  `<one-line-learning>` with a single space. A literal newline in either field would smuggle a second log line
+  and break the one-entry-per-line invariant Hallway 4 depends on. (Other shell metacharacters — `"`, `$`,
+  `` ` ``, `\` — are safe under `printf '%s' "$var"`, which doesn't expand its arguments.)
 - **Hook-compliant shell.** Per-Bash-call cap: 300 chars and 3 statement separators (`;`, `&&`, `||`, `|`, `>`, `<`,
   `>>`, `<<`, newline). For anything longer or multi-step, write a helper to `/tmp/` with **Write** first — see this
   repo's CLAUDE.md "No Inline Non-Bash Scripts in Bash" rule.
