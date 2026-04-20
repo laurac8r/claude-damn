@@ -23,6 +23,7 @@ worktrees/
 CHECKPOINT.md
 .claude
 docs/superpowers
+skills/*-workspace/
 __pycache__/
 *.py[cod]
 .venv/
