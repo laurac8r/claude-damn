@@ -1,7 +1,7 @@
 ---
-name: super-debug-and-fix-cat
+name: super-fixer-cat
 description:
-   Expert review to debug, then fix using brainstorm+TDD workflow with
+   Expert review to debug, then fix using brainstorming workflow with
    subagent-driven-development
 user-invocable: true
 ---

@@ -82,9 +82,7 @@ class TestEnforcementProtocolHeading:
 
     def test_mutation_without_heading_fails(self, skill_content: str) -> None:
         """TDD mutation check: removing the heading should make the assertion fail."""
-        mutated = skill_content.replace(
-            "## Enforcement Protocol", "## Removed Heading"
-        )
+        mutated = skill_content.replace("## Enforcement Protocol", "## Removed Heading")
         assert "## Enforcement Protocol" not in mutated  # mutation is effective
 
 
