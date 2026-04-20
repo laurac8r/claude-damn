@@ -336,6 +336,10 @@ class TestHookMalformedInput:
             text=True,
             timeout=10,
         )
+        # Error path: exit 1 + stderr message, no persistent systemMessage on stdout
+        assert result.returncode == 1
+        assert "Hook error" in result.stderr
+        assert result.stdout.strip() == ""
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert output == {}, f"Expected {{}}, got {output!r}"
