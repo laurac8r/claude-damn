@@ -41,9 +41,9 @@ class TestNoSkillReference:
         assert result.returncode == 0, (
             f"claude exited non-zero: {result.returncode}\nstderr: {result.stderr[:500]}"
         )
-        assert (
-            "HELLO_SMOKE_TEST" in result.stdout
-        ), f"Expected literal output, got:\n{result.stdout[:500]}"
+        assert "HELLO_SMOKE_TEST" in result.stdout, (
+            f"Expected literal output, got:\n{result.stdout[:500]}"
+        )
 
 
 class TestCompositionalSkillReference:
@@ -81,6 +81,6 @@ class TestMultipleSkillReferences:
         )
         output = result.stdout.lower()
         assert "tdd" in output, f"Expected tdd mention, got:\n{result.stdout[:500]}"
-        assert (
-            "review" in output
-        ), f"Expected review mention, got:\n{result.stdout[:500]}"
+        assert "review" in output, (
+            f"Expected review mention, got:\n{result.stdout[:500]}"
+        )
