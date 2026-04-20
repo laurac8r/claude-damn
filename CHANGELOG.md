@@ -55,6 +55,18 @@ tree, and the first spec-plan-test skill (`sme-test`).
      (23 default tests + 15 marker-gated smoke/performance cells). Mirrors the
      `/listen` test pattern. Behavioral layer uses TDD mutation checks.
 
+- **`/tesseract` skill** at `skills/tesseract/SKILL.md` — user-invocable
+  cross-session reflection tool. Resolves an anchor (file/branch/topic),
+  reads four "hallways" of evidence (git, memory, shelf, bulk-beings), and
+  writes back a shelf entry plus a one-line learning to
+  `~/.claude/tesseract/`. Solo skill — no subagents, no shared memory,
+  communicates with its own past and future only via file I/O.
+   - Structural + regression coverage at `tests/skills/tesseract/test_skill_md.py`
+     (11 tests: 5 regressions for the PR #21 review fixes — slug-rule prose
+     accuracy, `git log --grep -F`, porcelain rename handling, `printf`
+     append form — plus 6 structural invariants for frontmatter, hallway
+     count, process-step numbering, and skill-dir/spec-name alignment).
+
 - **Docs**
    - `README.md` — project overview, skill catalog, setup, project structure.
    - `ROADMAP.md` — 4-phase plugin transition plan.
@@ -66,6 +78,14 @@ tree, and the first spec-plan-test skill (`sme-test`).
    - `tests/skills/expert_review/` — structural tests for expert-review SKILL.md
      (duplicate bullet, Phase 0 numbering).
    - `scripts/test-isolated.sh` — error guards on worktree setup commands.
+
+- **PR review fixes** (PR #19 feedback)
+   - `tests/performance/test_proceed.py` — corrected matrix docstring
+     (actual matrix is complexity × prompt kind × model, not 2×3).
+   - `tests/smoke/test_proceed.py` — tightened
+     `test_not_standing_authorization` to require explicit negation of
+     "standing" or a current-gate-only phrase in proximity, so the test no
+     longer passes on incidental occurrences of "current"/"single"/"only".
 
 ### Changed
 
