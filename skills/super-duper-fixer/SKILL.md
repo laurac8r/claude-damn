@@ -1,7 +1,7 @@
 ---
-name: super-duper-debug-and-fix
+name: super-duper-fixer
 description:
-   Expert review to debug, then fix using brainstorm+TDD workflow in an isolated
+   Expert review to debug, then fix using brainstorming workflow in an isolated
    git worktree
 user-invocable: true
 ---
