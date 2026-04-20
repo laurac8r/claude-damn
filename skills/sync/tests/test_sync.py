@@ -1,12 +1,21 @@
 """Tests for the /sync CLI entrypoint (skills.sync.scripts.sync)."""
 
+import shutil
 import subprocess
 from pathlib import Path
+from typing import NoReturn
 
 import pytest
 
 from skills.sync.scripts import sync as sync_cli
+from skills.sync.scripts.apply import ApplyOptions
 from skills.sync.scripts.exceptions import InvalidModeError, RsyncFailedError
+from skills.sync.scripts.types import SyncPlan
+
+HAS_GIT = shutil.which("git") is not None
+HAS_RSYNC = shutil.which("rsync") is not None
+RSYNC_REQUIRED_REASON = "rsync is required for end-to-end apply tests"
+GIT_REQUIRED_REASON = "git is required for .gitignore integration test"
 
 # ---------------------------------------------------------------------------
 # 1. Missing target errors usefully
@@ -63,6 +72,7 @@ def test_plan_mode_prints_render_and_returns_zero(
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not HAS_RSYNC, reason=RSYNC_REQUIRED_REASON)
 def test_push_mode_copies_files(tmp_path: Path) -> None:
     src = tmp_path / "src"
     src.mkdir()
@@ -99,6 +109,7 @@ def test_missing_source_exits_one(
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not HAS_RSYNC, reason=RSYNC_REQUIRED_REASON)
 def test_positional_target_works(tmp_path: Path) -> None:
     src = tmp_path / "src"
     src.mkdir()
@@ -116,6 +127,7 @@ def test_positional_target_works(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not HAS_RSYNC, reason=RSYNC_REQUIRED_REASON)
 def test_to_flag_works(tmp_path: Path) -> None:
     src = tmp_path / "src"
     src.mkdir()
@@ -213,6 +225,7 @@ def test_include_exclude_are_repeatable(
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not HAS_GIT, reason=GIT_REQUIRED_REASON)
 def test_claude_flag_plumbs_through(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -268,6 +281,7 @@ def test_rsync_failure_exits_one_with_stderr(
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not HAS_RSYNC, reason=RSYNC_REQUIRED_REASON)
 def test_dry_run_leaves_target_untouched(tmp_path: Path) -> None:
     src = tmp_path / "src"
     src.mkdir()
@@ -307,3 +321,73 @@ def test_generic_sync_error_exits_one(
     err = capsys.readouterr().err
     assert "/sync:" in err
     assert "bogus" in err
+
+
+def test_push_mode_limit_applies_to_non_interactive(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "a.txt").write_text("a")
+    (src / "b.txt").write_text("b")
+    tgt = tmp_path / "tgt"
+    tgt.mkdir()
+
+    observed_plan: dict[str, object] = {}
+
+    def _capture(plan: SyncPlan, _opts: ApplyOptions) -> None:
+        observed_plan["ops"] = len(plan.ops)
+        observed_plan["paths"] = [op.path for op in plan.ops]
+
+    monkeypatch.setattr(sync_cli, "run_apply", _capture)
+    result = sync_cli.main(
+        [str(tgt), "--from", str(src), "--mode", "push", "--yes", "--limit", "1"]
+    )
+    assert result == 0
+    assert observed_plan["ops"] == 1
+    assert observed_plan["paths"] == [Path("a.txt")]
+
+
+def test_interactive_keyboard_interrupt_aborts_cleanly(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "a.txt").write_text("a")
+    tgt = tmp_path / "tgt"
+    tgt.mkdir()
+
+    def _raise_keyboard_interrupt(*args: object, **kwargs: object) -> NoReturn:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(sync_cli, "approve_ops", _raise_keyboard_interrupt)
+    result = sync_cli.main([str(tgt), "--from", str(src), "--mode", "interactive"])
+    assert result == 1
+    assert "cancelled by user" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [PermissionError("permission denied"), FileNotFoundError("rsync not found")],
+)
+def test_rsync_os_error_exits_one_with_user_friendly_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    exc: OSError,
+) -> None:
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "a.txt").write_text("a")
+    tgt = tmp_path / "tgt"
+    tgt.mkdir()
+
+    def _raise_os_error(*args: object, **kwargs: object) -> None:
+        raise exc
+
+    monkeypatch.setattr(sync_cli, "run_apply", _raise_os_error)
+    result = sync_cli.main([str(tgt), "--from", str(src), "--mode", "push", "--yes"])
+    assert result == 1
+    assert "failed to execute rsync" in capsys.readouterr().err
