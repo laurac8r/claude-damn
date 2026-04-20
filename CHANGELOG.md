@@ -79,6 +79,14 @@ tree, and the first spec-plan-test skill (`sme-test`).
      (duplicate bullet, Phase 0 numbering).
    - `scripts/test-isolated.sh` — error guards on worktree setup commands.
 
+- **PR review fixes** (PR #19 feedback)
+   - `tests/performance/test_proceed.py` — corrected matrix docstring
+     (actual matrix is complexity × prompt kind × model, not 2×3).
+   - `tests/smoke/test_proceed.py` — tightened
+     `test_not_standing_authorization` to require explicit negation of
+     "standing" or a current-gate-only phrase in proximity, so the test no
+     longer passes on incidental occurrences of "current"/"single"/"only".
+
 ### Changed
 
 - `expert-review` guidelines — added Java plus comprehensive language, security,
