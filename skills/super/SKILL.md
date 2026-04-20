@@ -1,7 +1,7 @@
 ---
 name: super
-description: Brainstorm first, then implement using TDD
+description: Brainstorming (alias for /brainstorming)
 user-invocable: true
 ---
 
-/brainstorming, but use /tdd when finally implementing
+/brainstorming

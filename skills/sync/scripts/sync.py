@@ -139,12 +139,21 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         if args.mode == "interactive":
-            approved = approve_ops(
-                plan.ops, PromptOptions(yes=args.yes, limit=args.limit)
-            )
+            try:
+                approved = approve_ops(
+                    plan.ops, PromptOptions(yes=args.yes, limit=args.limit)
+                )
+            except KeyboardInterrupt:
+                print("Sync operation cancelled by user.", file=sys.stderr)
+                return 1
             plan = dataclasses.replace(plan, ops=approved)
+        elif args.limit is not None:
+            plan = dataclasses.replace(plan, ops=plan.ops[: args.limit])
 
-        run_apply(plan, ApplyOptions(dry_run=args.dry_run, delete=args.delete))
+        try:
+            run_apply(plan, ApplyOptions(dry_run=args.dry_run, delete=args.delete))
+        except OSError as exc:
+            raise SyncError(f"failed to execute rsync: {exc}") from exc
         return 0
 
     except RsyncFailedError as exc:
