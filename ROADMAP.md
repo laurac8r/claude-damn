@@ -25,18 +25,21 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 
 - [x] Introduce `pyproject.toml` + `uv.lock` (uv-managed `.venv`, Python ≥ 3.14)
 - [x] Stand up `tests/` tree with `pytest` + `ruff`
-  - [x] `test_extract_cost.py` — cost parser coverage including fast-mode
-        pricing
-  - [x] `test_checkpoint_archive.bats` — checkpoint archive rotation
-  - [x] `test_hook_inline_scripts.py` — inline-script hook guardrail
-  - [x] `test_permissions.py` — settings.json permission lists
-  - [x] `test_settings_structure.py` — settings schema
-  - [x] `test_sync_theme.bats` — launchd theme-sync
-  - [x] `tests/skills/sme_test/` — 132 structural tests for sme-test v1
+   - [x] `test_extract_cost.py` — cost parser coverage including fast-mode
+         pricing
+   - [x] `test_checkpoint_archive.bats` — checkpoint archive rotation
+   - [x] `test_hook_inline_scripts.py` — inline-script hook guardrail
+   - [x] `test_permissions.py` — settings.json permission lists
+   - [x] `test_settings_structure.py` — settings schema
+   - [x] `test_sync_theme.bats` — launchd theme-sync
+   - [x] `tests/skills/sme_test/` — 132 structural tests for sme-test v1
 - [x] **sme-test v1** — first skill built with spec-plan-test discipline (see
       `docs/superpowers/specs/2026-04-05-sme-test-design.md`)
 - [ ] Dogfood sme-test on itself (Layer 4 — manual coaching run on its own
       files)
+- [ ] Structural test coverage for the rest of the skill catalog (`sme-test`,
+      `expert-review`, and `tesseract` have structural tests; other skills are
+      ad-hoc markdown)
 - [ ] **sme-review v1** — coaching-driven sibling to sme-test, interactive
       alternative to `/expert-review`. Spec brainstorm in progress; see
       `CHECKPOINT.md` and `.remember/remember.md` for current state. Will

@@ -1,6 +1,7 @@
 ---
 name: cost-opt
-description: 1. First, ensure logs exist by running: `python3 ~/.claude/extract_cost.py --append-log --quiet`
+description:
+  1. First, ensure logs exist by running: `python3 ~/.claude/extract_cost.py --append-log --quiet`
 user-invocable: true
 ---
 
@@ -9,12 +10,13 @@ user-invocable: true
 2. Read the JSONL cost log files in `~/.claude/cost-log/*.jsonl` and the
    existing `~/.claude/COST-SUMMARY.md`.
 3. Recalibrate and update `~/.claude/extract_cost.py` `PRICING` table and the
-   `~/.claude/statusline-command.sh` `case "$model_id"` pricing block,based on
+   `~/.claude/statusline-command.sh` `case "$model_id"` pricing block, based on
    the `~/.claude/cost-log/*.csv` actual extracts from
    - `https://platform.claude.com/cost` (cost-by-day), and
    - `https://platform.claude.com/logs` (historical API logs) –> The user will
      periodically fetch these extracts themselves and upload them to
      `~/.claude/cost-log`.
+
 4. Perform an efficient `/compact` summary on the log files (just changes since
    last summary) and update `SUMMARY.md` with the compacted summary including:
    total spend, spend by model, spend by project, busiest sessions, and trends.

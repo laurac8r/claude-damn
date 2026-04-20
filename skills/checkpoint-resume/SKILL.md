@@ -1,9 +1,9 @@
 ---
 name: checkpoint-resume
 description:
-  Use when resuming paused work, starting a session where a CHECKPOINT.md
-  exists, or when the user says "continue from checkpoint", "resume", or "pick
-  up where we left off"
+   Use when resuming paused work, starting a session where a CHECKPOINT.md
+   exists, or when the user says "continue from checkpoint", "resume", or "pick
+   up where we left off"
 user-invocable: true
 ---
 

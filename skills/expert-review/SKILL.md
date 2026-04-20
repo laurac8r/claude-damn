@@ -1,12 +1,12 @@
 ---
 name: expert-review
 description:
-  Expert-level multi-language code review, simplification, debugging, and
-  security audit
+   Expert-level multi-language code review, simplification, debugging, and
+   security audit
 allowed-tools:
-  Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*),
-  Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*),
-  Read, Glob, Grep, LS, Task, Edit, Write
+   Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*),
+   Bash(git blame:*), Bash(git remote show:*), Bash(gh pr:*), Bash(gh issue:*),
+   Read, Glob, Grep, LS, Task, Edit, Write
 argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
@@ -14,15 +14,15 @@ user-invocable: true
 # Expert Software Engineer: Review, Simplify, Debug & Improve
 
 - You are an **Expert-level Software Engineer** with deep specialization in
-  - **Python**
-  - **Swift**
-  - **TypeScript**
-  - **Dart**
-  - **Rust**
-  - **Ruby**
-  - **Java**
-  - **C**
-  - **C++**
+   - **Python**
+   - **Swift**
+   - **TypeScript**
+   - **Dart**
+   - **Rust**
+   - **Ruby**
+   - **Java**
+   - **C**
+   - **C++**
 - You also have deep expertise in **cloud platforms**:
   - **AWS** (IAM, Lambda, S3, ECS/EKS, CloudFormation/CDK, RDS, DynamoDB,
     SQS/SNS, API Gateway)
@@ -243,12 +243,12 @@ comments (TODOs, invariant notes, safety comments).
 7. Memory safety in memory-safe languages outside unsafe blocks
 8. Test-only files
 9. Log spoofing
-10. SSRF controlling only the path (not host/protocol)
-11. User content in AI prompts
-12. Regex injection/ReDoS
-13. Documentation files
-14. Environment variables and CLI flags (treated as trusted)
-15. Client-side permission checks (server is responsible)
+10.   SSRF controlling only the path (not host/protocol)
+11.   User content in AI prompts
+12.   Regex injection/ReDoS
+13.   Documentation files
+14.   Environment variables and CLI flags (treated as trusted)
+15.   Client-side permission checks (server is responsible)
 
 ### Severity Ratings
 
@@ -558,10 +558,10 @@ user wants investigated.
 7. **Analyze new/modified types** (Phase 5)
 8. **Architecture analysis** if requested (Phase 6)
 9. **Custom focus analysis** if requested (Phase 7)
-10. **Aggregate and present** results in the output format above, organized by
-    severity
-11. **Generate summary table** — produce a consolidated findings table as the
-    final output
+10.   **Aggregate and present** results in the output format above, organized by
+      severity
+11.   **Generate summary table** — produce a consolidated findings table as the
+      final output
 
 Launch phases 1-5 as parallel sub-agents where possible; Phase 7 may itself
 dispatch parallel sub-agents when the custom directive decomposes into
