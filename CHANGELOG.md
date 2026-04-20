@@ -55,6 +55,18 @@ tree, and the first spec-plan-test skill (`sme-test`).
      (23 default tests + 15 marker-gated smoke/performance cells). Mirrors the
      `/listen` test pattern. Behavioral layer uses TDD mutation checks.
 
+- **`/tesseract` skill** at `skills/tesseract/SKILL.md` — user-invocable
+  cross-session reflection tool. Resolves an anchor (file/branch/topic),
+  reads four "hallways" of evidence (git, memory, shelf, bulk-beings), and
+  writes back a shelf entry plus a one-line learning to
+  `~/.claude/tesseract/`. Solo skill — no subagents, no shared memory,
+  communicates with its own past and future only via file I/O.
+   - Structural + regression coverage at `tests/skills/tesseract/test_skill_md.py`
+     (11 tests: 5 regressions for the PR #21 review fixes — slug-rule prose
+     accuracy, `git log --grep -F`, porcelain rename handling, `printf`
+     append form — plus 6 structural invariants for frontmatter, hallway
+     count, process-step numbering, and skill-dir/spec-name alignment).
+
 - **Docs**
    - `README.md` — project overview, skill catalog, setup, project structure.
    - `ROADMAP.md` — 4-phase plugin transition plan.
