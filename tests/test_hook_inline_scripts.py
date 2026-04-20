@@ -63,10 +63,11 @@ class TestHookBlocksInlineScripts:
             "cat /tmp/x.py | python3",
         ],
     )
-    def test_blocked_output_has_system_message(self, command: str) -> None:
+    def test_blocked_output_has_deny_reason(self, command: str) -> None:
         output = run_hook("Bash", command)
-        assert "systemMessage" in output
-        assert "BLOCKED" in output["systemMessage"]
+        assert "systemMessage" not in output
+        reason = output["hookSpecificOutput"]["permissionDecisionReason"]
+        assert "BLOCKED" in reason
 
 
 class TestHookAllowsSafeCommands:
@@ -109,10 +110,11 @@ class TestCharLimit:
     def test_blocked_message_includes_length_and_limit(self) -> None:
         command = "echo " + "a" * 296  # 301 chars
         output = run_hook("Bash", command)
-        msg = output.get("systemMessage", "")
-        assert "301" in msg
-        assert "300" in msg
-        assert "BLOCKED" in msg
+        assert "systemMessage" not in output
+        reason = output["hookSpecificOutput"]["permissionDecisionReason"]
+        assert "301" in reason
+        assert "300" in reason
+        assert "BLOCKED" in reason
 
 
 class TestStatementLimit:
@@ -189,10 +191,11 @@ class TestStatementLimit:
     def test_blocked_message_includes_count_and_limit(self) -> None:
         command = "echo a; echo b; echo c; echo d; echo e"
         output = run_hook("Bash", command)
-        msg = output.get("systemMessage", "")
-        assert "4" in msg  # 4 semicolons
-        assert "3" in msg  # max is 3
-        assert "BLOCKED" in msg
+        assert "systemMessage" not in output
+        reason = output["hookSpecificOutput"]["permissionDecisionReason"]
+        assert "4" in reason  # 4 semicolons
+        assert "3" in reason  # max is 3
+        assert "BLOCKED" in reason
 
     # --- Fix A: SEPARATOR_PATTERN must not double-count >> and << ---
 
@@ -233,10 +236,11 @@ class TestMultipleViolations:
         # Long command with many separators
         command = "echo " + "a" * 280 + "; echo b; echo c; echo d; echo e"
         output = run_hook("Bash", command)
-        msg = output.get("systemMessage", "")
-        assert "Command too long" in msg
-        assert "Too many chained statements" in msg
-        assert "---" in msg
+        assert "systemMessage" not in output
+        reason = output["hookSpecificOutput"]["permissionDecisionReason"]
+        assert "Command too long" in reason
+        assert "Too many chained statements" in reason
+        assert "---" in reason
 
     def test_all_three_rules_reported(self) -> None:
         # Inline script + long + many separators
@@ -247,10 +251,11 @@ class TestMultipleViolations:
             + "; echo b; echo c; echo d"
         )
         output = run_hook("Bash", command)
-        msg = output.get("systemMessage", "")
-        assert "Inline non-Bash script detected" in msg
-        assert "Command too long" in msg
-        assert "Too many chained statements" in msg
+        assert "systemMessage" not in output
+        reason = output["hookSpecificOutput"]["permissionDecisionReason"]
+        assert "Inline non-Bash script detected" in reason
+        assert "Command too long" in reason
+        assert "Too many chained statements" in reason
 
 
 class TestHookIgnoresNonBash:
@@ -300,9 +305,58 @@ class TestHookMalformedInput:
             text=True,
             timeout=10,
         )
+        # Error path: exit 1 + stderr message, no persistent systemMessage on stdout
+        assert result.returncode == 1
+        assert "Hook error" in result.stderr
+        assert result.stdout.strip() == ""
+
+    # --- Fix B: non-string / non-dict inputs must coerce to empty, not error ---
+
+    def test_null_command_is_allowed(self) -> None:
+        """null command coerces to '' → no rules fire → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": None}})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "systemMessage" in output  # graceful error
+        assert output == {}, f"Expected {{}}, got {output!r}"
+
+    def test_non_string_command_is_allowed(self) -> None:
+        """Integer command coerces to '' → no rules fire → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": 42}})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        # Error path: exit 1 + stderr message, no persistent systemMessage on stdout
+        assert result.returncode == 1
+        assert "Hook error" in result.stderr
+        assert result.stdout.strip() == ""
+        assert result.returncode == 0
+        output = json.loads(result.stdout)
+        assert output == {}, f"Expected {{}}, got {output!r}"
+
+    def test_non_dict_tool_input_is_allowed(self) -> None:
+        """Non-dict tool_input coerces to {} → command = '' → no rules → {}."""
+        payload = json.dumps({"tool_name": "Bash", "tool_input": "oops"})
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=payload,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        assert result.returncode == 0
+        output = json.loads(result.stdout)
+        assert output == {}, f"Expected {{}}, got {output!r}"
 
     # --- Fix B: non-string / non-dict inputs must coerce to empty, not error ---
 

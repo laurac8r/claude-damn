@@ -4,8 +4,11 @@ Covers the dataclass shape and invoke_skill signature without shelling out
 to a real `claude -p` subprocess.
 """
 
+import os
 import subprocess
 from pathlib import Path
+
+import pytest
 
 from tests._skill_helpers import PROJECT_ROOT, SkillResult, invoke_skill
 
@@ -92,6 +95,10 @@ def test_invoke_skill_returns_timeout_sentinel_on_timeout(monkeypatch) -> None:
     assert result == SkillResult(stdout="", stderr="TIMEOUT", returncode=-1)
 
 
+@pytest.mark.skipif(
+    os.environ.get("PYTEST_XDIST_WORKER") is not None,
+    reason="Fixture only yields None when not running under xdist",
+)
 def test_worker_worktree_yields_none_outside_xdist(
     worker_worktree,
 ) -> None:

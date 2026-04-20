@@ -1,6 +1,6 @@
 ---
 name: expert-super-review
-description: Expert-level review, then brainstorm and fix using TDD
+description: Expert-level review, then brainstorm and fix
 user-invocable: true
 ---
 
