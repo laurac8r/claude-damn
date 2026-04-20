@@ -59,7 +59,7 @@ class TestOldNameAbsent:
                 continue
             try:
                 text = path.read_text()
-            except (UnicodeDecodeError, PermissionError):
+            except UnicodeDecodeError, PermissionError:
                 continue
             if "/enforce" in text:
                 for i, line in enumerate(text.splitlines(), 1):
