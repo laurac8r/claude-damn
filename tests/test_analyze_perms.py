@@ -97,6 +97,30 @@ class TestExtractFirstCommand:
     def test_only_env_vars_returns_none(self) -> None:
         assert extract_first_command("FOO=bar BAZ=1") is None
 
+    def test_drops_env_wrapper(self) -> None:
+        assert extract_first_command("env git status") == ("git", "git status")
+
+    def test_drops_env_wrapper_with_assignments(self) -> None:
+        result = extract_first_command("env FOO=bar git status")
+        assert result == ("git", "git status")
+
+    def test_drops_env_wrapper_with_multiple_assignments(self) -> None:
+        result = extract_first_command("env FOO=bar BAZ=1 git status")
+        assert result == ("git", "git status")
+
+    def test_drops_env_wrapper_with_i_flag(self) -> None:
+        assert extract_first_command("env -i git status") == ("git", "git status")
+
+    def test_drops_env_wrapper_with_u_flag_and_arg(self) -> None:
+        result = extract_first_command("env -u PATH git status")
+        assert result == ("git", "git status")
+
+    def test_bare_env_returns_none(self) -> None:
+        assert extract_first_command("env") is None
+
+    def test_env_with_only_assignments_returns_none(self) -> None:
+        assert extract_first_command("env FOO=bar") is None
+
 
 class TestScanTranscripts:
     def test_counts_bash_calls(self, tmp_path: Path) -> None:
@@ -231,6 +255,30 @@ class TestClassifyBashKey:
             ("curl", "allowlist"),
             ("open", "allowlist"),
             ("somecustomtool", "allowlist"),
+            # Bare pair-family leaves must not fall through to allowlist;
+            # `Bash(git *)` would also grant `git push`, etc.
+            ("git", "risky_wildcard"),
+            ("gh", "risky_wildcard"),
+            ("docker", "risky_wildcard"),
+            ("npm", "risky_wildcard"),
+            ("yarn", "risky_wildcard"),
+            ("pnpm", "risky_wildcard"),
+            ("bun", "risky_wildcard"),
+            ("cargo", "risky_wildcard"),
+            ("uv", "risky_wildcard"),
+            # Unknown subcommands of pair families also inherit the risky
+            # verdict — pair lookups still win for the known-good ones above.
+            ("git somenewsubcommand", "risky_wildcard"),
+            ("npm somenewsubcommand", "risky_wildcard"),
+            # Shell control keywords — `for f in *; do ...` parses to
+            # ("for", "for f") and must not emit a `Bash(for f *)` rule.
+            ("for f", "risky_wildcard"),
+            ("while true", "risky_wildcard"),
+            ("if test", "risky_wildcard"),
+            ("case $x", "risky_wildcard"),
+            ("do something", "risky_wildcard"),
+            ("then something", "risky_wildcard"),
+            ("function foo", "risky_wildcard"),
         ],
     )
     def test_classify(self, key: str, expected: str) -> None:
@@ -329,6 +377,49 @@ class TestRankSuggestions:
         scan.bash["curl"] = 1
         out = rank_suggestions(scan, min_count=1)
         assert [s.pattern for s in out] == ["Bash(curl *)"]
+
+    @pytest.mark.parametrize(
+        "noisy_key",
+        [
+            "shasum ~/.claude/foo.md",  # starts with ~
+            "shasum /usr/local/lib",  # starts with /
+            "shasum ./relative/path",  # starts with .
+            "shasum abc1234",  # 7-char hex hash
+            "shasum abc1234def5678",  # 14-char hex
+            "shasum notes.md",  # .md extension
+            "shasum archive.tar",  # .tar extension
+            "shasum file.py",  # .py extension
+        ],
+    )
+    def test_drops_noisy_second_tokens(self, noisy_key: str) -> None:
+        scan = ScanResult()
+        scan.bash[noisy_key] = 5
+        out = rank_suggestions(scan)
+        assert out == [], f"expected {noisy_key!r} to be filtered out"
+
+    def test_keeps_plain_second_tokens(self) -> None:
+        scan = ScanResult()
+        scan.bash["shasum filename"] = 5  # no path/hash/ext markers
+        out = rank_suggestions(scan)
+        assert out == [
+            Suggestion(
+                pattern="Bash(shasum filename *)",
+                count=5,
+                note="shasum filename",
+            )
+        ]
+
+    def test_noisy_filter_does_not_affect_single_token_bash(self) -> None:
+        scan = ScanResult()
+        scan.bash["curl"] = 4  # single token, no second; must survive
+        out = rank_suggestions(scan)
+        assert [s.pattern for s in out] == ["Bash(curl *)"]
+
+    def test_noisy_filter_does_not_affect_mcp(self) -> None:
+        scan = ScanResult()
+        scan.mcp["mcp__foo__read_file"] = 5  # MCP never has a second token
+        out = rank_suggestions(scan)
+        assert [s.pattern for s in out] == ["mcp__foo__read_file"]
 
 
 class TestFindRecentTranscripts:

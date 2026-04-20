@@ -254,6 +254,10 @@ _MUTATING_PAIRS: frozenset[str] = frozenset(
 )
 
 # Wildcarding any of these would grant arbitrary code execution.
+# Pair families (``git``, ``gh``, ``docker``, ``npm``, ``yarn``, ``pnpm``,
+# ``bun``, ``cargo``, ``uv``) are risky at the bare-leaf level because
+# ``Bash(git *)`` also matches ``git push``; known-safe subcommands are
+# whitelisted via ``_AUTO_PAIRS`` which wins in ``classify_bash_key``.
 _RISKY_COMMANDS: frozenset[str] = frozenset(
     {
         "python",
@@ -276,6 +280,24 @@ _RISKY_COMMANDS: frozenset[str] = frozenset(
         "bunx",
         "uvx",
         "pipx",
+        "git",
+        "gh",
+        "docker",
+        "npm",
+        "yarn",
+        "pnpm",
+        "bun",
+        "cargo",
+        "uv",
+        # Shell control keywords — parsing `for f in *; do ...` strands
+        # ``for`` as a leading token; allowlisting it would be nonsense.
+        "for",
+        "while",
+        "if",
+        "case",
+        "do",
+        "then",
+        "function",
     }
 )
 _RISKY_PAIRS: frozenset[str] = frozenset(
@@ -294,6 +316,15 @@ _RISKY_PAIRS: frozenset[str] = frozenset(
 
 _ENV_PREFIX = re.compile(r"^(?:[A-Z_][A-Z0-9_]*=\S+(?:\s+|$))+")
 _SEGMENT_SEP = re.compile(r"&&|\|\||[;|]")
+_VAR_ASSIGN = re.compile(r"^[A-Z_][A-Z0-9_]*=")
+# ``env`` flags that consume a following argument (``env -u NAME cmd``).
+_ENV_FLAGS_WITH_ARG: frozenset[str] = frozenset({"-u", "-C", "-S"})
+
+# Second tokens that signal per-session noise rather than a stable subcommand:
+# absolute/relative/home paths, commit-sha-like hex blobs, or filenames.
+# Applied as a post-filter in ``rank_suggestions`` so the parser and counter
+# stay stable and only the emitted allowlist is pruned.
+_NOISY_SECOND_TOKEN = re.compile(r"^(?:[~/.]|[a-f0-9]{7,40}$|.*\.[a-z]{1,5}$)")
 
 
 def _is_numeric_duration(token: str) -> bool:
@@ -325,6 +356,19 @@ def extract_first_command(cmd: str) -> tuple[str, str] | None:
     tokens = s.split()
     while tokens and tokens[0] in ("sudo", "nohup"):
         tokens.pop(0)
+    if tokens and tokens[0] == "env":
+        tokens.pop(0)
+        while tokens:
+            t = tokens[0]
+            if t.startswith("-"):
+                tokens.pop(0)
+                if t in _ENV_FLAGS_WITH_ARG and tokens:
+                    tokens.pop(0)
+                continue
+            if _VAR_ASSIGN.match(t):
+                tokens.pop(0)
+                continue
+            break
     if tokens and tokens[0] == "timeout":
         tokens.pop(0)
         while tokens:
@@ -453,6 +497,8 @@ def rank_suggestions(
         if count < min_count:
             continue
         if classify_bash_key(key) != "allowlist":
+            continue
+        if " " in key and _NOISY_SECOND_TOKEN.match(key.split(" ", 1)[1]):
             continue
         suggestions.append(Suggestion(f"Bash({key} *)", count, key))
     for name, count in scan.mcp.items():
