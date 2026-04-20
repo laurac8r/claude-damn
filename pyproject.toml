@@ -5,10 +5,6 @@ description = "Claude Code superpowers plugin"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
-dependencies = [
-    "defusedxml>=0.7.1",
-]
-
 
 [dependency-groups]
 dev = ["pytest>=9.0.2", "pyyaml>=6.0.3", "pytest-xdist>=3.8.0", "ruff>=0.9.0"]
@@ -22,6 +18,7 @@ dev = [
     "pytest-xdist>=3.8.0",
     "pytest-mock>=3.15.1",
     "ruff>=0.15.10",
+    "defusedxml>=0.7.1",
 ]
 markers = [
     "smoke: live skill invocation tests (cost tokens, non-deterministic)",
