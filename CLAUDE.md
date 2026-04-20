@@ -55,6 +55,11 @@ these operational directives:
         separators that smuggle multiple statements into a single-line form. If
         more than one statement is needed, use the write-to-`/tmp/` workflow
         above.
+   - **This repo's `hooks/block-inline-scripts.py` also enforces (PreToolUse
+     Bash):** max 300 chars per command and max 3 statement separators (`;`,
+     `&&`, `||`, `|`, `>`, `<`, `\n`, `>>`, `<<`). Exceeding either triggers a
+     deny. Split long/chained commands across separate Bash calls rather than
+     chaining.
 
 - **Git Commits:**
    - The user prefers to handle all `git commit` (and its variants) operations
@@ -76,6 +81,15 @@ these operational directives:
      APIs.
    - Generate your own if the user is not sure or cannot provide them, and
      reference those for the project from now on.
+
+## Hook Authoring (PreToolUse)
+
+- **Per-call feedback (deny / allow / ask):** emit via
+  `hookSpecificOutput.permissionDecisionReason`. The top-level `systemMessage`
+  persists as a `<system-reminder>` across turns — avoid it unless you *want*
+  the text to follow every subsequent tool call.
+- **Hook errors:** write to stderr + `sys.exit(1)`. Do not emit a
+  `systemMessage` on stdout for errors (same persistence problem).
 
 ## Cost Tracking
 
@@ -124,6 +138,8 @@ these operational directives:
    parallel agents or subprocesses if the workflow allows it.
 3. **Unblocking:** Queue up write tasks for the user, but do not let them block
    ongoing exploration or scaffolding.
+4. **Worktrees:** use `.worktrees/<slug>/` (hidden, gitignored). `CHECKPOINT.md`
+   at worktree root is also gitignored — don't `git add` it.
 
 ## ASCII and Unicode Diagram Alignment
 

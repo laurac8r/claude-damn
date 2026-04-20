@@ -1,7 +1,7 @@
 ---
-name: super-duper-debug-and-fix-cat
+name: super-duper-fixer-cat
 description:
-   Expert review to debug, then fix using brainstorm+TDD workflow in an isolated
+   Expert review to debug, then fix using brainstorming workflow in an isolated
    git worktree with subagent-driven-development
 user-invocable: true
 ---

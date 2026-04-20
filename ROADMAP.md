@@ -37,8 +37,9 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       `docs/superpowers/specs/2026-04-05-sme-test-design.md`)
 - [ ] Dogfood sme-test on itself (Layer 4 — manual coaching run on its own
       files)
-- [ ] Structural test coverage for the rest of the skill catalog (`sme-test` and
-      `expert-review` have structural tests; other skills are ad-hoc markdown)
+- [ ] Structural test coverage for the rest of the skill catalog (`sme-test`,
+      `expert-review`, and `tesseract` have structural tests; other skills are
+      ad-hoc markdown)
 - [ ] Write the Claude Code plugin manifest (`.claude-plugin/plugin.json` or
       equivalent)
 - [ ] Decide final namespace: `claude-damn` as a standalone plugin vs. a
