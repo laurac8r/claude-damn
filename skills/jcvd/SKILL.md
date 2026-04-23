@@ -1,6 +1,8 @@
 ---
 name: jcvd
-description: "Open the best Jean-Claude Van Damme movie in your browser. Muscles from Brussels, activate."
+description:
+   "Open the best Jean-Claude Van Damme movie in your browser. Muscles from
+   Brussels, activate."
 user-invocable: true
 argument-hint: "[movie-slug]"
 ---
@@ -9,8 +11,9 @@ argument-hint: "[movie-slug]"
 
 > "If you break my record, I will break you." — Chong Li
 
-Opens the default browser to the JustWatch listing for a JCVD film so the user can watch it legally on whichever
-streaming service currently has it. Default: **Bloodsport** (1988) — the foundational classic.
+Opens the default browser to the JustWatch listing for a JCVD film so the user
+can watch it legally on whichever streaming service currently has it. Default:
+**Bloodsport** (1988) — the foundational classic.
 
 **Arguments:** `$ARGUMENTS`
 
@@ -18,8 +21,8 @@ streaming service currently has it. Default: **Bloodsport** (1988) — the found
 
 ## Process
 
-1. **Parse `$ARGUMENTS`.** If a value is supplied, slugify it (lowercase, spaces → `-`, strip non-`[a-z0-9-]`). If
-   empty, default to `bloodsport`.
+1. **Parse `$ARGUMENTS`.** If a value is supplied, slugify it (lowercase, spaces
+   → `-`, strip non-`[a-z0-9-]`). If empty, default to `bloodsport`.
 
 2. **Construct the URL** using the JustWatch movie path pattern:
 
@@ -28,18 +31,17 @@ streaming service currently has it. Default: **Bloodsport** (1988) — the found
    ```
 
 3. **Open the browser** via the platform-appropriate single-statement command:
-
    - **macOS:** `open "https://www.justwatch.com/us/movie/<slug>"`
    - **Linux:** `xdg-open "https://www.justwatch.com/us/movie/<slug>"`
    - **Windows:** `start "" "https://www.justwatch.com/us/movie/<slug>"`
 
-   If none of those commands are available, print the URL instead and tell the user to click it. Do not fail loudly —
-   this is supposed to be fun.
+   If none of those commands are available, print the URL instead and tell the
+   user to click it. Do not fail loudly — this is supposed to be fun.
 
 4. **Deliver a line.** Print a one-liner appropriate to the chosen film:
 
    | Slug                | Quote                                                       |
-   | ------------------- |-------------------------------------------------------------|
+   | ------------------- | ----------------------------------------------------------- |
    | `bloodsport`        | "Brick not hit back."                                       |
    | `kickboxer`         | "You dance very well, Tong Po."                             |
    | `lionheart`         | "I fight for the honor of my family."                       |
@@ -52,10 +54,10 @@ streaming service currently has it. Default: **Bloodsport** (1988) — the found
    | `jcvd`              | "When I was young, I dreamed I dreamed of being like them." |
    | `street-fighter`    | "You must defeat Sheng Long to stand a chance."             |
    | `cyborg`            | "It's a good day to die."                                   |
-   | *any other slug*    | "You break my record, now I break you."                     |
+   | _any other slug_    | "You break my record, now I break you."                     |
 
-5. **Done.** No shared memory, no subagents, no test-writer, no red gate. Just kicks, splits, and the Muscles from
-   Brussels.
+5. **Done.** No shared memory, no subagents, no test-writer, no red gate. Just
+   kicks, splits, and the Muscles from Brussels.
 
 ---
 
@@ -63,16 +65,21 @@ streaming service currently has it. Default: **Bloodsport** (1988) — the found
 
 - `/jcvd` → Bloodsport. Always Bloodsport when in doubt.
 - `/jcvd kickboxer` → Kickboxer.
-- `/jcvd "universal soldier"` → Universal Soldier (quotes preserve the space; slugify hyphenates).
-- `/jcvd maximum-risk` → Maximum Risk. (Yes, the same one we named a test tier after.)
+- `/jcvd "universal soldier"` → Universal Soldier (quotes preserve the space;
+  slugify hyphenates).
+- `/jcvd maximum-risk` → Maximum Risk. (Yes, the same one we named a test tier
+  after.)
 
 ---
 
 ## Notes
 
-- This skill is intentionally undocumented. It does not appear in `skills/README.md`, any ROADMAP, any CHANGELOG, or any
-  plugin manifest. It lives at `~/.claude/skills/jcvd/` so it is personal-only and will never ship with the
-  `claude-damn` plugin.
-- No tests. No contract. No `shared/` coordination. It is exactly as discrete and fun as it was asked to be.
-- JustWatch is used because it is a legal aggregator and does not privilege any single streaming service — it tells the
-  user where the film is currently available.
+- This skill is intentionally undocumented. It does not appear in
+  `skills/README.md`, any ROADMAP, any CHANGELOG, or any plugin manifest. It
+  lives at `~/.claude/skills/jcvd/` so it is personal-only and will never ship
+  with the `claude-damn` plugin.
+- No tests. No contract. No `shared/` coordination. It is exactly as discrete
+  and fun as it was asked to be.
+- JustWatch is used because it is a legal aggregator and does not privilege any
+  single streaming service — it tells the user where the film is currently
+  available.
