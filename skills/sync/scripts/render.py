@@ -2,7 +2,7 @@
 
 from collections import Counter
 
-from skills.sync.scripts.types import SyncPlan
+from .types import SyncPlan
 
 _SAMPLE_LIMIT = 10
 
