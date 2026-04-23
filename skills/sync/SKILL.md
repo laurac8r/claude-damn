@@ -14,16 +14,59 @@ user-invocable: true
 # /sync
 
 Sync files between two local directories. Source defaults to `$PWD` (or set
-explicitly with `--from`). Target is the first positional argument or `--to`.
+explicitly with `--from`). Target is the first positional argument or `--to`
+(exactly one — passing both raises "target: use positional or --to, not both").
 
 ## When the user types `/sync ...`
 
-1. Parse the user's arguments.
-2. Run from any directory:
+1. **Parse the user's arguments** and translate shorthand:
+   - If the user's first token is a mode name (`plan`, `interactive`, `push`,
+     `pull`, `mirror`), rewrite it to `--mode <name>`. The script treats any
+     bare positional as the `target` directory, so `plan` as a bare arg
+     collides with `--to` and errors.
+   - Strip any leading `@` from path tokens (e.g. `@.claude/docs/…` →
+     `.claude/docs/…`). `@` is a convention from the Claude Code slash-command
+     surface, not a valid shell path.
+   - If the user passes a literal placeholder like `<every …>`, don't pass it
+     through — expand it to concrete paths first, or tell the user you need a
+     real path.
+2. **Run from the `claude-damn` repo root** (where this skill's Python module
+   lives — `pyproject.toml` at
+   `/Users/laura/IWANNAGO/PROJECTS/AREAS/SCRIPTS/AREAS/CLAUDE/claude-damn`):
    ```bash
    PYTHONPATH="$HOME/.claude" python3 -m skills.sync.scripts.sync <args>
    ```
-3. Show the output to the user.
+   If you are in a claude-damn worktree (`.worktrees/<slug>`), that also works
+   — the module is available from any checkout. Don't `cd` into the source or
+   target being synced; `cd` into the repo that hosts the sync module.
+3. **Show the output to the user.**
+
+### Concrete invocation examples
+
+```bash
+# Plan a sync: /foo → /bar with the Claude allowlist (gitignored files kept)
+uv run python -m skills.sync.scripts.sync --mode plan --claude \
+  --from /Users/you/src --to /Users/you/dst
+
+# Execute a push after plan-mode approval
+uv run python -m skills.sync.scripts.sync --mode push --yes --claude \
+  --from /Users/you/src --to /Users/you/dst
+
+# Positional target (equivalent to --to), source defaults to $PWD
+uv run python -m skills.sync.scripts.sync --mode plan /Users/you/dst
+```
+
+**Common translation mistakes — do not do these:**
+
+```bash
+# ❌ BAD: `plan` becomes the positional target, collides with --to
+uv run python -m skills.sync.scripts.sync plan --claude --to /Users/you/dst
+#   error: target: use positional or --to, not both
+
+# ❌ BAD: bare @ prefix on the target path
+uv run python -m skills.sync.scripts.sync --mode plan --claude \
+  --from /src @/Users/you/dst
+```
 
 ## Modes
 
