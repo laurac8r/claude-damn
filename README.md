@@ -227,6 +227,37 @@ uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress mat
 Skip `-n` for the default suite — it runs in ~0.5s, and xdist worker startup
 adds more overhead than it saves.
 
+## Privacy
+
+`claude-damn` runs entirely on your local machine. The plugin itself does not
+collect, transmit, store, or share any user data with the author or any
+third-party service. Specifically:
+
+- **Skills and hooks execute locally.** Every skill, every hook, every script
+  runs inside your Claude Code session on your own filesystem. Nothing is phoned
+  home to a `claude-damn` server — there is no `claude-damn` server.
+- **Cost-tracking artifacts stay on-disk.** `/cost_` writes session token-usage
+  logs to `~/.claude/cost-log/` and `~/.claude/COST-SUMMARY.md`. `/cost-opt`
+  reads and compacts those same files. None of this is uploaded anywhere.
+- **Checkpoint state stays in-repo.** `/checkpoint-save` writes `CHECKPOINT.md`
+  to your working tree and archives to `.checkpoints/` — local files only.
+- **Tesseract transmissions are local-only.** `/tesseract` reads and writes
+  `~/.claude/tesseract/shelf/*.md` and `~/.claude/tesseract/bulk-beings.md` on
+  your disk. The skill explicitly advises gitignoring these files in any repo
+  that mirrors `~/.claude`.
+
+**Upstream data flows the plugin does not govern:**
+
+- Your prompts and Claude's responses travel to Anthropic as part of normal
+  Claude Code operation. That is governed by
+  [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy), not
+  this plugin.
+- Skills that shell out to `gh`, `git`, `curl`, or other tools follow the
+  privacy practices of those tools and any remote services they talk to.
+
+If any future version of `claude-damn` adds data collection or transmission,
+this section will be updated before that version ships.
+
 ## License
 
 [MIT](LICENSE)
