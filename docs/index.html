@@ -1,0 +1,354 @@
+<!doctype html>
+<!-- Anchors: identity · skill-composition · repo-map · harness-systems · test-ladder -->
+<html lang="en" dir="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>claude-damn — visual aid</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --fg: #e8ecf1;
+    --muted: #9aa3af;
+    --card: #1e2330;
+    --card-soft: #171b26;
+    --accent: #7cc4ff;
+    --ring: #ffd866;
+    --border: #2a3040;
+    --code-bg: #0a0c11;
+    --pill-bg: #2a3040;
+    --radius: 14px;
+    --pad: clamp(16px, 3vw, 28px);
+  }
+  @media (prefers-color-scheme: light) {
+    /* Re-pick per scheme: dark-mode blues/golds fail 4.5:1 / 3:1 on white. */
+    :root {
+      --bg: #fafaf7;
+      --fg: #141821;
+      --muted: #525863;
+      --card: #ffffff;
+      --card-soft: #f1f2ee;
+      --accent: #0057b3;
+      --ring: #b45309;
+      --border: #e2e5ec;
+      --code-bg: #f4f5f1;
+      --pill-bg: #e2e5ec;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header.site, footer.site { max-width: 76ch; margin: 0 auto; padding: var(--pad); }
+  main { max-width: 76ch; margin: 0 auto; padding: var(--pad); }
+  h1 { font-size: clamp(1.9rem, 4vw, 2.7rem); line-height: 1.15; margin: 0 0 .25em; letter-spacing: -0.01em; }
+  h2 { font-size: clamp(1.2rem, 2.2vw, 1.45rem); margin: 2em 0 .5em; letter-spacing: -0.005em; }
+  h3 { font-size: 1.02rem; margin: 0 0 .35em; }
+  p { margin: .5em 0; }
+  .muted { color: var(--muted); }
+  .lede { font-size: 1.08rem; max-width: 62ch; }
+  .facts {
+    display: flex; flex-wrap: wrap; gap: .5rem .6rem; margin: 1rem 0 0; padding: 0; list-style: none;
+  }
+  .facts li {
+    background: var(--pill-bg);
+    color: var(--fg);
+    padding: .25rem .6rem;
+    border-radius: 999px;
+    font-size: .88rem;
+    border: 1px solid var(--border);
+  }
+  .facts b { font-weight: 600; color: var(--accent); }
+  .grid {
+    display: grid; gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    margin: 1rem 0;
+  }
+  .card {
+    background: var(--card);
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .card p:last-child { margin-bottom: 0; }
+  .card .tag {
+    display: inline-block;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-bottom: .3rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: .95rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  caption {
+    text-align: left; caption-side: top; color: var(--muted); font-size: .9rem; padding: 0 0 .4rem;
+  }
+  th, td {
+    text-align: left; padding: .55rem .75rem; border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  thead th { background: var(--card-soft); font-weight: 600; font-size: .88rem; letter-spacing: .02em; }
+  tbody tr:last-child td { border-bottom: 0; }
+  code, pre, kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  code { background: var(--code-bg); padding: .08em .35em; border-radius: 4px; font-size: .92em; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-size: .88rem;
+    line-height: 1.5;
+    margin: 1rem 0;
+  }
+  pre code { background: transparent; padding: 0; }
+  ul.plain { list-style: none; padding: 0; margin: .5rem 0; }
+  ul.plain li { margin: .35rem 0; padding-left: 1.1em; position: relative; }
+  ul.plain li::before {
+    content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 600;
+  }
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :is(a, button, input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 2.2rem 0 1rem; }
+  .sig {
+    background: var(--card-soft);
+    border-left: 3px solid var(--accent);
+    padding: .7rem 1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 1rem 0;
+    font-size: .95rem;
+  }
+  .sig b { color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  @media print {
+    :root {
+      --bg: #fff; --fg: #000; --card: #fff; --card-soft: #f5f5f5;
+      --muted: #333; --border: #888; --accent: #003a80; --ring: #7a3f04;
+      --code-bg: #f5f5f5; --pill-bg: #f0f0f0;
+    }
+    .grid { grid-template-columns: 1fr !important; }
+    main, header.site, footer.site { max-width: 100% !important; padding: 1em !important; }
+    a::after { content: " (" attr(href) ")"; font-size: .85em; color: #444; }
+    pre, table, .card { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<!-- Header/footer are siblings of <main> so banner/contentinfo landmark roles survive. -->
+<header class="site">
+  <h1>claude-damn</h1>
+  <p class="lede muted">
+    A composable skill library and opinionated harness for
+    <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>,
+    layered on top of the <code>superpowers</code> plugin. Ships slash commands, hooks,
+    permission guards, cost tracking, and session-state plumbing.
+  </p>
+  <ul class="facts" aria-label="fast facts">
+    <li><b>60+</b> skills</li>
+    <li><b>12</b> plugins</li>
+    <li><b>7</b> test fidelity layers</li>
+    <li>Python: <b>uv</b>-managed</li>
+    <li>License: <b>MIT</b></li>
+  </ul>
+</header>
+
+<main>
+
+  <section aria-labelledby="identity">
+    <h2 id="identity">1 · Identity — what the repo IS</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">Shape</span>
+        <h3>Harness, not app</h3>
+        <p>It reshapes how Claude Code behaves in <em>your</em> sessions — slash commands, permission
+        rules, pre-tool hooks, cost logging. No service to deploy.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Foundation</span>
+        <h3>Built on superpowers</h3>
+        <p>The official <code>superpowers</code> plugin is the skill engine.
+        claude-damn adds opinionated modifiers, review ladders, and harness guards on top.</p>
+      </div>
+      <div class="card">
+        <span class="tag">A11y</span>
+        <h3>Accessibility is load-bearing</h3>
+        <p>Treated as a first-class design concern, not a post-hoc checklist. Skills prefer
+        structured prompts over disruptive modals, avoid involuntary focus or tab shifts, and
+        keep rejection semantics honest — a denied step is a question, not a conclusion.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Discipline</span>
+        <h3>Disciplined git + isolation</h3>
+        <p>Commits are deliberate and reviewable. <code>.worktrees/</code>, <code>.checkpoints/</code>,
+        and <code>.remember/</code> keep per-branch work and session state out of the main tree.
+        Operator-specific commit style lives in <code>rules/PERSONALIZATION.md</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="skills">
+    <h2 id="skills">2 · Skill composition — four modifiers stack</h2>
+    <p>Every workflow name is a combination of four building blocks. Read the name left-to-right
+    and each modifier adds one behavior to the pipeline.</p>
+    <table>
+      <caption>Modifier vocabulary</caption>
+      <thead>
+        <tr><th scope="col">Modifier</th><th scope="col">What it adds</th><th scope="col">Flag it flips</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>super</code></td><td>Brainstorm requirements before implementing</td><td>Planning phase ON</td></tr>
+        <tr><td><code>duper</code></td><td>Run inside an isolated git worktree</td><td>Workspace isolation ON</td></tr>
+        <tr><td><code>cat</code></td><td>Fan out to parallel subagents</td><td>Subagent execution ON</td></tr>
+        <tr><td><code>tdd</code></td><td>Red–green–refactor discipline</td><td>Test-first ON</td></tr>
+      </tbody>
+    </table>
+
+    <p class="muted">Four families emerge from the combinations:</p>
+    <ul class="plain">
+      <li><strong>TDD</strong> — <code>/tdd</code>, <code>/tdd-cat</code>, <code>/duper-tdd</code>, <code>/duper-tdd-cat</code></li>
+      <li><strong>Brainstorm + TDD</strong> — <code>/super</code>, <code>/super-cat</code>, <code>/super-duper</code>, <code>/super-duper-cat</code></li>
+      <li><strong>Debug + Brainstorm + TDD</strong> — <code>/super-fixer</code>, <code>/super-fixer-cat</code>, <code>/super-duper-fixer</code>, <code>/super-duper-fixer-cat</code>, <code>/super-duper-fixer-tdd-cat</code></li>
+      <li><strong>Expert Review</strong> — <code>/expert-review</code> through <code>/expert-super-duper-tdd-cat-review</code> (10 variants)</li>
+    </ul>
+
+    <div class="sig" role="note" aria-label="example">
+      <b>Reading a name:</b> <code>/expert-super-duper-tdd-cat-review</code> =
+      expert review &rarr; brainstorm &rarr; worktree &rarr; TDD &rarr; parallel subagents.
+      Top of the ladder; reserve for work that actually needs every modifier.
+    </div>
+
+    <p class="muted">Beyond the combinators there are utility skills:
+    <code>/checkpoint-save</code>, <code>/checkpoint-resume</code>, <code>/check-yourself</code>,
+    <code>/cost_</code>, <code>/cost-opt</code>, <code>/listen</code>, <code>/proceed</code>,
+    <code>/sync</code>, <code>/tesseract</code>, <code>/jcvd</code>, plus PR-feedback and fast-review skills.</p>
+  </section>
+
+  <section aria-labelledby="map">
+    <h2 id="map">3 · Repo map — where things live</h2>
+    <pre aria-label="directory tree"><code>claude-damn/
+├── CLAUDE.md              opinionated project rules (model routing, style, testing)
+├── README.md              setup + skill family overview
+├── ROADMAP.md             transition plan → proper plugin package
+├── CHANGELOG.md           what's landed on feat/transition-to-plugin
+├── CHECKPOINT.md          current in-progress checkpoint (gitignored in worktrees)
+├── settings.json          permissions, hooks, enabled plugins, model routing
+├── policy-limits.json     policy budgets
+├── pyproject.toml         uv-managed Python project
+├── ruff.toml · ty.toml · .prettierrc     formatter configs
+│
+├── skills/                ~60 slash commands (the combinatoric library)
+├── hooks/                 PreToolUse guards — block-inline-scripts.py is the big one
+├── plugins/               marketplaces + cache for the 12 plugins used
+├── src/                   extract_cost.py · statusline · sync-theme
+├── scripts/               test-isolated.sh
+├── tests/                 7 fidelity layers (structural → performance)
+├── docs/superpowers/      design specs + implementation plans
+│
+├── cost-log/              per-session JSONL cost ledger
+├── .remember/             session handoff notes (buffer/today/recent/archive)
+├── .checkpoints/          save/resume work across sessions
+├── .worktrees/            hidden, gitignored isolation branches
+└── .serena/  .idea/  .github/  .venv/     tooling</code></pre>
+    <p class="muted">Design specs and implementation plans: <code>docs/superpowers/{specs,plans}/</code>.
+    Full combinatoric skill table: <code>skills/README.md</code>.</p>
+  </section>
+
+  <section aria-labelledby="harness">
+    <h2 id="harness">4 · Harness systems — runtime behavior</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">settings.json</span>
+        <h3>Permission guards</h3>
+        <p>Granular allow / ask / deny lists: blocks destructive <code>gh</code> ops,
+        gates <code>git commit</code>, protects settings files. Deny-by-default on anything scary.</p>
+      </div>
+      <div class="card">
+        <span class="tag">hooks/block-inline-scripts.py</span>
+        <h3>Inline-script hook</h3>
+        <p>PreToolUse Bash guard. Denies commands over <strong>300 chars</strong> or with
+        more than <strong>3 statement separators</strong> (<code>;</code> <code>&amp;&amp;</code>
+        <code>||</code> <code>|</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;&gt;</code>
+        <code>&lt;&lt;</code> newline). Forces multi-step work into separate calls or
+        <code>/tmp/</code> scripts.</p>
+      </div>
+      <div class="card">
+        <span class="tag">src/extract_cost.py · /cost_</span>
+        <h3>Cost tracking</h3>
+        <p>Parses session JSONL for real <code>usage</code> fields and computes spend via
+        Anthropic pricing. Logs go to <code>cost-log/YYYY-MM-DD_HHmm_{session}.jsonl</code>.
+        <code>/cost-opt</code> compacts logs and surfaces routing suggestions.</p>
+      </div>
+      <div class="card">
+        <span class="tag">.checkpoints/ · /checkpoint-{save,resume}</span>
+        <h3>Checkpoint system</h3>
+        <p>Save resumable context per branch, with automatic archive rotation.
+        Paired with <code>.remember/</code> (buffer/today/recent/archive/core) for
+        session-to-session continuity.</p>
+      </div>
+    </div>
+    <div class="sig" role="note" aria-label="model routing rule">
+      <b>Model routing:</b> Sonnet for reads, config edits, <code>~/.claude</code> work, short
+      Q&amp;A. Opus for multi-file refactors, subtle runtime bugs, new API/data-model design.
+      Sustained Opus sessions get a <code>/model opus</code> suggestion; trivial tasks get a nudge back to Sonnet.
+    </div>
+  </section>
+
+  <section aria-labelledby="tests">
+    <h2 id="tests">5 · Test fidelity ladder — cheapest to priciest</h2>
+    <table>
+      <caption>Default <code>uv run pytest</code> runs everything except <code>smoke</code> and <code>performance</code>.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Tier</th>
+          <th scope="col">Location</th>
+          <th scope="col">Checks</th>
+          <th scope="col">Cost signal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Structural</td><td><code>tests/structural/</code></td><td>Files, dirs, frontmatter</td><td>Cheap — existence only</td></tr>
+        <tr><td>Behavioral</td><td><code>tests/behavioral/</code></td><td>Skill body content, protocol rules</td><td>Cheap</td></tr>
+        <tr><td>Integration</td><td><code>tests/integration/</code></td><td>Cross-file references &amp; consistency</td><td>Cheap</td></tr>
+        <tr><td>Harness</td><td><code>tests/test_*.py</code></td><td>settings.json, permissions, hooks, cost extraction</td><td>Cheap</td></tr>
+        <tr><td>Bats</td><td><code>tests/*.bats</code></td><td>Shell scripts (checkpoint-archive, sync-theme)</td><td>Moderate — needs <code>bats</code></td></tr>
+        <tr><td>Smoke</td><td><code>tests/smoke/</code></td><td>Live skill invocation</td><td>Tokens · non-deterministic</td></tr>
+        <tr><td>Performance</td><td><code>tests/performance/</code></td><td>18-combo stress matrix</td><td>Expensive · non-deterministic</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Parallelize with <code>pytest-xdist</code> for <code>smoke</code>/<code>performance</code>:
+    <code>uv run pytest -n auto</code>. Skip <code>-n</code> on the default suite — it runs in ~0.5s and
+    worker startup adds more overhead than it saves.</p>
+  </section>
+
+</main>
+
+<footer class="site muted">
+  <p>Built for <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>.</p>
+</footer>
+</body>
+</html>

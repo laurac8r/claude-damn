@@ -19,9 +19,9 @@ explicitly with `--from`). Target is the first positional argument or `--to`.
 ## When the user types `/sync ...`
 
 1. Parse the user's arguments.
-2. Run from the repo root (where `pyproject.toml` lives):
+2. Run from any directory:
    ```bash
-   uv run python -m skills.sync.scripts.sync <args>
+   PYTHONPATH="$HOME/.claude" python3 -m skills.sync.scripts.sync <args>
    ```
 3. Show the output to the user.
 
