@@ -57,7 +57,7 @@ def model_key(model_name: str) -> str:
     if not model_name:
         return ""
     name = model_name.lower()
-    for key in sorted(PRICING, key=len, reverse=True):
+    for key in sorted(PRICING.keys(), key=len, reverse=True):
         if key in name or key.replace("-", "") in name.replace("-", ""):
             return key
     # Fuzzy match
