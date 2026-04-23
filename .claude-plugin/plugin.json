@@ -1,0 +1,24 @@
+{
+  "name": "claude-damn",
+  "description": "Composable skill library + harness for Claude Code: super/duper/cat/tdd modifier families, expert-review, sme-test, tesseract memory, checkpoint lifecycle, cost tracking, and a pre-tool guard against inline multiline scripts.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Laura Kaminskiy",
+    "email": "laurakaminskiy@webcatgirl.com <laurakaminskiy@webcatgirl.com>"
+  },
+  "homepage": "https://github.com/laurac8r/claude-damn",
+  "repository": "https://github.com/laurac8r/claude-damn",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "tdd",
+    "expert-review",
+    "code-review",
+    "checkpoint",
+    "cost-tracking",
+    "workflows",
+    "brainstorming",
+    "subagents",
+    "worktrees"
+  ]
+}
