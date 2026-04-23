@@ -4,7 +4,7 @@ requires-python = ">=3.14"
 
 [[package]]
 name = "claude-damn"
-version = "0.2.0"
+version = "1.0.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]
