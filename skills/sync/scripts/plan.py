@@ -3,10 +3,10 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from skills.sync.scripts.claude_allowlist import load_claude_allowlist
-from skills.sync.scripts.diff import diff_ops
-from skills.sync.scripts.discover import DiscoverOptions, discover
-from skills.sync.scripts.types import Mode, SyncPlan
+from .claude_allowlist import load_claude_allowlist
+from .diff import diff_ops
+from .discover import DiscoverOptions, discover
+from .types import Mode, SyncPlan
 
 
 @dataclass(frozen=True)

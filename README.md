@@ -130,7 +130,23 @@ cp CLAUDE.md ~/.claude/CLAUDE.md
 > allow/ask/deny lists, and plugin enablement that you may want to adapt to your
 > own setup.
 
-### 5. Verify
+### 5. Personalize
+
+Personal operator preferences (commit style, model routing, subagent
+delegation targets, worktree location) live in `rules/PERSONALIZATION.md`
+— gitignored, so your clone can diverge from upstream without merge pain.
+
+First-time setup:
+
+```bash
+cp rules/PERSONALIZATION.example.md rules/PERSONALIZATION.md
+```
+
+Then edit `rules/PERSONALIZATION.md` to taste. `CLAUDE.md` holds general
+engineering rules that apply to every clone and should stay in sync with
+upstream.
+
+### 6. Verify
 
 Open a new Claude Code session and run a skill to confirm everything loaded:
 

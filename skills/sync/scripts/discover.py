@@ -13,8 +13,8 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from skills.sync.scripts.claude_allowlist import ClaudeAllowlist
-from skills.sync.scripts.gitignore import GitignoreFilter
+from .claude_allowlist import ClaudeAllowlist
+from .gitignore import GitignoreFilter
 
 
 @dataclass(frozen=True)
