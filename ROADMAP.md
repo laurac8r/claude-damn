@@ -40,6 +40,16 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 - [ ] Structural test coverage for the rest of the skill catalog (`sme-test`,
       `expert-review`, and `tesseract` have structural tests; other skills are
       ad-hoc markdown)
+- [ ] **sme-review v1** — coaching-driven sibling to sme-test, interactive
+      alternative to `/expert-review`. Spec brainstorm in progress; see
+      `CHECKPOINT.md` and `.remember/remember.md` for current state. Will
+      refactor `/expert-review` to source phase prompts from
+      `skills/_shared/review-phases/` so both skills compose the same building
+      blocks. Tests adopt the 6-layer pyramid pattern (structural, behavioral,
+      integration, smoke, performance, yolo) modeled on `/listen`'s test suite,
+      with observed-rate-calibrated pass gates.
+- [ ] Structural test coverage for the rest of the skill catalog (`sme-test` and
+      `expert-review` have structural tests; other skills are ad-hoc markdown)
 - [ ] Write the Claude Code plugin manifest (`.claude-plugin/plugin.json` or
       equivalent)
 - [ ] Decide final namespace: `claude-damn` as a standalone plugin vs. a
