@@ -10,6 +10,12 @@ import pytest
 
 HOOK_SCRIPT = Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py"
 
+sys.path.insert(0, str(HOOK_SCRIPT.parent))
+from constants import (  # type: ignore[import-not-found]  # noqa: E402
+    MAX_COMMAND_LENGTH,
+    MAX_STATEMENT_COUNT,
+)
+
 
 def run_hook(tool_name: str, command: str) -> dict:
     """Feed a simulated tool call to the hook and return its JSON output."""
@@ -95,106 +101,89 @@ class TestHookAllowsSafeCommands:
 class TestCharLimit:
     """Commands exceeding MAX_COMMAND_LENGTH must be blocked."""
 
-    def test_blocks_command_over_300_chars(self) -> None:
-        command = "echo " + "a" * 296  # 301 chars total
+    def test_blocks_command_over_limit(self) -> None:
+        command = "a" * (MAX_COMMAND_LENGTH + 1)
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
-    def test_allows_command_at_exactly_300_chars(self) -> None:
-        command = "echo " + "a" * 295  # 300 chars total
+    def test_allows_command_at_exactly_limit(self) -> None:
+        command = "a" * MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
-        # Should not be blocked by char limit; also won't trip other rules
         assert output == {}
 
     def test_blocked_message_includes_length_and_limit(self) -> None:
-        command = "echo " + "a" * 296  # 301 chars
+        over_by_one = MAX_COMMAND_LENGTH + 1
+        command = "a" * over_by_one
         output = run_hook("Bash", command)
         assert "systemMessage" not in output
         reason = output["hookSpecificOutput"]["permissionDecisionReason"]
-        assert "301" in reason
-        assert "300" in reason
+        assert str(over_by_one) in reason
+        assert str(MAX_COMMAND_LENGTH) in reason
         assert "BLOCKED" in reason
 
 
 class TestStatementLimit:
     """Commands with too many statement separators must be blocked."""
 
-    def test_blocks_command_with_4_semicolons(self) -> None:
-        command = "echo a; echo b; echo c; echo d; echo e"
+    @pytest.mark.parametrize("sep", ["; ", " && ", " || ", " | "])
+    def test_blocks_command_over_limit(self, sep: str) -> None:
+        command = sep.join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
-    def test_blocks_command_with_4_and_operators(self) -> None:
-        command = "echo a && echo b && echo c && echo d && echo e"
+    def test_blocks_command_with_mixed_separators_over_limit(self) -> None:
+        ops = [" && ", " | ", "; ", " > ", " || "][: MAX_STATEMENT_COUNT + 2]
+        command = "echo 0" + "".join(f"{op}echo {i + 1}" for i, op in enumerate(ops))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
-    def test_blocks_command_with_4_or_operators(self) -> None:
-        command = "echo a || echo b || echo c || echo d || echo e"
+    def test_allows_command_at_exactly_limit(self) -> None:
+        ops = [" && ", " | ", "; ", " > ", " || "][:MAX_STATEMENT_COUNT]
+        command = "echo 0" + "".join(f"{op}echo {i + 1}" for i, op in enumerate(ops))
         output = run_hook("Bash", command)
-        hook_out = output.get("hookSpecificOutput", {})
-        assert hook_out.get("permissionDecision") == "deny"
-
-    def test_blocks_command_with_4_pipes(self) -> None:
-        command = "cat file | grep a | sort | uniq | wc -l"
-        output = run_hook("Bash", command)
-        hook_out = output.get("hookSpecificOutput", {})
-        assert hook_out.get("permissionDecision") == "deny"
-
-    def test_blocks_command_with_mixed_separators(self) -> None:
-        command = "echo a && echo b | grep c; echo d > out.txt"
-        output = run_hook("Bash", command)
-        hook_out = output.get("hookSpecificOutput", {})
-        assert hook_out.get("permissionDecision") == "deny"
-
-    def test_allows_command_with_exactly_3_separators(self) -> None:
-        command = "echo a && echo b | grep c; echo d"
-        output = run_hook("Bash", command)
-        # 3 separators (&&, |, ;) — at the limit, not over
         assert output == {}
 
     def test_double_ampersand_counts_as_one(self) -> None:
         """'&&' is one separator, not two '&' characters."""
-        command = "echo a && echo b && echo c && echo d"
+        command = " && ".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 1))
         output = run_hook("Bash", command)
-        # 3 && = 3 separators, at the limit
         assert output == {}
 
     def test_double_pipe_counts_as_one(self) -> None:
         """'||' is one separator, not two '|' characters."""
-        command = "echo a || echo b || echo c || echo d"
+        command = " || ".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 1))
         output = run_hook("Bash", command)
-        # 3 || = 3 separators, at the limit
         assert output == {}
 
     def test_newline_counts_as_separator(self) -> None:
-        command = "echo a\necho b\necho c\necho d\necho e"
+        command = "\n".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
     def test_carriage_return_counts_as_separator(self) -> None:
-        command = "echo a\recho b\recho c\recho d\recho e"
+        command = "\r".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
     def test_redirect_counts_as_separator(self) -> None:
-        command = "echo a > f1 > f2 > f3 > f4"
+        command = "echo a" + "".join(f" > f{i}" for i in range(MAX_STATEMENT_COUNT + 1))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
     def test_blocked_message_includes_count_and_limit(self) -> None:
-        command = "echo a; echo b; echo c; echo d; echo e"
+        over_by_one = MAX_STATEMENT_COUNT + 1
+        command = "; ".join(f"echo {i}" for i in range(over_by_one + 1))
         output = run_hook("Bash", command)
         assert "systemMessage" not in output
         reason = output["hookSpecificOutput"]["permissionDecisionReason"]
-        assert "4" in reason  # 4 semicolons
-        assert "3" in reason  # max is 3
+        assert str(over_by_one) in reason
+        assert str(MAX_STATEMENT_COUNT) in reason
         assert "BLOCKED" in reason
 
     # --- Fix A: SEPARATOR_PATTERN must not double-count >> and << ---
@@ -222,10 +211,10 @@ class TestStatementLimit:
         assert mod.SEPARATOR_PATTERN.findall("a << b") == ["<<"]
 
     def test_double_right_redirect_allowed_at_limit(self) -> None:
-        """Integration: 'echo a >> f1 >> f2 >> f3' has 3 >> tokens = 3 separators."""
-        command = "echo a >> f1 >> f2 >> f3"
+        """Integration: MAX >> tokens = MAX separators — at the limit, allowed."""
+        parts = ["echo a"] + [f"f{i}" for i in range(MAX_STATEMENT_COUNT)]
+        command = " >> ".join(parts)
         output = run_hook("Bash", command)
-        # 3 '>>' = 3 separators — at the limit, must be ALLOWED
         assert output == {}, f"Should allow: {command!r}"
 
 
@@ -233,8 +222,8 @@ class TestMultipleViolations:
     """Commands tripping multiple rules report all violations."""
 
     def test_char_limit_and_statement_limit_both_reported(self) -> None:
-        # Long command with many separators
-        command = "echo " + "a" * 280 + "; echo b; echo c; echo d; echo e"
+        tail = "; ".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
+        command = "echo " + "a" * (MAX_COMMAND_LENGTH + 1) + "; " + tail
         output = run_hook("Bash", command)
         assert "systemMessage" not in output
         reason = output["hookSpecificOutput"]["permissionDecisionReason"]
@@ -243,12 +232,13 @@ class TestMultipleViolations:
         assert "---" in reason
 
     def test_all_three_rules_reported(self) -> None:
-        # Inline script + long + many separators
+        tail = "; ".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
         command = (
             'python3 -c "import os; os.listdir()" && '
             + "echo "
-            + "a" * 280
-            + "; echo b; echo c; echo d"
+            + "a" * (MAX_COMMAND_LENGTH + 1)
+            + "; "
+            + tail
         )
         output = run_hook("Bash", command)
         assert "systemMessage" not in output
