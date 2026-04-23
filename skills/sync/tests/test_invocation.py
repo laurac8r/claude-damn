@@ -18,12 +18,12 @@ def test_sync_invocation_works_from_any_directory(tmp_path: Path) -> None:
     `ModuleNotFoundError: No module named 'skills'` when CWD was not the
     claude-damn repo root.
     """
-    skills_root = Path(__file__).resolve().parents[3]
-    assert (skills_root / "skills" / "sync" / "scripts" / "sync.py").is_file(), (
-        f"expected skills/ under {skills_root}"
+    repo_root = Path(__file__).resolve().parents[3]
+    assert (repo_root / "skills" / "sync" / "scripts" / "sync.py").is_file(), (
+        f"expected repo root containing skills/ under {repo_root}"
     )
 
-    env = {**os.environ, "PYTHONPATH": str(skills_root)}
+    env = {**os.environ, "PYTHONPATH": str(repo_root)}
     result = subprocess.run(
         [sys.executable, "-m", "skills.sync.scripts.sync", "--help"],
         cwd=tmp_path,
