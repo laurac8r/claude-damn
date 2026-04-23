@@ -12,8 +12,8 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from skills.sync.scripts.exceptions import RsyncFailedError, TargetNotWritableError
-from skills.sync.scripts.types import FileOp, SyncPlan
+from .exceptions import RsyncFailedError, TargetNotWritableError
+from .types import FileOp, SyncPlan
 
 
 @dataclass(frozen=True)
