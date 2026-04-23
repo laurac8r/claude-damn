@@ -1,7 +1,6 @@
 ---
 name: cost-opt
-description:
-  1. First, ensure logs exist by running: `python3 ~/.claude/extract_cost.py --append-log --quiet`
+description: "Compact cost logs, recalibrate the pricing table in ~/.claude/extract_cost.py and statusline-command.sh against platform.claude.com/cost extracts, and surface optimization suggestions."
 user-invocable: true
 ---
 
