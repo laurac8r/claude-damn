@@ -7,11 +7,6 @@ requires-python = ">=3.14"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=9.0.2", "pyyaml>=6.0.3", "pytest-xdist>=3.8.0", "ruff>=0.9.0"]
-
-[tool.pytest.ini_options]
-addopts = "-m 'not smoke and not performance'"
-pythonpath = ["."]
 dev = [
     "pytest>=9.0.3",
     "pyyaml>=6.0.3",
@@ -20,6 +15,10 @@ dev = [
     "ruff>=0.15.10",
     "defusedxml>=0.7.1",
 ]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not smoke and not performance'"
+pythonpath = ["."]
 markers = [
     "smoke: live skill invocation tests (cost tokens, non-deterministic)",
     "performance: stress test matrix (18 combos, expensive, non-deterministic)",
