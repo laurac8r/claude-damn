@@ -27,4 +27,5 @@ __pycache__/
 *.py[cod]
 .venv/
 *.egg-info/
+.config
 /rules/PERSONALIZATION.md
