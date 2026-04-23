@@ -132,9 +132,9 @@ cp CLAUDE.md ~/.claude/CLAUDE.md
 
 ### 5. Personalize
 
-Personal operator preferences (commit style, model routing, subagent
-delegation targets, worktree location) live in `rules/PERSONALIZATION.md`
-— gitignored, so your clone can diverge from upstream without merge pain.
+Personal operator preferences (commit style, model routing, subagent delegation
+targets, worktree location) live in `rules/PERSONALIZATION.md` — gitignored, so
+your clone can diverge from upstream without merge pain.
 
 First-time setup:
 

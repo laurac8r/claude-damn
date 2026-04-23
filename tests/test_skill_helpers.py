@@ -31,8 +31,8 @@ class _FakeRun:
         self.stdout = stdout
         self.stderr = stderr
         self.returncode = returncode
-        self.last_args: tuple | None = None
-        self.last_kwargs: dict | None = None
+        self.last_args: tuple = ()
+        self.last_kwargs: dict = {}
 
     def __call__(self, *args, **kwargs) -> subprocess.CompletedProcess:
         self.last_args = args

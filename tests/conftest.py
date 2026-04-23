@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -13,7 +14,7 @@ SETTINGS_PATH = PROJECT_ROOT / "settings.json"
 
 
 @pytest.fixture(scope="session")
-def worker_worktree(tmp_path_factory) -> Path | None:
+def worker_worktree(tmp_path_factory) -> Iterator[Path | None]:
     """Yield an ephemeral git worktree for the current xdist worker.
 
     Returns ``None`` when not running under xdist (``pytest -n``),
