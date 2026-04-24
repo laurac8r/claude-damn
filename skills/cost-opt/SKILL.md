@@ -1,6 +1,9 @@
 ---
 name: cost-opt
-description: "Compact cost logs, recalibrate the pricing table in ~/.claude/extract_cost.py and statusline-command.sh against platform.claude.com/cost extracts, and surface optimization suggestions."
+description:
+   "Compact cost logs, recalibrate the pricing table in
+   ~/.claude/extract_cost.py and statusline-command.sh against
+   platform.claude.com/cost extracts, and surface optimization suggestions."
 user-invocable: true
 ---
 

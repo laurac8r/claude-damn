@@ -14,10 +14,11 @@ class TestSingleSkillReference:
 
     def test_invokes_referenced_skill(self, invoke_skill) -> None:
         result = invoke_skill(
-            "/listen /tdd : list the 3 core steps of TDD in a numbered list, nothing else"
+            "/listen /tdd : list the 3 core steps of TDD in a numbered list, nothing else"  # noqa: E501
         )
         assert result.returncode == 0, (
-            f"claude exited non-zero: {result.returncode}\nstderr: {result.stderr[:500]}"
+            f"claude exited non-zero: {result.returncode}\n"
+            f"stderr: {result.stderr[:500]}"
         )
         output = result.stdout.lower()
         assert any(
@@ -39,7 +40,8 @@ class TestNoSkillReference:
     def test_executes_without_enforcement(self, invoke_skill) -> None:
         result = invoke_skill('/listen say exactly "HELLO_SMOKE_TEST" and nothing else')
         assert result.returncode == 0, (
-            f"claude exited non-zero: {result.returncode}\nstderr: {result.stderr[:500]}"
+            f"claude exited non-zero: {result.returncode}\n"
+            f"stderr: {result.stderr[:500]}"
         )
         assert "HELLO_SMOKE_TEST" in result.stdout, (
             f"Expected literal output, got:\n{result.stdout[:500]}"
@@ -51,10 +53,11 @@ class TestCompositionalSkillReference:
 
     def test_invokes_compositional_skill_directly(self, invoke_skill) -> None:
         result = invoke_skill(
-            "/listen /super-duper-cat : describe what skills you just loaded, as a bullet list"
+            "/listen /super-duper-cat : describe what skills you just loaded, as a bullet list"  # noqa: E501
         )
         assert result.returncode == 0, (
-            f"claude exited non-zero: {result.returncode}\nstderr: {result.stderr[:500]}"
+            f"claude exited non-zero: {result.returncode}\n"
+            f"stderr: {result.stderr[:500]}"
         )
         output = result.stdout.lower()
         assert any(
@@ -74,10 +77,11 @@ class TestMultipleSkillReferences:
 
     def test_invokes_all_referenced_skills(self, invoke_skill) -> None:
         result = invoke_skill(
-            "/listen /tdd /review : list which skills you were asked to invoke, nothing else"
+            "/listen /tdd /review : list which skills you were asked to invoke, nothing else"  # noqa: E501
         )
         assert result.returncode == 0, (
-            f"claude exited non-zero: {result.returncode}\nstderr: {result.stderr[:500]}"
+            f"claude exited non-zero: {result.returncode}\n"
+            f"stderr: {result.stderr[:500]}"
         )
         output = result.stdout.lower()
         assert "tdd" in output, f"Expected tdd mention, got:\n{result.stdout[:500]}"

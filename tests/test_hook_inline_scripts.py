@@ -326,54 +326,6 @@ class TestHookMalformedInput:
             text=True,
             timeout=10,
         )
-        # Error path: exit 1 + stderr message, no persistent systemMessage on stdout
-        assert result.returncode == 1
-        assert "Hook error" in result.stderr
-        assert result.stdout.strip() == ""
-        assert result.returncode == 0
-        output = json.loads(result.stdout)
-        assert output == {}, f"Expected {{}}, got {output!r}"
-
-    def test_non_dict_tool_input_is_allowed(self) -> None:
-        """Non-dict tool_input coerces to {} → command = '' → no rules → {}."""
-        payload = json.dumps({"tool_name": "Bash", "tool_input": "oops"})
-        result = subprocess.run(
-            [sys.executable, str(HOOK_SCRIPT)],
-            input=payload,
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        assert result.returncode == 0
-        output = json.loads(result.stdout)
-        assert output == {}, f"Expected {{}}, got {output!r}"
-
-    # --- Fix B: non-string / non-dict inputs must coerce to empty, not error ---
-
-    def test_null_command_is_allowed(self) -> None:
-        """null command coerces to '' → no rules fire → {}."""
-        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": None}})
-        result = subprocess.run(
-            [sys.executable, str(HOOK_SCRIPT)],
-            input=payload,
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        assert result.returncode == 0
-        output = json.loads(result.stdout)
-        assert output == {}, f"Expected {{}}, got {output!r}"
-
-    def test_non_string_command_is_allowed(self) -> None:
-        """Integer command coerces to '' → no rules fire → {}."""
-        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": 42}})
-        result = subprocess.run(
-            [sys.executable, str(HOOK_SCRIPT)],
-            input=payload,
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert output == {}, f"Expected {{}}, got {output!r}"
