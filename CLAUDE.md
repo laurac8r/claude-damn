@@ -16,13 +16,13 @@ these operational directives:
      logic.
    - Be aware of when to recommend a manual switch of models:
       - **Suggest `/model opus`** when the task requires sustained deep
-        reasoningthroughout execution, not just planning — e.g., debugging a
+        reasoning throughout execution, not just planning — e.g., debugging a
         subtle runtime bug across many files, or a large refactor where every
         step requires cross-cutting context. Say: _"This task would benefit from
         full Opus — run `/model opus` to switch."_
       - **Suggest `/model sonnet`** when the session is primarily reads,
-        searches,config edits, or short Q&A with no complex logic — Sonnet alone
-        will suffice and cost significantly less.
+        searches, config edits, or short Q&A with no complex logic — Sonnet
+        alone will suffice and cost significantly less.
    - **Model selection by task type** (data-driven from cost logs):
       - **Use Sonnet for:** config file editing, dotfile management, `~/.claude`
         work, short exploratory sessions (<10 turns), git operations, file
