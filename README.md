@@ -9,7 +9,20 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-Install via the official Claude Code marketplace:
+> **⏳ Status:** v1.0.0 submitted to the official Claude Code marketplace on
+> 2026-04-23; **awaiting Anthropic review**. Until approval lands, install via
+> the local / git path below (the `/plugin install` command will start working
+> once the submission is accepted — watch `CHANGELOG.md` for the flip).
+
+Install ahead of marketplace approval:
+
+```bash
+# Point Claude Code at a local clone
+git clone https://github.com/laurac8r/claude-damn
+claude --plugin-dir ./claude-damn
+```
+
+Once approved, this becomes:
 
 ```
 /plugin install claude-damn@claude-plugins-official
@@ -72,13 +85,17 @@ See [`skills/README.md`](skills/README.md) for the full combinatoric table.
   and authenticated
 - Git
 
-### Install from the marketplace (recommended)
+### Install from the marketplace (post-approval)
+
+> **Not yet available.** v1.0.0 is awaiting Anthropic marketplace review as of
+> 2026-04-23. Once accepted, the command below will work. Until then, use the
+> pre-approval install path under "Manual install" below.
 
 ```
 /plugin install claude-damn@claude-plugins-official
 ```
 
-This registers every skill, command, and the inline-script PreToolUse hook.
+This will register every skill, command, and the inline-script PreToolUse hook.
 Restart or reload the session once to pick up the hook.
 
 ### Companion plugins
@@ -130,20 +147,33 @@ cp rules/PERSONALIZATION.example.md ~/.claude/rules/PERSONALIZATION.md
 `CLAUDE.md` holds general engineering rules that apply to every clone and should
 stay in sync with upstream.
 
-### Manual install (contributors / local dev)
+### Manual install (pre-approval, and for contributors)
 
-If you're hacking on `claude-damn` itself rather than consuming it, clone the
-repo and run the test suite directly:
+Until the marketplace submission is approved, this is the primary install path.
+It's also the right path if you're hacking on `claude-damn` itself:
 
 ```bash
 git clone https://github.com/laurac8r/claude-damn
 cd claude-damn
-uv sync
-uv run pytest
+uv sync        # dev/test dependencies
+uv run pytest  # 422 tests green
 ```
 
-Point Claude Code at the local checkout via `claude --plugin-dir .` to test
-changes without going through the marketplace.
+Then point Claude Code at the local checkout so skills, commands, and the
+PreToolUse hook load:
+
+```bash
+claude --plugin-dir /absolute/path/to/claude-damn
+```
+
+Or use `--add-dir` to allow tool access without registering as a plugin:
+
+```bash
+claude --add-dir /absolute/path/to/claude-damn
+```
+
+Once the marketplace submission is approved, you can remove the local clone and
+switch to `/plugin install claude-damn@claude-plugins-official`.
 
 ## Quickstart
 
