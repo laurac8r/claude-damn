@@ -13,7 +13,7 @@ def test_file_op_is_frozen() -> None:
         reason="only in source",
     )
     with pytest.raises(AttributeError):
-        op.action = "delete"  # type: ignore[misc]
+        op.action = "delete"  # ty: ignore[invalid-assignment]
 
 
 def test_sync_plan_ops_is_tuple() -> None:

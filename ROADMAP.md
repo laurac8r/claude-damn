@@ -21,7 +21,7 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 - [x] `policy-limits.json` — remote control restrictions
 - [x] `com.claude.sync-theme.plist` — macOS launchd theme sync
 
-## Phase 1 — Plugin packaging (in progress, `feat/transition-to-plugin`)
+## Phase 1 — Plugin packaging (v1.0.0 submitted 2026-04-23; awaiting Anthropic review)
 
 - [x] Introduce `pyproject.toml` + `uv.lock` (uv-managed `.venv`, Python ≥ 3.14)
 - [x] Stand up `tests/` tree with `pytest` + `ruff`
@@ -48,12 +48,13 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       blocks. Tests adopt the 6-layer pyramid pattern (structural, behavioral,
       integration, smoke, performance, yolo) modeled on `/listen`'s test suite,
       with observed-rate-calibrated pass gates.
-- [ ] Structural test coverage for the rest of the skill catalog (`sme-test` and
-      `expert-review` have structural tests; other skills are ad-hoc markdown)
-- [ ] Write the Claude Code plugin manifest (`.claude-plugin/plugin.json` or
-      equivalent)
-- [ ] Decide final namespace: `claude-damn` as a standalone plugin vs. a
-      marketplace overlay on `claude-plugins-official/superpowers`
+- [x] Claude Code plugin manifest at `.claude-plugin/plugin.json` (v1.0.0,
+      skills auto-discovered, validated via `claude plugin validate .`)
+- [x] Namespace: **standalone plugin** submitted to
+      `claude-plugins-official/external_plugins` (overlay-on-superpowers was
+      investigated and ruled out — plugins don't overlay)
+- [x] PreToolUse hook wired via `hooks/hooks.json` using `${CLAUDE_PLUGIN_ROOT}`
+- [x] Privacy policy section in README for Anthropic Verified Status
 
 ## Phase 2 — Skill hardening
 
@@ -77,8 +78,13 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 
 ## Phase 4 — Distribution
 
-- [ ] Install via Claude Code's plugin mechanism rather than
+- [x] Install via Claude Code's plugin mechanism (pre-approval: `git clone` +
+      `claude --plugin-dir`; post-approval:
+      `/plugin install claude-damn@claude-plugins-official`) rather than
       `cp -r skills/* ~/.claude/skills/`
+- [x] **Submitted** to the official Claude Code marketplace 2026-04-23 via
+      `clau.de/plugin-directory-submission`
+- [ ] **Approved** and listed in `claude-plugins-official/external_plugins/` —
+      awaiting Anthropic review
 - [ ] Versioned releases with CHANGELOG entries per skill
 - [ ] Per-skill quickstart docs and usage examples
-- [ ] Publish to a marketplace (official or personal) for one-command install

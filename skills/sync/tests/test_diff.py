@@ -108,4 +108,4 @@ def test_mirror_target_only_adds_to_source(trees: tuple[Path, Path]) -> None:
 def test_unsupported_mode_raises_invalid_mode_error(trees: tuple[Path, Path]) -> None:
     src, tgt = trees
     with pytest.raises(InvalidModeError):
-        diff_ops(src, tgt, mode="bogus", src_paths=set(), tgt_paths=set())  # type: ignore[arg-type]
+        diff_ops(src, tgt, mode="bogus", src_paths=set(), tgt_paths=set())  # ty: ignore[invalid-argument-type]
