@@ -203,7 +203,7 @@ how `super` / `duper` / `cat` / `tdd` compose into 20+ skill variants.
 ├── LICENSE                    # MIT
 ├── settings.json              # Default harness config (permissions, hooks, plugins)
 ├── pyproject.toml             # Python tooling (uv, pytest, ruff, ty)
-├── skills/                    # Auto-discovered skills (38+ SKILL.md entries)
+├── skills/                    # Auto-discovered skills (one SKILL.md per skill)
 │   ├── README.md              # Full combinatoric skill table
 │   ├── tdd/                   # Base TDD workflow
 │   ├── super/                 # Brainstorm + TDD
