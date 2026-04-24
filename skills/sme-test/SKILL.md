@@ -22,7 +22,6 @@ triples before writing test code.
 Parse arguments to determine mode:
 
 | Input                      | Mode            | Flow                                                          |
-| -------------------------- | --------------- | ------------------------------------------------------------- |
 | (default)                  | **Coach**       | Full 6-stage coaching flow with 3-Whys dialogue               |
 | `--expert` or `-x`         | **Expert**      | Single-turn: paste G/W/T triples directly, skip coaching      |
 | `--expert --auto` or `-xa` | **Expert-Auto** | Auto-infer triples from code scan with mandatory preview gate |
@@ -153,7 +152,6 @@ All subagents coordinate via the `shared/` memory directory pattern (per
 CLAUDE.md):
 
 | Subagent    | Model                         | Stages | Writes to `shared/`            |
-| ----------- | ----------------------------- | ------ | ------------------------------ |
 | test-coach  | Opus (coach), Sonnet (expert) | 1-3    | `shared/coach-state.md`        |
 | test-writer | Sonnet                        | 4      | `shared/test-writer-output.md` |
 | test-runner | Sonnet                        | 5      | `shared/red-gate-result.md`    |
