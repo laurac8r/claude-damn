@@ -4,7 +4,60 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project is pre-1.0
 so entries are grouped by development phase rather than SemVer.
 
-## [Unreleased] — `feat/transition-to-plugin`
+## [1.0.0] — 2026-04-23 (submitted, review pending)
+
+v1.0.0 **submitted** to the official Claude Code marketplace on 2026-04-23 as a
+standalone plugin alongside `superpowers`. Currently **awaiting Anthropic
+review** — not yet listed. Until approval, install via `git clone` +
+`claude --plugin-dir` (see README). This section will be updated with an
+"(approved)" note and the effective install command once the submission lands.
+
+### Added (v1.0.0)
+
+- `.claude-plugin/plugin.json` manifest (v1.0.0, MIT, author + keywords set for
+  marketplace discovery).
+- `hooks/hooks.json` registering PreToolUse Bash hook for the existing
+  `block-inline-scripts.py` guardrail via `${CLAUDE_PLUGIN_ROOT}`.
+- Privacy policy section in `README.md` documenting that skills, hooks, and
+  cost-tracking run entirely locally — no data collection or transmission by the
+  plugin itself.
+- README rewrite for marketplace-install flow: top-of-file
+  `/plugin install claude-damn@claude-plugins-official`, Companion plugins
+  table, Quickstart section, updated Project structure.
+
+### Fixed (v1.0.0)
+
+- `skills/cost-opt/SKILL.md` frontmatter: multi-line unquoted `description`
+  (invalid YAML) rewritten as single-line quoted scalar so
+  `claude plugin validate .` parses it.
+- `skills/sme-test/SKILL.md`: added GFM header-separator rows to two tables that
+  prettier was collapsing into prose.
+- `pyproject.toml` consolidated two duplicate `dev = [...]` keys (the fuller
+  list was incorrectly nested under `[tool.pytest.ini_options]` where `uv sync`
+  never picked it up).
+- `tests/test_hook_inline_scripts.py`: deleted buggy shadowed F811 duplicates of
+  `test_null_command_is_allowed`, `test_non_string_command_is_allowed`,
+  `test_non_dict_tool_input_is_allowed` — the first copy had contradictory
+  assertions from a half-done PR #37 refactor; the second copy matches current
+  hook behavior.
+- `src/extract_cost.py`: `sorted(PRICING, key=len)` →
+  `sorted(PRICING.keys(), key=lambda k: len(k))` to preserve `_T = str` through
+  ty's overload resolution.
+- `tests/conftest.py` fixture: return annotation `Path | None` →
+  `Iterator[Path | None]` for yield-based fixture.
+- `tests/test_skill_helpers.py` `_FakeRun`: `last_args: tuple | None` →
+  `tuple = ()` (same for `last_kwargs`) to remove needless `None` narrowing
+  burden.
+
+### Tooling (v1.0.0)
+
+- Linters at zero: ruff 11 → 0, ty 12 → 0, prettier 17 → 0.
+- Tests green: pytest 422 passed, 58 deselected.
+- `.prettierignore` covers `.pytest_cache/` (auto-generated) and
+  `rules/PERSONALIZATION.example.md` (prettier 3.8.2 idempotency bug on HTML
+  comment inside list with `tabWidth: 3`).
+
+## [0.2.0] — `feat/transition-to-plugin` pre-ship
 
 The plugin packaging phase: introducing `uv`, `pyproject.toml`, a real test
 tree, and the first spec-plan-test skill (`sme-test`).
