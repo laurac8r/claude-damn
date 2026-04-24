@@ -48,10 +48,8 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       blocks. Tests adopt the 6-layer pyramid pattern (structural, behavioral,
       integration, smoke, performance, yolo) modeled on `/listen`'s test suite,
       with observed-rate-calibrated pass gates.
-- [ ] Structural test coverage for the rest of the skill catalog (`sme-test` and
-      `expert-review` have structural tests; other skills are ad-hoc markdown)
-- [x] Claude Code plugin manifest at `.claude-plugin/plugin.json` (v1.0.0, all
-      56 skills auto-discovered, validated via `claude plugin validate .`)
+- [x] Claude Code plugin manifest at `.claude-plugin/plugin.json` (v1.0.0,
+      skills auto-discovered, validated via `claude plugin validate .`)
 - [x] Namespace: **standalone plugin** submitted to
       `claude-plugins-official/external_plugins` (overlay-on-superpowers was
       investigated and ruled out — plugins don't overlay)
