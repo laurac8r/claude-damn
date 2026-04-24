@@ -186,7 +186,7 @@ If nothing stood out, note that explicitly:
 
 ### 7 · Render the final output
 
-```markdown
+```text
 # 🧊 Tesseract: <anchor>
 
 > Murph point. 4 hallways in view. <N> prior visits on the shelf.
@@ -211,9 +211,10 @@ If nothing stood out, note that explicitly:
 
 ## 📉 Dropped a book
 
-Shelf: ~/.claude/tesseract/shelf/<slug>.md (+1 entry) Bulk beings:
-~/.claude/tesseract/bulk-beings.md (+1 line) Signal: "<signal>" Learning:
-<one-line-learning>
+Shelf: ~/.claude/tesseract/shelf/<slug>.md (+1 entry)
+Bulk beings: ~/.claude/tesseract/bulk-beings.md (+1 line)
+Signal: "<signal>"
+Learning: <one-line-learning>
 ```
 
 `<N>` is `N_before` — the count of visits _before_ this invocation's shelf
