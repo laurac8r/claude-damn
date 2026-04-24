@@ -75,9 +75,11 @@ can watch it legally on whichever streaming service currently has it. Default:
 ## Notes
 
 - This skill is intentionally undocumented. It does not appear in
-  `skills/README.md`, any ROADMAP, any CHANGELOG, or any plugin manifest. It
-  lives at `~/.claude/skills/jcvd/` so it is personal-only and will never ship
-  with the `claude-damn` plugin.
+  `skills/README.md`, any ROADMAP, any CHANGELOG, or any plugin manifest.
+  However, because it lives under the repository's `skills/` tree, it is
+  auto-discovered and shipped with the `claude-damn` plugin like every other
+  skill — the "undocumented" status is about catalog silence, not distribution
+  exclusion.
 - No tests. No contract. No `shared/` coordination. It is exactly as discrete
   and fun as it was asked to be.
 - JustWatch is used because it is a legal aggregator and does not privilege any
