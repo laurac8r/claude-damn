@@ -1,10 +1,10 @@
 ---
 name: learn
 description:
-   Use when you want to review the current session for skills that misfired
+   "Use when you want to review the current session for skills that misfired
    (skipped, invoked-but-ignored, or triggered user corrections) and update them
    — scans the active transcript, classifies findings, and delegates fixes to
-   /writing-skills with per-finding approval
+   /writing-skills with per-finding approval"
 user-invocable: true
 ---
 
