@@ -274,35 +274,53 @@ for rapid iteration where you only want the HTML output).
 
 ### SOP
 
-1. **Resolve slug.** Lowercase the prompt, replace spaces/punctuation with
-   dashes. Create `/tmp/visual-aid/<slug>/` (`mkdir -p`).
+> **Note on artifact vs verification URL.** The HTTP server below exists
+> *only* for the verification pass. The final artifact the agent surfaces to
+> the user is always the durable `file://` path to the on-disk HTML — the
+> localhost URL disappears the moment the server stops in step 8.
 
-2. **Open in browser.** Use `navigate_page` to load
-   `file://<absolute-path-to-output.html>`.
+1. **Resolve slug + dirs.** Lowercase the prompt, replace spaces/punctuation
+   with dashes. Create `/tmp/visual-aid/<slug>/` (`mkdir -p`).
 
-3. **Desktop screenshot.** Use `take_screenshot` — save to
+2. **Start a local HTTP server.** Pick an unused high port (e.g., 8765), then
+   run `python3 -m http.server <port>` rooted at the *directory containing the
+   output HTML* in the background. Capture the PID/job id so you can stop it
+   in step 8. *Why HTTP:* Lighthouse rejects `file://` URLs with `INVALID_URL`
+   and requires an HTTP origin — a bare `file://` path causes the Lighthouse
+   audit to fail before it can score the page.
+
+3. **Open in browser.** Use `navigate_page` to load
+   `http://localhost:<port>/<filename>` (not the `file://` URL).
+
+4. **Desktop screenshot.** Use `take_screenshot` — save to
    `/tmp/visual-aid/<slug>/desktop.png`.
 
-4. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812) to
-   switch to a mobile viewport, then `take_screenshot` — save to
+5. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812)
+   to switch to a mobile viewport, then `take_screenshot` — save to
    `/tmp/visual-aid/<slug>/mobile.png`. This covers the "renders sanely at
    320 px / small viewport" self-check.
 
-5. **Console check.** Use `list_console_messages`. If any error-level console
+6. **Console check.** Use `list_console_messages`. If any error-level console
    errors are present, abort and attach the console errors to the response.
    Do not emit the file path until all console errors are resolved.
 
-6. **Lighthouse a11y audit.** Use `lighthouse_audit`. If the accessibility
-   score is below the threshold of 90, abort and attach the failing audits.
-   A lighthouse score below that threshold means the page ships with real
-   a11y defects — fix them before surfacing the output.
+7. **Lighthouse a11y audit.** Use `lighthouse_audit` (threshold 90) against
+   the same `http://localhost:<port>/<filename>` URL. If the accessibility
+   score is below 90, abort and attach the failing audits. A score below that
+   threshold means the page ships with real a11y defects — fix them before
+   surfacing the output.
 
-7. **Surface artifacts.** On success, print the artifact paths inline:
+8. **Stop the server.** Kill the background `http.server` job (e.g.,
+   `pkill -f "http.server <port>"`). The server is one-shot — leaving it
+   running risks port collisions on subsequent invocations.
+
+9. **Surface artifacts.** On success, print the artifact paths inline:
+   - `file://<absolute-path-to-output.html>` ← the durable on-disk HTML
    - `file:///tmp/visual-aid/<slug>/desktop.png`
    - `file:///tmp/visual-aid/<slug>/mobile.png`
 
-   These outputs are ephemeral — `/tmp/visual-aid/` is not persisted across
-   reboots. Copy anything you want to keep.
+   The screenshots are ephemeral — `/tmp/visual-aid/` is not persisted across
+   reboots. The HTML output is durable at its original write path.
 
 ### Opt-out
 
