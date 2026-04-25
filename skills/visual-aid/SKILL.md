@@ -167,7 +167,7 @@ pattern in `baseline.html` must be replaced with real content (or the
 surrounding block deleted) before shipping. Grep the output for `{{` as a final
 check — any survivor is a bug.**
 
-Structural slots in `baseline.html`:
+Slots in `baseline.html`:
 
 - `{{Title}}` — the page title, used in both `<title>{{Title}}</title>` and the
   visible `<h1>`.
@@ -283,9 +283,10 @@ for rapid iteration where you only want the HTML output).
 3. **Desktop screenshot.** Use `take_screenshot` — save to
    `/tmp/visual-aid/<slug>/desktop.png`.
 
-4. **Mobile viewport screenshot.** Resize to mobile viewport (375×812 px).
-   Use `take_screenshot` again — save to `/tmp/visual-aid/<slug>/mobile.png`.
-   This covers the "renders sanely at 320 px / small viewport" self-check.
+4. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812) to
+   switch to a mobile viewport, then `take_screenshot` — save to
+   `/tmp/visual-aid/<slug>/mobile.png`. This covers the "renders sanely at
+   320 px / small viewport" self-check.
 
 5. **Console check.** Use `list_console_messages`. If any error-level console
    errors are present, abort and attach the console errors to the response.
