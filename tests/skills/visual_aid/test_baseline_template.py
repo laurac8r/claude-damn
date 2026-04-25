@@ -8,7 +8,8 @@ selectors, print media query, slot placeholders).
 HTML template and instead references baseline.html by name, retaining the slot
 conventions documentation.
 
-These tests are intentionally RED until the refactor is performed.
+These are regression/contract tests: they pin the post-refactor invariants so a
+future edit cannot silently re-inline the template or drop a structural guard.
 """
 
 from __future__ import annotations
