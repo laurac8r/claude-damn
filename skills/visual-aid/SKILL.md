@@ -78,7 +78,8 @@ HTML comment (`<!-- Input: text; layout: cards -->`).
      inline runs, add `lang` on the span.
    - Color contrast ≥ 4.5:1 for body text, ≥ 3:1 for large text and focus rings.
      If unsure, run a Lighthouse a11y audit (e.g. via the `chrome-devtools-mcp`
-     plugin's `lighthouse_audit` tool, if installed).
+     plugin's `lighthouse_audit` tool, if installed). A score below 90 should
+     be treated as a fail — see the Verification SOP below.
    - `:focus-visible` ring on every interactive element — cover
      `a, button, input, select, textarea, summary, [tabindex], [contenteditable]`
      in the selector. Never `outline: none` without a replacement.
@@ -153,199 +154,24 @@ different OS.
 
 ## Baseline template
 
-When you need to scaffold, start from this skeleton. It is the minimum — fill
-in, prune what you don't use, but never drop the a11y guards (motion, focus,
-contrast, print).
+The full HTML skeleton lives in the sibling file `skills/visual-aid/baseline.html`.
+When scaffolding a new visual aid, **copy** `baseline.html` as your starting point,
+then fill in the content slots and prune any unused blocks. Never drop the a11y
+guards (motion, focus, contrast, print).
 
-```html
-<!doctype html>
-<!-- Generated from: "{{one-line prompt summary}}" -->
-<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->
-<html lang="en" dir="auto">
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width,initial-scale=1" />
-      <title>{{Title}}</title>
-      <style>
-         :root {
-            --bg: #0f1115;
-            --fg: #e8ecf1;
-            --muted: #9aa3af;
-            --accent: #7cc4ff;
-            --card: #1e2330;
-            --ring: #ffd866;
-            --border: #2a3040;
-            --radius: 14px;
-            --pad: clamp(16px, 3vw, 28px);
-         }
-         @media (prefers-color-scheme: light) {
-            /* Dark-mode --accent/--ring fail 4.5:1 / 3:1 on white — re-pick per scheme. */
-            :root {
-               --bg: #fafaf7;
-               --fg: #141821;
-               --muted: #525863;
-               --card: #ffffff;
-               --accent: #0057b3;
-               --ring: #b45309;
-               --border: #e2e5ec;
-            }
-         }
-         * {
-            box-sizing: border-box;
-         }
-         html,
-         body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--fg);
-            font:
-               16px/1.55 ui-sans-serif,
-               system-ui,
-               -apple-system,
-               "Segoe UI",
-               Roboto,
-               sans-serif;
-         }
-         header.site,
-         footer.site {
-            max-width: 72ch;
-            margin: 0 auto;
-            padding: var(--pad);
-         }
-         main {
-            max-width: 72ch;
-            margin: 0 auto;
-            padding: var(--pad);
-         }
-         h1 {
-            font-size: clamp(1.8rem, 4vw, 2.6rem);
-            line-height: 1.15;
-            margin: 0 0 0.25em;
-         }
-         h2 {
-            font-size: clamp(1.15rem, 2vw, 1.4rem);
-            margin: 1.6em 0 0.4em;
-         }
-         p {
-            margin: 0.5em 0;
-         }
-         .muted {
-            color: var(--muted);
-         }
-         /* min() lets columns shrink below 220px on narrow viewports (avoids 320px overflow) */
-         .grid {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(
-               auto-fit,
-               minmax(min(220px, 100%), 1fr)
-            );
-            margin: 1rem 0;
-         }
-         .card {
-            background: var(--card);
-            padding: 1rem 1.1rem;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-         }
-         a {
-            color: var(--accent);
-         }
-         :is(
-            a,
-            button,
-            input,
-            select,
-            textarea,
-            summary,
-            [tabindex],
-            [contenteditable]
-         ):focus-visible {
-            outline: 3px solid var(--ring);
-            outline-offset: 2px;
-            border-radius: 4px;
-         }
-         img,
-         svg {
-            max-width: 100%;
-            height: auto;
-            display: block;
-         }
-         figure {
-            margin: 1rem 0;
-         }
-         figcaption {
-            color: var(--muted);
-            font-size: 0.9rem;
-            margin-top: 0.35rem;
-         }
-         @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-               animation-duration: 0.01ms !important;
-               animation-iteration-count: 1 !important;
-               transition-duration: 0.01ms !important;
-               scroll-behavior: auto !important;
-            }
-         }
-         @media print {
-            :root {
-               --bg: #fff;
-               --fg: #000;
-               --card: #fff;
-               --muted: #444;
-               --border: #999;
-               --accent: #003a80;
-            }
-            .grid {
-               grid-template-columns: 1fr !important;
-            }
-            main,
-            header.site,
-            footer.site {
-               max-width: 100% !important;
-               padding: 1em !important;
-            }
-            a::after {
-               content: " (" attr(href) ")";
-               font-size: 0.85em;
-               color: #444;
-            }
-         }
-      </style>
-   </head>
-   <body>
-      <!-- Note: <header> and <footer> are siblings of <main> so they retain banner/contentinfo roles. -->
-      <header class="site">
-         <h1>{{Title}}</h1>
-         <p class="muted">
-            {{One-line intro — what this page is and who it's for}}
-         </p>
-      </header>
-      <main>
-         <section aria-labelledby="key-points">
-            <h2 id="key-points">Key points</h2>
-            <div class="grid">
-               <div class="card">
-                  <h3>{{Point 1}}</h3>
-                  <p>{{…}}</p>
-               </div>
-               <div class="card">
-                  <h3>{{Point 2}}</h3>
-                  <p>{{…}}</p>
-               </div>
-               <div class="card">
-                  <h3>{{Point 3}}</h3>
-                  <p>{{…}}</p>
-               </div>
-            </div>
-         </section>
-      </main>
-      <footer class="site muted"><p>Source: {{link or "—"}}</p></footer>
-   </body>
-</html>
-```
+### Slot conventions
+
+The template uses the following placeholder slots that you must replace with
+real content before saving the output file:
+
+- `{{Title}}` — the page title, used in both `<title>{{Title}}</title>` and the
+  visible `<h1>`.
+- `{{one-line prompt summary}}` — a brief description of the user's request,
+  placed in the traceability comment
+  `<!-- Generated from: "{{one-line prompt summary}}" -->` at the very top.
+- `{{X}}`, `{{Y}}`, `{{Z}}` — the 3–6 anchor points you curated from the source,
+  listed in `<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->` so the user can see what was
+  included and what was left out.
 
 ## Worked examples — different inputs, different shapes
 
@@ -415,10 +241,58 @@ Verifiable by the agent:
 - [ ] File opens without network: grep the HTML — zero `http://`/`https://`
       outside anchor `href`s that the user explicitly asked for.
 
-Needs human verification (flag in response, don't tick):
+Layout and print checks (covered by chrome-devtools SOP below):
 
-- [ ] Renders sanely at 320px width and at 200% browser zoom.
-- [ ] Printed preview looks right.
+- [ ] Renders sanely at 320px width and at 200% browser zoom — verified by
+      mobile-viewport screenshot in the chrome-devtools verification step.
+- [ ] Printed preview looks right — run the OS print-to-PDF flow after
+      verification passes.
+
+## Verification (chrome-devtools)
+
+Automated browser verification runs **by default** on every `/visual-aid`
+invocation. It drives Chrome via the `chrome-devtools-mcp` plugin. Pass
+`--no-verify` to skip (e.g., when chrome-devtools-mcp is not installed, or
+for rapid iteration where you only want the HTML output).
+
+### SOP
+
+1. **Resolve slug.** Lowercase the prompt, replace spaces/punctuation with
+   dashes. Create `/tmp/visual-aid/<slug>/` (`mkdir -p`).
+
+2. **Open in browser.** Use `navigate_page` to load
+   `file://<absolute-path-to-output.html>`.
+
+3. **Desktop screenshot.** Use `take_screenshot` — save to
+   `/tmp/visual-aid/<slug>/desktop.png`.
+
+4. **Mobile viewport screenshot.** Resize to mobile viewport (375×812 px).
+   Use `take_screenshot` again — save to `/tmp/visual-aid/<slug>/mobile.png`.
+   This covers the "renders sanely at 320 px / small viewport" self-check.
+
+5. **Console check.** Use `list_console_messages`. If any error-level console
+   errors are present, abort and attach the console errors to the response.
+   Do not emit the file path until all console errors are resolved.
+
+6. **Lighthouse a11y audit.** Use `lighthouse_audit`. If the accessibility
+   score is below the threshold of 90, abort and attach the failing audits.
+   A lighthouse score below that threshold means the page ships with real
+   a11y defects — fix them before surfacing the output.
+
+7. **Surface artifacts.** On success, print the artifact paths inline:
+   - `file:///tmp/visual-aid/<slug>/desktop.png`
+   - `file:///tmp/visual-aid/<slug>/mobile.png`
+
+   These outputs are ephemeral — `/tmp/visual-aid/` is not persisted across
+   reboots. Copy anything you want to keep.
+
+### Opt-out
+
+Pass `--no-verify` when:
+
+- `chrome-devtools-mcp` is not installed in the current environment.
+- Fast iteration: you want the raw HTML first and will verify manually.
+- CI / headless environments without a browser.
 
 ## Common mistakes
 
