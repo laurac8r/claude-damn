@@ -161,8 +161,13 @@ guards (motion, focus, contrast, print).
 
 ### Slot conventions
 
-The template uses the following placeholder slots that you must replace with
-real content before saving the output file:
+The template uses placeholder slots that you must replace before saving. **The
+list below names the structural slots; the rule is broader: every `{{...}}`
+pattern in `baseline.html` must be replaced with real content (or the
+surrounding block deleted) before shipping. Grep the output for `{{` as a final
+check — any survivor is a bug.**
+
+Structural slots in `baseline.html`:
 
 - `{{Title}}` — the page title, used in both `<title>{{Title}}</title>` and the
   visible `<h1>`.
@@ -172,6 +177,16 @@ real content before saving the output file:
 - `{{X}}`, `{{Y}}`, `{{Z}}` — the 3–6 anchor points you curated from the source,
   listed in `<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->` so the user can see what was
   included and what was left out.
+- `{{One-line intro — what this page is and who it's for}}` — the lede
+  paragraph under the `<h1>`. Replace with a real sentence; do not leave the
+  hint text.
+- `{{Point 1}}`, `{{Point 2}}`, `{{Point 3}}` — card titles in the default
+  three-card layout. Add or remove cards to match your chosen shape from the
+  Input shapes table; don't pad to three if the source has two.
+- `{{…}}` — card body text under each card title. One per card; replace with
+  the curated content for that anchor.
+- `{{link or "—"}}` — the source link in the footer. Use the URL the user
+  provided, or replace with `—` (em dash) if there's no canonical source.
 
 ## Worked examples — different inputs, different shapes
 
@@ -241,12 +256,14 @@ Verifiable by the agent:
 - [ ] File opens without network: grep the HTML — zero `http://`/`https://`
       outside anchor `href`s that the user explicitly asked for.
 
-Layout and print checks (covered by chrome-devtools SOP below):
+Layout (automated) and print (manual) checks:
 
-- [ ] Renders sanely at 320px width and at 200% browser zoom — verified by
-      mobile-viewport screenshot in the chrome-devtools verification step.
-- [ ] Printed preview looks right — run the OS print-to-PDF flow after
-      verification passes.
+- [ ] Renders sanely at 320px width and at 200% browser zoom — **automated**
+      via mobile-viewport screenshot in the chrome-devtools verification step
+      below.
+- [ ] Printed preview looks right — **manual**: run the OS print-to-PDF flow
+      (see `reference_html_to_pdf_sop`) after the chrome-devtools verification
+      passes. The chrome-devtools SOP does not cover print rendering.
 
 ## Verification (chrome-devtools)
 
