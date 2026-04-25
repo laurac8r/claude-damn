@@ -7,10 +7,9 @@ artifact path, MCP tool names, mobile viewport step, default-on language).
 `TestHumanVerificationHandoffRemoved` guards that the old human-screenshot-ask
 is gone and that machine-readable failure conditions replace it.
 
-RED phase: all tests in `TestVerificationSopExists` and the positive-search
-tests in `TestHumanVerificationHandoffRemoved` are expected to FAIL until the
-GREEN agent edits SKILL.md. The negative-existence tests may already PASS if
-the exact phrases are absent from the current file.
+These are regression/contract tests: they pin the SOP shape post-refactor so a
+future edit cannot silently regress to a human-screenshot hand-off or drop a
+required step from the chrome-devtools flow.
 """
 
 from __future__ import annotations
