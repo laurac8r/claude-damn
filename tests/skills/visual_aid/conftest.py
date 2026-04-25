@@ -23,7 +23,7 @@ def skill_md(skill_root: Path) -> str:
 
 
 @pytest.fixture
-def frontmatter(skill_md: str) -> dict:
+def frontmatter(skill_md: str) -> dict[str, object]:
     if not skill_md.startswith("---"):
         raise ValueError("No YAML frontmatter found (file must start with ---)")
     end = skill_md.index("---", 3)
