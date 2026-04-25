@@ -184,6 +184,90 @@ class TestHumanVerificationHandoffRemoved:
         )
 
 
+class TestHttpServerSop:
+    """The verification SOP must use a local HTTP server, not file:// URLs."""
+
+    def test_sop_uses_http_server_not_file_url_for_lighthouse(
+        self, skill_md: str
+    ) -> None:
+        """SOP must reference http.server or localhost (not bare file://) for audit.
+
+        lighthouse_audit rejects file:// URLs with INVALID_URL — the SOP must
+        document serving over HTTP so the audit can actually run.
+        """
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        assert re.search(r"http\.server|localhost", sop_section, re.IGNORECASE), (
+            "The Verification SOP must mention 'http.server' or 'localhost' to "
+            "document serving the HTML via HTTP rather than a file:// URL."
+        )
+
+    def test_sop_documents_lighthouse_file_url_limitation(self, skill_md: str) -> None:
+        """SOP must explain why HTTP is needed (lighthouse rejects file:// URLs).
+
+        The explanation keeps the rationale close to the step so the agent
+        doesn't regress back to a file:// URL in future edits.
+        """
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        has_invalid_url = "INVALID_URL" in sop_section
+        has_file_rejection = bool(
+            re.search(
+                r"file://.*(?:lighthouse|reject|require|http|limitation)"
+                r"|(?:lighthouse|reject|require|http|limitation).*file://",
+                sop_section,
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        assert has_invalid_url or has_file_rejection, (
+            "The Verification SOP must explain that lighthouse_audit rejects "
+            "file:// URLs (mention 'INVALID_URL', or pair 'file://' with "
+            "'lighthouse'/'reject'/'require'/'http'/'limitation')."
+        )
+
+    def test_sop_documents_server_lifecycle(self, skill_md: str) -> None:
+        """SOP must name a server-start step AND a server-stop/teardown step.
+
+        A server that starts but never stops risks port collisions on the next
+        invocation.
+        """
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        has_start = bool(
+            re.search(r"start.*server|server.*start", sop_section, re.IGNORECASE)
+        )
+        has_stop = bool(
+            re.search(r"stop|kill|tear\s*down|teardown", sop_section, re.IGNORECASE)
+        )
+        assert has_start, (
+            "The Verification SOP must document a server-start step "
+            "('start … server' or 'server … start')."
+        )
+        assert has_stop, (
+            "The Verification SOP must document a server-stop/teardown step "
+            "('stop', 'kill', 'teardown', or 'tear down')."
+        )
+
+    def test_navigate_page_uses_http_url_form_in_sop(self, skill_md: str) -> None:
+        """The SOP's navigate_page example must reference http://, not file://.
+
+        Pins that the navigate_page step was updated alongside the server step,
+        so the two don't drift apart in future edits.
+        """
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        nav_match = re.search(r"navigate_page", sop_section)
+        assert nav_match, "'navigate_page' must appear in the Verification SOP."
+        # Grab a 300-char window centred on navigate_page
+        start = max(0, nav_match.start() - 50)
+        end = min(len(sop_section), nav_match.end() + 250)
+        window = sop_section[start:end]
+        assert "http://" in window, (
+            "The navigate_page step in the Verification SOP must use 'http://' "
+            "(not 'file://') as its example URL."
+        )
+
+
 class TestSlotCrossCheck:
     """Every {{...}} placeholder in baseline.html must appear in SKILL.md slot docs."""
 
