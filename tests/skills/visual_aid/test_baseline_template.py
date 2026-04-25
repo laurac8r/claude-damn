@@ -2,7 +2,7 @@
 
 `TestBaselineHtmlExtracted` guards that baseline.html exists and contains all
 required structural invariants (doctype, lang attr, colour-scheme blocks, a11y
-selectors, print media query, slot placeholders).
+selectors, print media query, key traceability and title slot placeholders).
 
 `TestSkillMdReferencesBaseline` guards that SKILL.md no longer inlines the raw
 HTML template and instead references baseline.html by name, retaining the slot
@@ -43,7 +43,7 @@ class TestBaselineHtmlExtracted:
         )
 
     def test_focus_visible_selector_coverage(self, baseline_html: str) -> None:
-        """The :focus-visible rule must cover all eight interactive elements."""
+        """The :focus-visible rule must cover all eight selector tokens."""
         assert ":focus-visible" in baseline_html
         # Find the region around :focus-visible to check selector tokens.
         idx = baseline_html.index(":focus-visible")
@@ -90,6 +90,20 @@ class TestBaselineHtmlExtracted:
         """The <title>{{Title}}</title> slot must be preserved."""
         assert "<title>{{Title}}</title>" in baseline_html
 
+    def test_h1_title_slot(self, baseline_html: str) -> None:
+        """The <h1>{{Title}}</h1> slot must appear in the baseline.html body."""
+        assert "<h1>{{Title}}</h1>" in baseline_html, (
+            "<h1>{{Title}}</h1> must be present in baseline.html so the "
+            "visible heading slot is populated alongside the <title> slot."
+        )
+
+    def test_footer_source_slot(self, baseline_html: str) -> None:
+        """The {{link or \"—\"}} footer source slot must be preserved."""
+        assert '{{link or "—"}}' in baseline_html, (
+            '{{link or "—"}} must be present in baseline.html as the footer '
+            "source-link slot."
+        )
+
 
 class TestSkillMdReferencesBaseline:
     """Invariants for SKILL.md after the baseline.html extraction."""
@@ -104,8 +118,8 @@ class TestSkillMdReferencesBaseline:
 
     def test_slot_conventions_retained(self, skill_md: str) -> None:
         """SKILL.md must retain slot docs outside an inlined HTML block."""
-        # After refactor: slots are referenced in prose near "baseline.html",
-        # not buried inside the raw HTML. Verify baseline.html is mentioned
+        # Slots are documented in prose near "baseline.html", not inside an
+        # inlined raw HTML block. Verify baseline.html is mentioned
         # (prerequisite) and then that each slot token appears in skill_md.
         assert "baseline.html" in skill_md, (
             "baseline.html must be referenced before slot docs are meaningful"
@@ -119,8 +133,6 @@ class TestSkillMdReferencesBaseline:
     def test_baseline_template_section_header_retained(self, skill_md: str) -> None:
         """The ## Baseline template section header points to baseline.html."""
         assert re.search(r"^## Baseline template", skill_md, re.MULTILINE)
-        # After refactor the section body must reference baseline.html —
-        # not just contain raw HTML.
         assert "baseline.html" in skill_md, (
             "## Baseline template section must reference baseline.html "
             "after the inline template is extracted"
