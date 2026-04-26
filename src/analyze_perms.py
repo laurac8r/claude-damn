@@ -522,6 +522,12 @@ def find_recent_transcripts(root: Path, *, limit: int) -> list[Path]:
     ]
     candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return candidates[:limit]
+    candidates: list[tuple[float, Path]] = []
+    for p in root.rglob("*.jsonl"):
+        if any("pytest-of" in part for part in p.relative_to(root).parts):
+            continue
+        try:
+            mtime = p.stat().st_mtime
 
 
 def format_table(suggestions: list[Suggestion]) -> str:

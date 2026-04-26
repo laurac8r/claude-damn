@@ -485,6 +485,27 @@ class TestFindRecentTranscripts:
         assert len(out) == 1
         assert out[0].name == "keep.jsonl"
 
+    def test_stat_oserror_skips_path_does_not_raise(
+        self, tmp_path: Path, mocker
+    ) -> None:
+        """A TOCTOU/permission OSError from .stat() must skip the path, not abort."""
+        good = tmp_path / "good.jsonl"
+        bad = tmp_path / "bad.jsonl"
+        good.write_text("{}\n")
+        bad.write_text("{}\n")
+
+        real_stat = Path.stat
+
+        def _stat_side_effect(self, *args, **kwargs):  # type: ignore[override]
+            if self == bad:
+                raise PermissionError("permission denied")
+            return real_stat(self)
+
+        mocker.patch.object(Path, "stat", _stat_side_effect)
+        out = find_recent_transcripts(tmp_path, limit=10)
+        assert good in out
+        assert bad not in out
+
 
 class TestFormatTable:
     def test_empty_list_yields_header_only(self) -> None:
