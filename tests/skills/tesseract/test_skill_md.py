@@ -26,7 +26,10 @@ class TestTesseractRegressions:
         but they're case-normalized.
         """
         assert "strips every dot, slash, and uppercase letter" not in skill_md
-        assert "lowercases letters" in skill_md
+        assert re.search(r"lowercases\s+letters", skill_md), (
+            "Slug-rule prose must describe case-normalization via "
+            "'lowercases letters' (reflow-tolerant)."
+        )
 
     def test_2_free_text_grep_uses_fixed_strings(self, skill_md: str) -> None:
         """Fix 2 (Copilot #5): the free-text Hallway 1 must use -F (or

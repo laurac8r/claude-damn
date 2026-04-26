@@ -9,11 +9,28 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-Currently on branch `feat/transition-to-plugin` — converting the flat
-`~/.claude` layout into a proper plugin package with tests, `pyproject.toml`,
-and `uv`-managed dependencies. See [`ROADMAP.md`](ROADMAP.md) for the transition
-plan and [`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs and
-implementation plans live in `docs/superpowers/{specs,plans}/`.
+> **⏳ Status:** v1.0.0 submitted to the official Claude Code marketplace on
+> 2026-04-23; **awaiting Anthropic review**. Until approval lands, install via
+> the local / git path below (the `/plugin install` command will start working
+> once the submission is accepted — watch `CHANGELOG.md` for the flip).
+
+Install ahead of marketplace approval:
+
+```bash
+# Point Claude Code at a local clone
+git clone https://github.com/laurac8r/claude-damn
+claude --plugin-dir ./claude-damn
+```
+
+Once approved, this becomes:
+
+```
+/plugin install claude-damn@claude-plugins-official
+```
+
+See [`ROADMAP.md`](ROADMAP.md) for what's next and
+[`CHANGELOG.md`](CHANGELOG.md) for what's landed. Design specs live in
+`docs/superpowers/{specs,plans}/`.
 
 ## What's in the box
 
@@ -68,103 +85,125 @@ See [`skills/README.md`](skills/README.md) for the full combinatoric table.
   and authenticated
 - Git
 
-### 1. Enable the official plugin marketplace
+### Install from the marketplace (post-approval)
 
-In Claude Code, confirm you can access plugins from `claude-plugins-official`.
-If prompted, approve marketplace access:
-
-```
-claude plugins list
-```
-
-### 2. Install required plugins
-
-At minimum, install **superpowers** — the skill engine this repo builds on:
+> **Not yet available.** v1.0.0 is awaiting Anthropic marketplace review as of
+> 2026-04-23. Once accepted, the command below will work. Until then, use the
+> pre-approval install path under "Manual install" below.
 
 ```
-claude plugins install superpowers@claude-plugins-official
+/plugin install claude-damn@claude-plugins-official
 ```
 
-The full set used by this project (all from `claude-plugins-official`):
+This will register every skill, command, and the inline-script PreToolUse hook.
+Restart or reload the session once to pick up the hook.
+
+### Companion plugins
+
+`claude-damn` layers on top of `superpowers`. Install it if you don't have it
+already:
 
 ```
-superpowers          # Core skill engine — required
-code-review          # PR review workflows
-frontend-design      # UI/UX skill
-code-simplifier      # Code cleanup
-feature-dev          # Guided feature development
-skill-creator        # Create/edit skills
-security-guidance    # Security audit
-pr-review-toolkit    # Multi-agent PR review
-agent-sdk-dev        # Agent SDK scaffolding
-hookify              # Hook rule creation
-chrome-devtools-mcp  # Browser DevTools via MCP
-playground           # Interactive HTML playgrounds
-remember             # Session handoff notes
+/plugin install superpowers@claude-plugins-official
 ```
 
-### 3. Clone this repo
+Other marketplace plugins the skill set composes with (all optional):
 
-```bash
-git clone <repo-url> claude-damn
-cd claude-damn
-```
+| Plugin                | What it adds                 |
+| --------------------- | ---------------------------- |
+| `code-review`         | PR review workflows          |
+| `frontend-design`     | UI/UX skill                  |
+| `code-simplifier`     | Code cleanup                 |
+| `feature-dev`         | Guided feature development   |
+| `skill-creator`       | Create/edit skills           |
+| `security-guidance`   | Security audit               |
+| `pr-review-toolkit`   | Multi-agent PR review        |
+| `agent-sdk-dev`       | Agent SDK scaffolding        |
+| `hookify`             | Hook rule creation           |
+| `chrome-devtools-mcp` | Browser DevTools via MCP     |
+| `playground`          | Interactive HTML playgrounds |
+| `remember`            | Session handoff notes        |
 
-### 4. Copy skills and config to your Claude Code home
+### Verify
 
-```bash
-# Skills
-cp -r skills/* ~/.claude/skills/
-
-# Project settings (review before overwriting — merges with your existing config)
-# settings.json contains permissions, hooks, enabled plugins, and model routing
-cp settings.json ~/.claude/settings.json
-
-# Project instructions
-cp CLAUDE.md ~/.claude/CLAUDE.md
-```
-
-> **Note:** If you already have a `~/.claude/settings.json` or
-> `~/.claude/CLAUDE.md`, merge manually rather than overwriting. The
-> `settings.json` in this repo includes hook definitions, permission
-> allow/ask/deny lists, and plugin enablement that you may want to adapt to your
-> own setup.
-
-### 5. Personalize
-
-Personal operator preferences (commit style, model routing, subagent
-delegation targets, worktree location) live in `rules/PERSONALIZATION.md`
-— gitignored, so your clone can diverge from upstream without merge pain.
-
-First-time setup:
-
-```bash
-cp rules/PERSONALIZATION.example.md rules/PERSONALIZATION.md
-```
-
-Then edit `rules/PERSONALIZATION.md` to taste. `CLAUDE.md` holds general
-engineering rules that apply to every clone and should stay in sync with
-upstream.
-
-### 6. Verify
-
-Open a new Claude Code session and run a skill to confirm everything loaded:
+Open a new Claude Code session and invoke any skill — e.g.:
 
 ```
 /expert-review
 ```
 
-You should see the skill content expand in your session.
+The skill content should expand in your session.
+
+### Personalize (optional)
+
+Operator-specific preferences (commit style, model routing, subagent delegation
+targets) go in `~/.claude/rules/PERSONALIZATION.md`. Copy the template and edit
+to taste:
+
+```bash
+cp rules/PERSONALIZATION.example.md ~/.claude/rules/PERSONALIZATION.md
+```
+
+`CLAUDE.md` holds general engineering rules that apply to every clone and should
+stay in sync with upstream.
+
+### Manual install (pre-approval, and for contributors)
+
+Until the marketplace submission is approved, this is the primary install path.
+It's also the right path if you're hacking on `claude-damn` itself:
+
+```bash
+git clone https://github.com/laurac8r/claude-damn
+cd claude-damn
+uv sync        # dev/test dependencies
+uv run pytest  # 422 tests green
+```
+
+Then point Claude Code at the local checkout so skills, commands, and the
+PreToolUse hook load:
+
+```bash
+claude --plugin-dir /absolute/path/to/claude-damn
+```
+
+Or use `--add-dir` to allow tool access without registering as a plugin:
+
+```bash
+claude --add-dir /absolute/path/to/claude-damn
+```
+
+Once the marketplace submission is approved, you can remove the local clone and
+switch to `/plugin install claude-damn@claude-plugins-official`.
+
+## Quickstart
+
+A few skill invocations to get a feel for the workflow:
+
+```
+/tdd                 # Start a test-driven development loop
+/super                # Brainstorm first, then TDD
+/super-duper-cat      # Brainstorm + worktree isolation + parallel subagents
+/expert-review        # Multi-phase expert code review
+/checkpoint-save      # Save resumable work state
+/checkpoint-resume    # Pick up where you left off
+/cost_                # Log this session's token spend
+```
+
+See [`skills/README.md`](skills/README.md) for the full combinatoric table of
+how `super` / `duper` / `cat` / `tdd` compose into 20+ skill variants.
 
 ## Project structure
 
 ```
 .
+├── .claude-plugin/
+│   └── plugin.json            # Plugin manifest (name, version, author, keywords)
 ├── CLAUDE.md                  # Project instructions (model routing, style, testing)
-├── CHECKPOINT.md              # Current work-in-progress checkpoint
-├── settings.json              # Claude Code harness config (permissions, hooks, plugins)
-├── .prettierrc                # Prettier config for Markdown
-├── skills/
+├── README.md                  # This file
+├── LICENSE                    # MIT
+├── settings.json              # Default harness config (permissions, hooks, plugins)
+├── pyproject.toml             # Python tooling (uv, pytest, ruff, ty)
+├── skills/                    # Auto-discovered skills (one SKILL.md per skill)
 │   ├── README.md              # Full combinatoric skill table
 │   ├── tdd/                   # Base TDD workflow
 │   ├── super/                 # Brainstorm + TDD
@@ -174,16 +213,18 @@ You should see the skill content expand in your session.
 │   ├── expert-*-review/       # 9 combinatoric expert-review variants
 │   ├── checkpoint-save/       # Save resumable checkpoint
 │   ├── checkpoint-resume/     # Resume from checkpoint
-│   ├── check-yourself/        # Post-step self-check
-│   └── ...                    # 37 skills total
-├── tests/
-│   ├── test_checkpoint_archive.bats
-│   ├── test_extract_cost.py
-│   ├── test_hook_inline_scripts.py
-│   ├── test_permissions.py
-│   └── test_settings_structure.py
+│   ├── tesseract/             # Cross-session memory via file I/O
+│   └── ...
+├── hooks/
+│   ├── hooks.json             # PreToolUse registration
+│   └── block-inline-scripts.py # Guardrail for multiline non-Bash scripts
+├── src/
+│   └── extract_cost.py        # Token-usage parser for session JSONL logs
+├── scripts/
+│   └── statusline-command.sh  # Per-session cost in the statusline
+├── tests/                     # pytest + bats suite
 └── docs/
-    └── superpowers/           # Design specs
+    └── superpowers/           # Design specs (sme-test, sme-review, etc.)
 ```
 
 ## Running tests
@@ -226,6 +267,37 @@ uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress mat
 
 Skip `-n` for the default suite — it runs in ~0.5s, and xdist worker startup
 adds more overhead than it saves.
+
+## Privacy
+
+`claude-damn` runs entirely on your local machine. The plugin itself does not
+collect, transmit, store, or share any user data with the author or any
+third-party service. Specifically:
+
+- **Skills and hooks execute locally.** Every skill, every hook, every script
+  runs inside your Claude Code session on your own filesystem. Nothing is phoned
+  home to a `claude-damn` server — there is no `claude-damn` server.
+- **Cost-tracking artifacts stay on-disk.** `/cost_` writes session token-usage
+  logs to `~/.claude/cost-log/` and `~/.claude/COST-SUMMARY.md`. `/cost-opt`
+  reads and compacts those same files. None of this is uploaded anywhere.
+- **Checkpoint state stays in-repo.** `/checkpoint-save` writes `CHECKPOINT.md`
+  to your working tree and archives to `.checkpoints/` — local files only.
+- **Tesseract transmissions are local-only.** `/tesseract` reads and writes
+  `~/.claude/tesseract/shelf/*.md` and `~/.claude/tesseract/bulk-beings.md` on
+  your disk. The skill explicitly advises gitignoring these files in any repo
+  that mirrors `~/.claude`.
+
+**Upstream data flows the plugin does not govern:**
+
+- Your prompts and Claude's responses travel to Anthropic as part of normal
+  Claude Code operation. That is governed by
+  [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy), not
+  this plugin.
+- Skills that shell out to `gh`, `git`, `curl`, or other tools follow the
+  privacy practices of those tools and any remote services they talk to.
+
+If any future version of `claude-damn` adds data collection or transmission,
+this section will be updated before that version ships.
 
 ## License
 

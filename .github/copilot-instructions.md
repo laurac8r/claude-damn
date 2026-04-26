@@ -28,7 +28,7 @@ except UnicodeDecodeError, PermissionError:
 
 The second form is **not** Python 2 `except-as-name` syntax (which was spelled
 `except X, e:` and required exactly one exception type followed by a name). PEP
-758's form requires *two or more* exception types and binds no name; the tuple
+758's form requires _two or more_ exception types and binds no name; the tuple
 is unambiguous to the parser.
 
 **Do NOT flag** `except A, B:` or `except* A, B:` as a `SyntaxError`, "Python 2
