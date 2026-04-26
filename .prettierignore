@@ -1,0 +1,7 @@
+# Auto-generated, never committed
+.pytest_cache/
+
+# Prettier 3.8.2 idempotency bug on HTML comment inside list item with tabWidth=3.
+# Reformatting oscillates between 4- and 5-space indents on line 47 and fails
+# `prettier --check` indefinitely. Leaving as-authored until upstream fixes.
+rules/PERSONALIZATION.example.md

@@ -56,7 +56,7 @@ these operational directives:
         more than one statement is needed, use the write-to-`/tmp/` workflow
         above.
    - **This repo's `hooks/block-inline-scripts.py` also enforces (PreToolUse
-     Bash):** max 300 chars per command and max 3 statement separators (`;`,
+     Bash):** max 400 chars per command and max 4 statement separators (`;`,
      `&&`, `||`, `|`, `>`, `<`, `\n`, `>>`, `<<`). Exceeding either triggers a
      deny. Split long/chained commands across separate Bash calls rather than
      chaining.
@@ -86,7 +86,7 @@ these operational directives:
 
 - **Per-call feedback (deny / allow / ask):** emit via
   `hookSpecificOutput.permissionDecisionReason`. The top-level `systemMessage`
-  persists as a `<system-reminder>` across turns — avoid it unless you *want*
+  persists as a `<system-reminder>` across turns — avoid it unless you _want_
   the text to follow every subsequent tool call.
 - **Hook errors:** write to stderr + `sys.exit(1)`. Do not emit a
   `systemMessage` on stdout for errors (same persistence problem).
