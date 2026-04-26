@@ -9,16 +9,17 @@ from pathlib import Path
 import pytest
 
 HOOK_SCRIPT = Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py"
+CONSTANTS_SCRIPT = HOOK_SCRIPT.parent / "constants.py"
 
 _constants_spec = importlib.util.spec_from_file_location(
-    "constants",
-    Path(__file__).parent.parent / "hooks" / "constants.py",
+    "hook_constants", CONSTANTS_SCRIPT
 )
-assert _constants_spec is not None and _constants_spec.loader is not None
-_constants_mod = importlib.util.module_from_spec(_constants_spec)
-_constants_spec.loader.exec_module(_constants_mod)  # type: ignore[union-attr]
-MAX_COMMAND_LENGTH: int = _constants_mod.MAX_COMMAND_LENGTH
-MAX_STATEMENT_COUNT: int = _constants_mod.MAX_STATEMENT_COUNT
+assert _constants_spec is not None
+assert _constants_spec.loader is not None
+_constants = importlib.util.module_from_spec(_constants_spec)
+_constants_spec.loader.exec_module(_constants)  # type: ignore[union-attr]
+MAX_COMMAND_LENGTH: int = _constants.MAX_COMMAND_LENGTH
+MAX_STATEMENT_COUNT: int = _constants.MAX_STATEMENT_COUNT
 
 
 def run_hook(tool_name: str, command: str) -> dict[str, object]:
