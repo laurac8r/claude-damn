@@ -21,7 +21,7 @@ MAX_COMMAND_LENGTH: int = _constants_mod.MAX_COMMAND_LENGTH
 MAX_STATEMENT_COUNT: int = _constants_mod.MAX_STATEMENT_COUNT
 
 
-def run_hook(tool_name: str, command: str) -> dict:
+def run_hook(tool_name: str, command: str) -> dict[str, object]:
     """Feed a simulated tool call to the hook and return its JSON output."""
     payload = json.dumps(
         {
