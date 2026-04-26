@@ -315,7 +315,7 @@ _RISKY_PAIRS: frozenset[str] = frozenset(
     }
 )
 
-_ENV_PREFIX = re.compile(r"^(?:[A-Z_][A-Z0-9_]*=\S+(?:\s+|$))+")
+_ENV_PREFIX = re.compile(r"^(?:[A-Za-z_][A-Za-z0-9_]*=\S+(?:\s+|$))+")
 _SEGMENT_SEP = re.compile(r"&&|\|\||[;|]")
 _VAR_ASSIGN = re.compile(r"^[A-Z_][A-Z0-9_]*=")
 # ``env`` flags that consume a following argument (``env -u NAME cmd``).

@@ -48,6 +48,19 @@ class TestExtractFirstCommand:
         result = extract_first_command("FOO=bar BAZ=1 git status")
         assert result == ("git", "git status")
 
+    @pytest.mark.parametrize(
+        "cmd, expected",
+        [
+            ("foo=bar git status", ("git", "git status")),
+            ("foo=bar baz=1 git status", ("git", "git status")),
+            ("_foo=bar git status", ("git", "git status")),
+        ],
+    )
+    def test_drops_lowercase_leading_env_vars(
+        self, cmd: str, expected: tuple[str, str]
+    ) -> None:
+        assert extract_first_command(cmd) == expected
+
     def test_drops_sudo(self) -> None:
         assert extract_first_command("sudo systemctl status") == (
             "systemctl",
