@@ -458,7 +458,7 @@ def scan_transcripts(paths: Iterable[Path]) -> ScanResult:
                 for item in content:
                     if not isinstance(item, dict) or item.get("type") != "tool_use":
                         continue
-                    name = item.get("name", "")
+                    name = item.get("name") or ""
                     if name == "Bash":
                         cmd = (item.get("input") or {}).get("command", "")
                         if not isinstance(cmd, str) or not cmd.strip():

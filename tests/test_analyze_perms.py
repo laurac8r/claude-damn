@@ -217,6 +217,24 @@ class TestScanTranscripts:
         result = scan_transcripts([a, b])
         assert result.bash["gh pr"] == 2
 
+    def test_tool_use_name_null_does_not_raise(self, tmp_path: Path) -> None:
+        """A tool_use block with explicit null name must be skipped, not raise."""
+        jsonl = tmp_path / "session.jsonl"
+        # Write a raw line with name=null (JSON null, not absent key)
+        event = {
+            "type": "assistant",
+            "message": {
+                "content": [
+                    {"type": "tool_use", "name": None, "input": {}},
+                ],
+            },
+        }
+        jsonl.write_text(json.dumps(event) + "\n")
+        # Must not raise AttributeError; result should be empty
+        result = scan_transcripts([jsonl])
+        assert result.bash == {}
+        assert result.mcp == {}
+
 
 class TestClassifyBashKey:
     """classify_bash_key returns a verdict tag for a `leading sub` pair.
