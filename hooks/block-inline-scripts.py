@@ -14,12 +14,10 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 
-# ---------------------------------------------------------------------------
-# Configurable constants — edit these to change defaults
-# ---------------------------------------------------------------------------
-MAX_COMMAND_LENGTH = 300  # characters
-MAX_STATEMENT_COUNT = 3  # separator occurrences
-
+from constants import (  # type: ignore[import-not-found]
+    MAX_COMMAND_LENGTH,
+    MAX_STATEMENT_COUNT,
+)
 
 # ---------------------------------------------------------------------------
 # Rule dataclass
@@ -149,7 +147,7 @@ def main() -> None:
                 }
             )
         )
-    except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
+    except (json.JSONDecodeError, UnicodeDecodeError, TypeError) as e:
         print(f"Hook error: {e}", file=sys.stderr)
         sys.exit(1)
 

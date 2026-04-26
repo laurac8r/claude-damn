@@ -158,7 +158,7 @@ tree, and the first spec-plan-test skill (`sme-test`).
   persistent `systemMessage`. Tests updated.
 - `CLAUDE.md` — documented the PreToolUse hook output contract (use
   `permissionDecisionReason`, not `systemMessage`); noted the repo hook's Bash
-  limits (300 chars / 3 statement separators); documented the `.worktrees/`
+  limits (400 chars / 4 statement separators); documented the `.worktrees/`
   convention and gitignored `CHECKPOINT.md`.
 
 ## [Baseline] — Pre-plugin (`~/.claude` dotfiles)
