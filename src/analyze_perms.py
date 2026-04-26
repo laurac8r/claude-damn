@@ -516,19 +516,17 @@ def find_recent_transcripts(root: Path, *, limit: int) -> list[Path]:
     Pytest worker temp dirs (paths containing ``pytest-of``) are excluded so
     local test-suite runs don't pollute the allowlist suggestions.
     """
-    candidates = [
-        p
-        for p in root.rglob("*.jsonl")
-        if not any("pytest-of" in part for part in p.relative_to(root).parts)
-    ]
-    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
-    return candidates[:limit]
     candidates: list[tuple[float, Path]] = []
     for p in root.rglob("*.jsonl"):
         if any("pytest-of" in part for part in p.relative_to(root).parts):
             continue
         try:
             mtime = p.stat().st_mtime
+        except OSError:
+            continue
+        candidates.append((mtime, p))
+    candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+    return [path for _, path in candidates[:limit]]
 
 
 def format_table(suggestions: list[Suggestion]) -> str:

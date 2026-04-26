@@ -14,6 +14,7 @@ from src.analyze_perms import (
     extract_first_command,
     find_recent_transcripts,
     format_table,
+    main,
     rank_suggestions,
     scan_transcripts,
 )
