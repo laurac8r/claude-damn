@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -564,7 +565,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    paths = find_recent_transcripts(args.projects_dir, limit=args.sessions)
+    try:
+        if not args.projects_dir.exists():
+            raise FileNotFoundError(
+                f"[Errno 2] No such file or directory: '{args.projects_dir}'"
+            )
+        paths = find_recent_transcripts(args.projects_dir, limit=args.sessions)
+    except OSError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     scan = scan_transcripts(paths)
     suggestions = rank_suggestions(scan, limit=args.limit, min_count=args.min_count)
     print(format_table(suggestions))

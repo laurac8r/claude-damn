@@ -543,3 +543,13 @@ class TestFormatTable:
         table = format_table(suggestions)
         assert "| 1 |" in table
         assert "| 2 |" in table
+
+
+class TestMain:
+    def test_nonexistent_projects_dir_exits_nonzero_with_message(self, capsys) -> None:
+        """--projects-dir pointing to a non-existent path must return non-zero
+        and print a user-friendly error to stderr, not a raw traceback."""
+        rc = main(["--projects-dir", "/this/path/does/not/exist/at/all"])
+        assert rc != 0
+        captured = capsys.readouterr()
+        assert "/this/path/does/not/exist/at/all" in captured.err
