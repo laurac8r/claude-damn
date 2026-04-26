@@ -435,7 +435,7 @@ def scan_transcripts(paths: Iterable[Path]) -> ScanResult:
     result = ScanResult()
     for path in paths:
         try:
-            fh = path.open()
+            fh = path.open(encoding="utf-8", errors="replace")
         except OSError:
             continue
         with fh:

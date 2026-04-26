@@ -217,6 +217,16 @@ class TestScanTranscripts:
         result = scan_transcripts([a, b])
         assert result.bash["gh pr"] == 2
 
+    def test_unicode_decode_error_does_not_raise(self, tmp_path: Path) -> None:
+        """Non-UTF-8 bytes in a JSONL file must not propagate as UnicodeDecodeError."""
+        jsonl = tmp_path / "mixed.jsonl"
+        valid_line = json.dumps(_tool_use("Bash", {"command": "git log"}))
+        # Write one valid JSON line followed by bytes that are not valid UTF-8
+        jsonl.write_bytes(valid_line.encode() + b"\n\xff\xfe garbage\n")
+        # Must not raise; the valid line before the bad bytes should be counted
+        result = scan_transcripts([jsonl])
+        assert result.bash["git log"] == 1
+
     def test_tool_use_name_null_does_not_raise(self, tmp_path: Path) -> None:
         """A tool_use block with explicit null name must be skipped, not raise."""
         jsonl = tmp_path / "session.jsonl"
