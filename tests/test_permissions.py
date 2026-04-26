@@ -42,6 +42,17 @@ class TestAllowPatterns:
     ) -> None:
         assert pattern in allow_list, f"Missing claude dir access: {pattern}"
 
+    @pytest.mark.parametrize(
+        "pattern",
+        [
+            "Write(**/.superpowers/brainstorm/**)",
+        ],
+    )
+    def test_brainstorm_skill_write_allowed(
+        self, allow_list: list[str], pattern: str
+    ) -> None:
+        assert pattern in allow_list, f"Missing brainstorm write permission: {pattern}"
+
 
 class TestDenyPatterns:
     """Critical deny rules that must never be removed."""
