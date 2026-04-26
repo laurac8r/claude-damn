@@ -30,9 +30,8 @@ explicitly with `--from`). Target is the first positional argument or `--to`
    - If the user passes a literal placeholder like `<every …>`, don't pass it
      through — expand it to concrete paths first, or tell the user you need a
      real path.
-2. **Run from the `claude-damn` repo root** (where this skill's Python module
-   lives — `pyproject.toml` at
-   `/Users/laura/IWANNAGO/PROJECTS/AREAS/SCRIPTS/AREAS/CLAUDE/claude-damn`):
+2. **Run from the `claude-damn` repo root** (the directory containing
+   `pyproject.toml`; locate it with `git rev-parse --show-toplevel` if needed):
    ```bash
    PYTHONPATH="$HOME/.claude" python3 -m skills.sync.scripts.sync <args>
    ```
