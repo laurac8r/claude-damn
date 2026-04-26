@@ -147,7 +147,7 @@ def main() -> None:
                 }
             )
         )
-    except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
+    except (json.JSONDecodeError, UnicodeDecodeError, TypeError) as e:
         print(f"Hook error: {e}", file=sys.stderr)
         sys.exit(1)
 

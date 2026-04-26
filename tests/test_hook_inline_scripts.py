@@ -10,11 +10,15 @@ import pytest
 
 HOOK_SCRIPT = Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py"
 
-sys.path.insert(0, str(HOOK_SCRIPT.parent))
-from constants import (  # type: ignore[import-not-found]  # noqa: E402
-    MAX_COMMAND_LENGTH,
-    MAX_STATEMENT_COUNT,
+_constants_spec = importlib.util.spec_from_file_location(
+    "constants",
+    Path(__file__).parent.parent / "hooks" / "constants.py",
 )
+assert _constants_spec is not None and _constants_spec.loader is not None
+_constants_mod = importlib.util.module_from_spec(_constants_spec)
+_constants_spec.loader.exec_module(_constants_mod)  # type: ignore[union-attr]
+MAX_COMMAND_LENGTH: int = _constants_mod.MAX_COMMAND_LENGTH
+MAX_STATEMENT_COUNT: int = _constants_mod.MAX_STATEMENT_COUNT
 
 
 def run_hook(tool_name: str, command: str) -> dict:
@@ -188,27 +192,33 @@ class TestStatementLimit:
 
     # --- Fix A: SEPARATOR_PATTERN must not double-count >> and << ---
 
+    def _load_hook_module(self) -> object:
+        """Load block-inline-scripts module via spec, pre-seeding constants."""
+        import sys as _sys
+
+        hooks_dir = str(Path(__file__).parent.parent / "hooks")
+        _sys.path.insert(0, hooks_dir)
+        try:
+            spec = importlib.util.spec_from_file_location(
+                "block_inline_scripts",
+                Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
+            )
+            assert spec is not None and spec.loader is not None
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        finally:
+            _sys.path.remove(hooks_dir)
+        return mod
+
     def test_double_right_redirect_pattern_counts_as_one(self) -> None:
         """Unit test: SEPARATOR_PATTERN.findall treats '>>' as one token."""
-        spec = importlib.util.spec_from_file_location(
-            "block_inline_scripts",
-            Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
-        )
-        assert spec is not None and spec.loader is not None
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)  # type: ignore[union-attr]
-        assert mod.SEPARATOR_PATTERN.findall("a >> b") == [">>"]
+        mod = self._load_hook_module()
+        assert mod.SEPARATOR_PATTERN.findall("a >> b") == [">>"]  # type: ignore[union-attr]
 
     def test_double_left_redirect_pattern_counts_as_one(self) -> None:
         """Unit test: SEPARATOR_PATTERN.findall treats '<<' as one token."""
-        spec = importlib.util.spec_from_file_location(
-            "block_inline_scripts",
-            Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
-        )
-        assert spec is not None and spec.loader is not None
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)  # type: ignore[union-attr]
-        assert mod.SEPARATOR_PATTERN.findall("a << b") == ["<<"]
+        mod = self._load_hook_module()
+        assert mod.SEPARATOR_PATTERN.findall("a << b") == ["<<"]  # type: ignore[union-attr]
 
     def test_double_right_redirect_allowed_at_limit(self) -> None:
         """Integration: MAX >> tokens = MAX separators — at the limit, allowed."""
@@ -343,3 +353,19 @@ class TestHookMalformedInput:
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert output == {}, f"Expected {{}}, got {output!r}"
+
+    def test_non_utf8_stdin_exits_cleanly(self) -> None:
+        """Non-UTF-8 bytes on stdin must exit 1 with 'Hook error:' on stderr."""
+        result = subprocess.run(
+            [sys.executable, str(HOOK_SCRIPT)],
+            input=b"\xff\xfe\x00not-json",
+            capture_output=True,
+            text=False,
+            timeout=10,
+        )
+        assert result.returncode == 1, (
+            f"Expected exit 1, got {result.returncode}; stderr={result.stderr!r}"
+        )
+        assert b"Hook error:" in result.stderr, (
+            f"Expected 'Hook error:' in stderr, got {result.stderr!r}"
+        )
