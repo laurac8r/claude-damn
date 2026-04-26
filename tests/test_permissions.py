@@ -109,6 +109,13 @@ class TestAskPatterns:
         assert pattern in ask_list, f"Missing ask pattern: {pattern}"
 
 
+class TestSkillWorkflowWrites:
+    """Allow rules for skill-driven content directories (no prompt needed)."""
+
+    def test_brainstorm_content_writable(self, allow_list: list[str]) -> None:
+        assert "Write(**/.superpowers/brainstorm/**)" in allow_list
+
+
 class TestNoOverlap:
     """Deny must not contain patterns also in allow (deny takes priority,
     but overlaps signal config mistakes)."""
