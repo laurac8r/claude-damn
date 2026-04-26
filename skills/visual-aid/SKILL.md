@@ -78,7 +78,8 @@ HTML comment (`<!-- Input: text; layout: cards -->`).
      inline runs, add `lang` on the span.
    - Color contrast ≥ 4.5:1 for body text, ≥ 3:1 for large text and focus rings.
      If unsure, run a Lighthouse a11y audit (e.g. via the `chrome-devtools-mcp`
-     plugin's `lighthouse_audit` tool, if installed).
+     plugin's `lighthouse_audit` tool, if installed). A score below 90 should
+     be treated as a fail — see the Verification SOP below.
    - `:focus-visible` ring on every interactive element — cover
      `a, button, input, select, textarea, summary, [tabindex], [contenteditable]`
      in the selector. Never `outline: none` without a replacement.
@@ -153,10 +154,42 @@ different OS.
 
 ## Baseline template
 
+The full HTML skeleton lives in the sibling file `skills/visual-aid/baseline.html`.
+When scaffolding a new visual aid, **copy** `baseline.html` as your starting point,
+then fill in the content slots and prune any unused blocks. Never drop the a11y
+guards (motion, focus, contrast, print).
+
+### Slot conventions
 When you need to scaffold, start from this skeleton. It is the minimum — fill
 in, prune what you don't use, but never drop the a11y guards (motion, focus,
 contrast, print).
 
+The template uses placeholder slots that you must replace before saving. **The
+list below names the structural slots; the rule is broader: every `{{...}}`
+pattern in `baseline.html` must be replaced with real content (or the
+surrounding block deleted) before shipping. Grep the output for `{{` as a final
+check — any survivor is a bug.**
+
+Slots in `baseline.html`:
+
+- `{{Title}}` — the page title, used in both `<title>{{Title}}</title>` and the
+  visible `<h1>`.
+- `{{one-line prompt summary}}` — a brief description of the user's request,
+  placed in the traceability comment
+  `<!-- Generated from: "{{one-line prompt summary}}" -->` at the very top.
+- `{{X}}`, `{{Y}}`, `{{Z}}` — the 3–6 anchor points you curated from the source,
+  listed in `<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->` so the user can see what was
+  included and what was left out.
+- `{{One-line intro — what this page is and who it's for}}` — the lede
+  paragraph under the `<h1>`. Replace with a real sentence; do not leave the
+  hint text.
+- `{{Point 1}}`, `{{Point 2}}`, `{{Point 3}}` — card titles in the default
+  three-card layout. Add or remove cards to match your chosen shape from the
+  Input shapes table; don't pad to three if the source has two.
+- `{{…}}` — card body text under each card title. One per card; replace with
+  the curated content for that anchor.
+- `{{link or "—"}}` — the source link in the footer. Use the URL the user
+  provided, or replace with `—` (em dash) if there's no canonical source.
 ```html
 <!doctype html>
 <!-- Generated from: "{{one-line prompt summary}}" -->
@@ -415,10 +448,79 @@ Verifiable by the agent:
 - [ ] File opens without network: grep the HTML — zero `http://`/`https://`
       outside anchor `href`s that the user explicitly asked for.
 
-Needs human verification (flag in response, don't tick):
+Layout (automated) and print (manual) checks:
 
-- [ ] Renders sanely at 320px width and at 200% browser zoom.
-- [ ] Printed preview looks right.
+- [ ] Renders sanely at 320px width and at 200% browser zoom — **automated**
+      via mobile-viewport screenshot in the chrome-devtools verification step
+      below.
+- [ ] Printed preview looks right — **manual**: run the OS print-to-PDF flow
+      (see `reference_html_to_pdf_sop`) after the chrome-devtools verification
+      passes. The chrome-devtools SOP does not cover print rendering.
+
+## Verification (chrome-devtools)
+
+Automated browser verification runs **by default** on every `/visual-aid`
+invocation. It drives Chrome via the `chrome-devtools-mcp` plugin. Pass
+`--no-verify` to skip (e.g., when chrome-devtools-mcp is not installed, or
+for rapid iteration where you only want the HTML output).
+
+### SOP
+
+> **Note on artifact vs verification URL.** The HTTP server below exists
+> *only* for the verification pass. The final artifact the agent surfaces to
+> the user is always the durable `file://` path to the on-disk HTML — the
+> localhost URL disappears the moment the server stops in step 8.
+
+1. **Resolve slug + dirs.** Lowercase the prompt, replace spaces/punctuation
+   with dashes. Create `/tmp/visual-aid/<slug>/` (`mkdir -p`).
+
+2. **Start a local HTTP server.** Pick an unused high port (e.g., 8765), then
+   run `python3 -m http.server <port>` rooted at the *directory containing the
+   output HTML* in the background. Capture the PID/job id so you can stop it
+   in step 8. *Why HTTP:* Lighthouse rejects `file://` URLs with `INVALID_URL`
+   and requires an HTTP origin — a bare `file://` path causes the Lighthouse
+   audit to fail before it can score the page.
+
+3. **Open in browser.** Use `navigate_page` to load
+   `http://localhost:<port>/<filename>` (not the `file://` URL).
+
+4. **Desktop screenshot.** Use `take_screenshot` — save to
+   `/tmp/visual-aid/<slug>/desktop.png`.
+
+5. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812)
+   to switch to a mobile viewport, then `take_screenshot` — save to
+   `/tmp/visual-aid/<slug>/mobile.png`. This covers the "renders sanely at
+   320 px / small viewport" self-check.
+
+6. **Console check.** Use `list_console_messages`. If any error-level console
+   errors are present, abort and attach the console errors to the response.
+   Do not emit the file path until all console errors are resolved.
+
+7. **Lighthouse a11y audit.** Use `lighthouse_audit` (threshold 90) against
+   the same `http://localhost:<port>/<filename>` URL. If the accessibility
+   score is below 90, abort and attach the failing audits. A score below that
+   threshold means the page ships with real a11y defects — fix them before
+   surfacing the output.
+
+8. **Stop the server.** Kill the background `http.server` job (e.g.,
+   `pkill -f "http.server <port>"`). The server is one-shot — leaving it
+   running risks port collisions on subsequent invocations.
+
+9. **Surface artifacts.** On success, print the artifact paths inline:
+   - `file://<absolute-path-to-output.html>` ← the durable on-disk HTML
+   - `file:///tmp/visual-aid/<slug>/desktop.png`
+   - `file:///tmp/visual-aid/<slug>/mobile.png`
+
+   The screenshots are ephemeral — `/tmp/visual-aid/` is not persisted across
+   reboots. The HTML output is durable at its original write path.
+
+### Opt-out
+
+Pass `--no-verify` when:
+
+- `chrome-devtools-mcp` is not installed in the current environment.
+- Fast iteration: you want the raw HTML first and will verify manually.
+- CI / headless environments without a browser.
 
 ## Common mistakes
 
