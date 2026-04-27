@@ -165,3 +165,40 @@ declarative control over when a named set of skills applies to ongoing work:
       operator positively flagged the card-grid render produced on-the-fly
       during that session's retrospective; the flag makes it the canonical
       rendering path for future `/learn` runs rather than a one-off.
+
+### `/atlas` — session-survey skill
+
+- [ ] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
+      into a single "where am I, what have I done, what's next" survey page.
+      Single-anchor by default (auto-detected from `cwd`/branch); `--anchor
+      <name>` for explicit scope; `--all` for multi-anchor survey across every
+      shelf. Output: HTML only, written to `~/.visual-aid/atlas-<slug>.html`.
+      Read-only by design (no shelf or bulk-beings writes), like
+      `/tesseract --visual`. Concept card already rendered at
+      `~/.visual-aid/visual-aid-atlas.html` (2026-04-26) — that page is the
+      spec.
+
+- [ ] **Future exploration — per-project sections in `/atlas --all` mode.**
+      v1 `--all` drops the project-scoped sections (git state, CHECKPOINT,
+      TaskList) because those are 1:1 with the cwd, not with each anchor.
+      Two alternatives surfaced during 2026-04-26 brainstorm Q4 for later
+      exploration:
+      - **Option 2 — cwd-scoped:** keep one project section in `--all` mode,
+        sourced from the current cwd's git/checkpoint/tasks; render it once
+        above the per-anchor shelf cards. Cheap to implement; honest about the
+        scope (one project, many anchors).
+      - **Option 3 — per-anchor → project mapping:** maintain an
+        `anchor → project-root` index and render a project section per anchor
+        in `--all` mode. Most informative but requires a new persistent
+        mapping (where does it live? who writes it?) and a migration path for
+        existing shelves. Defer until a concrete need surfaces.
+
+### `/visual-aid` — server lifecycle (Lighthouse SOP)
+
+- [ ] For `/visual-aid` (or `/visual-aid --serve`) add a Python server endpoint
+      to safely kill the local audit server without running any `kill*` bash
+      commands. Surfaced 2026-04-26: Lighthouse rejects `file://` URLs
+      (`INVALID_URL`), forcing a `python3 -m http.server` fallback that we then
+      have to `pkill` — fragile (one of those calls failed exit 144) and not
+      portable. Replace with an HTTP shutdown endpoint that `httpd.shutdown()`s
+      from a worker thread.
