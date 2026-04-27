@@ -7,7 +7,7 @@ description:
    circles on X', 'what have I learned about X', 'what did past-me say about X',
    'I keep rediscovering this'."
 user-invocable: true
-argument-hint: '[anchor] [--signal "<morse>"]'
+argument-hint: '[anchor] [--signal "<morse>"] | --visual [--out <path>]'
 ---
 
 # /tesseract — Step Outside Time
@@ -24,18 +24,33 @@ cannot visit the tesseract silently.
 
 ## Metaphor
 
-| Movie                    | Skill                                                           |
-| ------------------------ | --------------------------------------------------------------- |
-| Murph point of reference | **Anchor** — the file/branch/topic everything is framed around  |
-| Gravity                  | **File I/O** — the only cross-session channel                   |
-| Books on the shelf       | **Shelf entries** at `~/.claude/tesseract/shelf/<slug>.md`      |
-| Morse via the watch      | **`--signal "<morse>"`** — optional short payload               |
-| Bulk-beings transmission | **`~/.claude/tesseract/bulk-beings.md`** — append-only self-log |
-| Four hallways            | git · memory · shelf · bulk — the four evidence streams         |
+| Movie                    | Skill                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| Murph point of reference | **Anchor** — the file/branch/topic everything is framed around |
+| Gravity                  | **File I/O** — the only cross-session channel                  |
+| Books on the shelf       | **Shelf entries** at `~/.tesseract/shelf/<slug>.md`            |
+| Morse via the watch      | **`--signal "<morse>"`** — optional short payload              |
+| Bulk-beings transmission | **`~/.tesseract/bulk-beings.md`** — append-only self-log       |
+| Four hallways            | git · memory · shelf · bulk — the four evidence streams        |
 
 ---
 
 ## Process
+
+### 0 · `--visual` short-circuit
+
+If `$ARGUMENTS` contains the bare flag `--visual`, do not resolve an anchor, do
+not read hallways, and do not drop a book. Instead:
+
+1. Parse `--out <path>` if present (default `/tmp/visual-aid-tesseract.html`).
+2. Run the skill's bundled renderer:
+   `python3 ~/.claude/skills/tesseract/render_visual.py --out <path>`
+3. Print only the `file://` URL on its own line.
+
+`--visual` is read-only by design: it surveys the whole shelf, which is not a
+visit to any single anchor, so writing a shelf block + bulk-beings line would
+pollute the ledger with meta-entries. See the test contract in
+`tests/test_render_visual.py::test_cli_visual_writes_html_and_does_not_touch_shelf_or_bulk`.
 
 ### 1 · Resolve the anchor
 
@@ -55,8 +70,8 @@ Parse `$ARGUMENTS` by splitting on `--signal` (surrounded by spaces):
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its
       `name:` frontmatter field; if none, the basename without `.md`.
-   4. `ls -t ~/.claude/tesseract/shelf/*.md 2>/dev/null | head -1` → filename
-      stem. Past-you's last anchor, recovered from the shelf itself.
+   4. `ls -t ~/.tesseract/shelf/*.md 2>/dev/null | head -1` → filename stem.
+      Past-you's last anchor, recovered from the shelf itself.
    5. `basename "$PWD"`. Where you are when history is empty.
 
    If every step yields nothing (first-ever invocation outside any repo with
@@ -85,19 +100,19 @@ below.
 
 ### 2 · Ensure the tesseract exists
 
-If `~/.claude/tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is
-created implicitly by the first append.
+If `~/.tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created
+implicitly by the first append.
 
 ### 3 · Read the shelf
 
-With **Read**, open `~/.claude/tesseract/shelf/<slug>.md` if it exists. Count
-every `^## ` block — call that count `N_before`. Take the three most-recent
-blocks for Hallway 3. If the file doesn't exist, `N_before = 0`.
+With **Read**, open `~/.tesseract/shelf/<slug>.md` if it exists. Count every
+`^## ` block — call that count `N_before`. Take the three most-recent blocks for
+Hallway 3. If the file doesn't exist, `N_before = 0`.
 
 ### 4 · Read bulk-beings
 
-With **Read**, open `~/.claude/tesseract/bulk-beings.md` if it exists. Collect
-lines where the anchor string appears case-insensitively. Keep up to three
+With **Read**, open `~/.tesseract/bulk-beings.md` if it exists. Collect lines
+where the anchor string appears case-insensitively. Keep up to three
 most-recent. Do **not** pad with unrelated lines at this step; Hallway 4 handles
 the fallback labeling.
 
@@ -169,7 +184,7 @@ the first block, then the block. Write the result back with **Write**.
 **Bulk-beings append.** One shell call, one line:
 
 ```
-printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.claude/tesseract/bulk-beings.md
+printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.tesseract/bulk-beings.md
 ```
 
 If the full append command would exceed the 300-char hook cap (see "Rules of the
@@ -211,8 +226,8 @@ If nothing stood out, note that explicitly:
 
 ## 📉 Dropped a book
 
-Shelf: ~/.claude/tesseract/shelf/<slug>.md (+1 entry)
-Bulk beings: ~/.claude/tesseract/bulk-beings.md (+1 line)
+Shelf: ~/.tesseract/shelf/<slug>.md (+1 entry)
+Bulk beings: ~/.tesseract/bulk-beings.md (+1 line)
 Signal: "<signal>"
 Learning: <one-line-learning>
 ```
@@ -263,6 +278,9 @@ current invocation's own book-drop isn't prior to itself.
   for next-session-you.
 - `/tesseract` — infers anchor via modified-file → branch → latest-memory
   cascade. Prints the inferred anchor first so the frame is explicit.
+- `/tesseract --visual` — read-only survey: renders every shelf entry as a
+  single self-contained HTML page at `/tmp/visual-aid-tesseract.html`. No
+  anchor, no hallways, no shelf/bulk write. Add `--out <path>` to redirect.
 
 ---
 
@@ -270,11 +288,11 @@ current invocation's own book-drop isn't prior to itself.
 
 - **Code ships, data doesn't.** The skill itself — `SKILL.md` and any supporting
   scripts under `skills/tesseract/` — is safe to ship with the `claude-damn`
-  plugin. The gravity signals at `~/.claude/tesseract/shelf/*.md` and
-  `~/.claude/tesseract/bulk-beings.md` are personal and must **never** be
-  committed. Any repo that mirrors `~/.claude` should gitignore
-  `~/.claude/tesseract/` entirely. Don't bake specific anchors, signals, or
-  paths into source — read the shelf at runtime.
+  plugin. The gravity signals at `~/.tesseract/shelf/*.md` and
+  `~/.tesseract/bulk-beings.md` are personal and must **never** be committed.
+  Any repo that mirrors `~/.claude` should gitignore `~/.tesseract/` entirely.
+  Don't bake specific anchors, signals, or paths into source — read the shelf at
+  runtime.
 - No subagents, no `shared/` coordination, no tests. A solo skill that
   communicates only with its own past and future, and only through gravity.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the
