@@ -54,3 +54,33 @@ Before executing the instructions above, you MUST:
 - Follow the invoked skills' own instructions exactly — this enforcement layer
   adds the guarantee that they are all used, but does not override how each
   skill operates.
+
+### Satisfaction Semantics
+
+A skill reference in the instructions is satisfied when **one** of the following
+holds:
+
+1. **Direct invocation** — the `Skill` tool was called with that skill's name
+   (e.g. `Skill(skill="superpowers:writing-skills")`) during this execution.
+2. **Compositional delegation** — a compositional skill was directly invoked
+   whose body text explicitly delegates to the referenced skill. When claiming
+   satisfaction via composition, **cite the composing skill's line that
+   delegates** (e.g. _"/super-duper-cat invokes /writing-skills at phase N"_).
+   If you cannot cite a specific delegation line, the claim does not hold.
+
+**Transitive / implicit application does NOT satisfy the requirement.**
+Following a skill's discipline "in spirit" — applying its pattern without
+invocation — is not satisfaction. Reading a skill's content without invoking it
+is not satisfaction. If the skill was referenced in the instructions and you
+never invoked it (directly or through a composing skill that explicitly
+delegates), the requirement is **unmet** — go back and invoke it now.
+
+**Rationalization counter:**
+
+| Excuse                                                                  | Reality                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "I followed /writing-skills discipline through the chain — that counts" | Composition counts only when the composing skill's text explicitly delegates. "In spirit" does not. Cite the delegation line or invoke directly.                                                                                                                       |
+| "The skill's content informed my behavior, so it was applied"           | Content-informed behavior is not invocation. Invoke via the Skill tool.                                                                                                                                                                                                |
+| "Invoking it at the end is redundant"                                   | Invoking at the _right point_ is the requirement, not at the end. If skipped at the point, you have a gap — invoke now and note it.                                                                                                                                    |
+| "The compositional skill I used must be doing that internally"          | Must cite the internal delegation, otherwise no claim. If the composing skill doesn't actually delegate, invoke the target directly.                                                                                                                                   |
+| "Skill invocation order should be reordered for dependency reasons"     | Dependency reordering may move _when_ a skill fires but never _whether_. The reference is a requirement, not a suggestion. If a dependency truly makes invocation impossible at the listed point, surface the blocker explicitly — never silently drop the invocation. |
