@@ -150,6 +150,29 @@ comments (TODOs, invariant notes, safety comments).
 
 **Filter threshold: >= 80 confidence only.**
 
+**Self-Verification for High-Confidence Code Claims:**
+
+Before presenting any finding **≥ 90 confidence** that names a specific code
+location (file:line or function name), the main agent MUST re-trace the claim
+against the source before showing it to the user:
+
+1. Read the cited file:line range with the `Read` tool.
+2. Execute the logic on paper with realistic inputs.
+3. Confirm the claim matches what the code actually does.
+
+If the claim does not survive re-trace, downgrade or drop it. Do NOT pass
+high-confidence sub-agent findings through to the user verbatim. This rule
+applies equally to parallel-reviewer aggregation and to single-phase output.
+
+**Rationalization counter (re: the self-verify step):**
+
+| Excuse                                                   | Reality                                                                                                      |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| "Three reviews came back — let me synthesize and report" | Synthesis ≠ verification. Each ≥ 90 claim is a sub-agent hypothesis, not a fact. Re-trace before presenting. |
+| "The reviewer was confident (95/100)"                    | Confidence is the sub-agent's self-assessment, not ground truth. Re-verify the specific trace.               |
+| "The user authorized /proceed, there's no time"          | `/proceed` authorizes passing the gate, not skipping verification. Critical claims get re-traced regardless. |
+| "Retracting later is fine"                               | A retracted phantom critical costs more context and trust than verifying up front.                           |
+
 **False Positive Exclusions:**
 
 - Pre-existing issues not introduced by the current changes
@@ -466,12 +489,34 @@ When `custom` scope is requested:
 3. **Apply the same rigor as the built-in phases**: gather context, launch
    parallel sub-agents if the criteria decompose into independent checks, apply
    the >= 80 confidence filter, and exclude false positives per Phase 1 rules.
-4. **Report findings** using the Code Review output format below, with the
-   `[Category]` field set to a short label derived from the custom directive
-   (e.g. `N+1`, `ThreadSafety`, `BlockingIO`).
+4. **Report findings** using the format appropriate to the directive:
+   - **Review-shaped directives** (auditing, vulnerability scanning, gap
+     analysis, compliance checks): use the Code Review output format below, with
+     the `[Category]` field set to a short label derived from the custom
+     directive (e.g. `N+1`, `ThreadSafety`, `BlockingIO`).
+   - **Non-review directives** (drafting a PR title/description, summarizing
+     changes, producing a changelog entry, writing migration notes, generating
+     release notes, composing a commit message): produce output in the format
+     the directive _asks for_. A PR description should look like a PR
+     description, a changelog like a changelog, a migration note like a
+     migration note. Forcing a "Findings Summary" table onto these is
+     nonsensical and confusing.
+
+**How to tell the difference:** a review-shaped directive asks "what's wrong
+with X?" or "where does X fail?" — the output is a list of issues with severity.
+A non-review directive asks "draft / write / summarize / describe X" — the
+output is the artifact itself, not a critique.
 
 Use this scope when the built-in phases do not cover the specific concern the
-user wants investigated.
+user wants investigated or the deliverable the user wants produced.
+
+**Rationalization counter:**
+
+| Excuse                                                               | Reality                                                                                                                                                   |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Phase 7 says 'Report findings using the Code Review output format'" | That clause assumed every custom directive is review-shaped. It isn't. For drafting/summarizing directives, the format-appropriate output IS the finding. |
+| "I should at least include the Findings Summary table"               | If there are no findings, the table is empty. Don't pad. Deliver the artifact the user asked for.                                                         |
+| "Staying rigid to the prescribed format is safer"                    | It's not — it produces confusing output that doesn't answer the directive. The skill's purpose is to serve the directive, not the format.                 |
 
 ---
 
