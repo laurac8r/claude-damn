@@ -28,3 +28,17 @@ def frontmatter(skill_md: str) -> dict:
         raise ValueError("No YAML frontmatter found (file must start with ---)")
     end = skill_md.index("---", 3)
     return yaml.safe_load(skill_md[3:end])
+
+
+@pytest.fixture
+def git_sandbox(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
+    """Labeled subdirectory of ``tmp_path`` for tests that init a real git repo.
+
+    Returns a freshly-created directory at
+    ``<tmp_path>/atlas-git-sandbox-<test-name>``. Putting the spurious
+    ``.git`` under a labeled subdir (rather than bare ``tmp_path``) makes
+    the artifacts recognizable in ``/tmp`` listings — operator preference.
+    """
+    sandbox = tmp_path / f"atlas-git-sandbox-{request.node.name}"
+    sandbox.mkdir()
+    return sandbox
