@@ -326,6 +326,21 @@ class TestClassifyBashKey:
     def test_classify(self, key: str, expected: str) -> None:
         assert classify_bash_key(key) == expected
 
+    @pytest.mark.parametrize(
+        "key",
+        [
+            # `git tag` and `git stash` accept mutating subcommands
+            # (`git tag -d X`, `git stash drop`) that `extract_first_command`
+            # collapses to the same pair key as their read-only forms.
+            # Dual-listed pairs must classify as ``mutating`` so the safer
+            # verdict wins — `_AUTO_PAIRS` no longer takes precedence.
+            "git tag",
+            "git stash",
+        ],
+    )
+    def test_dual_classified_pairs_resolve_to_mutating(self, key: str) -> None:
+        assert classify_bash_key(key) == "mutating"
+
 
 class TestRankSuggestions:
     def test_single_bash_entry_emits_prefix_pattern(self) -> None:
