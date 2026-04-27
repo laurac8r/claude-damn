@@ -87,6 +87,20 @@
             padding: 1rem 1.1rem;
             border-radius: var(--radius);
             border: 1px solid var(--border);
+            /* Allow shrinking below intrinsic min-content so long inline
+               <code> identifiers wrap inside the card instead of overflowing
+               past the right edge of the grid track. */
+            min-width: 0;
+         }
+         /* Long identifiers in inline code (e.g. fully-qualified Java/Kotlin
+            class paths, dotted method chains) must break, or they bleed past
+            the card's right edge. Pair with .card { min-width: 0 } above —
+            both are required. */
+         code,
+         kbd,
+         samp {
+            overflow-wrap: anywhere;
+            word-break: break-word;
          }
          a {
             color: var(--accent);
