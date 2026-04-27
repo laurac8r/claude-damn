@@ -62,6 +62,21 @@ def check_inline_script(command: str) -> str | None:
 
 
 # ---------------------------------------------------------------------------
+# Tesseract path bypass — exempt rules 2 & 3 only (rule 1 still fires)
+# ---------------------------------------------------------------------------
+
+TESSERACT_PATH_PATTERN = re.compile(
+    r"(?:~|\$HOME|/(?:Users|home)/[^/\s]+)/\.claude/tesseract/"
+)
+
+
+# Substring search: any occurrence of the path triggers bypass, including
+# in comments or arguments. Rule 1 (inline-script) still fires regardless.
+def _is_tesseract_path(command: str) -> bool:
+    return bool(TESSERACT_PATH_PATTERN.search(command))
+
+
+# ---------------------------------------------------------------------------
 # Rule 2: Character length limit
 # ---------------------------------------------------------------------------
 
@@ -73,6 +88,8 @@ CHAR_LIMIT_MESSAGE = (
 
 
 def check_char_limit(command: str) -> str | None:
+    if _is_tesseract_path(command):
+        return None
     actual = len(command)
     if actual > MAX_COMMAND_LENGTH:
         return CHAR_LIMIT_MESSAGE.format(actual=actual, limit=MAX_COMMAND_LENGTH)
@@ -93,6 +110,8 @@ STATEMENT_LIMIT_MESSAGE = (
 
 
 def check_statement_limit(command: str) -> str | None:
+    if _is_tesseract_path(command):
+        return None
     count = len(SEPARATOR_PATTERN.findall(command))
     if count > MAX_STATEMENT_COUNT:
         return STATEMENT_LIMIT_MESSAGE.format(count=count, limit=MAX_STATEMENT_COUNT)
