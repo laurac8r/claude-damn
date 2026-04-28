@@ -65,6 +65,10 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       composition rules documented in `skills/README.md`
 - [ ] Canonicalize the error-handling contract from `sme-test/errors/` as a
       shared skill pattern
+- [ ] `/tesseract` file-input mode: accept `--input <path>` (e.g.
+      `/tesseract --input ./scratch/thread-dump.txt`) and read the artifact
+      via the Read tool instead of expecting inline content. Error clearly
+      when input >50KB and suggest file mode.
 
 ## Phase 3 — Harness integration
 
