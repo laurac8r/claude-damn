@@ -4,6 +4,32 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project is pre-1.0
 so entries are grouped by development phase rather than SemVer.
 
+## [Unreleased] — post-v1.0.0 skill catalog expansion (Phase 5)
+
+First wave of post-v1.0.0 skill additions. Each new skill ships through
+TDD discipline (RED tests first, then SKILL.md) and the
+`tests/skills/<skill>/{helpers,smoke,pressure,performance}/` test taxonomy.
+
+### Added
+
+- **`/add-to-roadmap` (v1, prose)** — appends a checkbox task to the project's
+  `ROADMAP.md` under a fuzzy-resolved `## Phase` or `### Subsection` header.
+  Walks up from CWD to repo root, fuzzy contains-match (case-insensitive),
+  bottom-of-section insertion, unified-diff confirmation gate before write.
+  Pure-prose v1; deterministic Python helper roadmapped for v2.
+- `tests/skills/add_to_roadmap/` — 28 tests across 4 layers (structural 9,
+  smoke 9, pressure 7, performance 2). Doc-length budget calibrated on
+  observed sibling-skill rates (`tesseract` ~270 lines, `checkpoint-save`
+  ~80).
+- `ROADMAP.md` Phase 5: `/add-to-roadmap` helper-script entry under "Flag
+  additions to existing skills" — first dogfood-eat of the new skill (added
+  manually since the skill couldn't add itself).
+
+### Fixed
+
+- `tests/performance/test_learn.py`, `tests/smoke/test_learn.py`: trailing-
+  newline / whitespace fixes from `uv run ruff format` (no behavior change).
+
 ## [1.0.0] — 2026-04-23 (submitted, review pending)
 
 v1.0.0 **submitted** to the official Claude Code marketplace on 2026-04-23 as a
