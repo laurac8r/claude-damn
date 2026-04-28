@@ -65,6 +65,10 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       composition rules documented in `skills/README.md`
 - [ ] Canonicalize the error-handling contract from `sme-test/errors/` as a
       shared skill pattern
+- [ ] `/tesseract` file-input mode: accept `--input <path>` (e.g.
+      `/tesseract --input ./scratch/thread-dump.txt`) and read the artifact
+      via the Read tool instead of expecting inline content. Error clearly
+      when input >50KB and suggest file mode.
 
 ## Phase 3 — Harness integration
 
@@ -165,3 +169,73 @@ declarative control over when a named set of skills applies to ongoing work:
       operator positively flagged the card-grid render produced on-the-fly
       during that session's retrospective; the flag makes it the canonical
       rendering path for future `/learn` runs rather than a one-off.
+- [ ] **`/add-to-roadmap` helper script** — replace the v1 prose-skill with a
+      deterministic Python helper at `skills/add-to-roadmap/insert_item.py` so
+      the skill can be invoked non-interactively (CI, hooks, scripted batch
+      ROADMAP updates). v1 is pure-prose (Claude reads ROADMAP.md and applies
+      the Edit tool); the helper version takes `<phase-or-section>` and
+      `<task-text>` as argv, performs the same fuzzy-match + bottom-of-section
+      insertion deterministically, and emits a unified diff to stdout. Added
+      to the roadmap 2026-04-27 as the v1 skill's first dogfood-eat — the
+      entry was authored by hand in the same PR that introduces the skill,
+      since the skill didn't yet exist to add itself.
+
+### SOLID & SWE composition
+
+Added to the roadmap 2026-04-25 from the `self-improvement` tesseract anchor.
+Lands AFTER the PERSONALIZATION SOLID section (below) so `/solid` has a
+canonical principle reference to read from.
+
+- [ ] **`/solid`** — single skill enforcing SOLID principles across three
+      temporal modes, mapped to the 5.2 control-triad vocabulary:
+      - **feed-forward** (before writing) — suggest SOLID-compliant designs
+        upfront; flag violations during `/brainstorming`.
+      - **feed-back** (during writing) — catch SOLID violations as code is
+        being written; emit warnings during the implementation phase of
+        `/tdd` GREEN.
+      - **retro-active** (after writing) — scan existing code for refactor
+        candidates (god classes, fat interfaces, hidden coupling); produce
+        `/super-swe`-ready findings.
+- [ ] **`/swe`** — composite skill `/solid ⨷ /tdd ⨷ /fixer`. Standard
+      operating loop for non-trivial software-engineering work: design under
+      SOLID, drive via TDD, debug via systematic-debugging. The `⨷`
+      tensor-product is the composition operator from `/ops` / `/bra-ket`
+      (5.4) — `/swe` will need to reconcile its informal-`⨷` notation with
+      whatever `/ops` formalizes.
+- [ ] **SWE combinatoric family** — derived skills following the existing
+      `/tdd` and `/fixer` family density. Proposed initial 8 (cardinality
+      matched to existing families; full 2^N permutation deferred to `/ops`
+      5.4 when that lands):
+      - `/super-swe` — brainstorm + swe
+      - `/duper-swe` — worktree + swe
+      - `/swe-cat` — swe + subagent-driven-development
+      - `/super-cat-swe` — brainstorm + cat + swe
+      - `/duper-tdd-swe` — worktree + tdd + swe (TDD-explicit on top of swe's
+        tdd, for cases where the tdd phase is the primary surface)
+      - `/super-duper-swe-tdd-cat` — full stack
+      - `/expert-swe-review` — expert review through SOLID lens
+      - `/super-fixer-swe` — expert-debug + fix via swe
+
+### PERSONALIZATION & rules updates
+
+- [ ] **SOLID emphasis in PERSONALIZATION** — add a
+      `## SOLID Software Engineering [policy] [soft]` section to all three:
+      `~/.claude/rules/PERSONALIZATION.md` (operator runtime),
+      `~/.claude/rules/PERSONALIZATION.example.md` (active-dev clone), and
+      this repo's `rules/PERSONALIZATION.example.md` (canonical, public).
+      Five principles (SRP / OCP / LSP / ISP / DIP) with one-line
+      when-to-apply each. Lands BEFORE `/solid` is implemented — `/solid`
+      reads from this section as its principle source.
+
+### `/learn` scope extension
+
+- [ ] **`/learn` config-surface coverage** — extend `/learn` beyond Skills to
+      also produce learnings against `CLAUDE.md`, `PERSONALIZATION.md`,
+      hookify rules, and `settings.json`. Three new emit modes:
+      - **rule findings** → propose edits to CLAUDE.md / PERSONALIZATION.md.
+      - **hook findings** → propose hookify rules (delegate to
+        `/hookify:writing-rules`).
+      - **settings findings** → stage context for `/update-config` rather
+        than editing settings.json directly. `/learn` produces the WHAT
+        (which key) and WHY (which session evidence); operator runs
+        `/update-config` to apply.
