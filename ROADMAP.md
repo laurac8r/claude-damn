@@ -169,3 +169,13 @@ declarative control over when a named set of skills applies to ongoing work:
       operator positively flagged the card-grid render produced on-the-fly
       during that session's retrospective; the flag makes it the canonical
       rendering path for future `/learn` runs rather than a one-off.
+- [ ] **`/add-to-roadmap` helper script** — replace the v1 prose-skill with a
+      deterministic Python helper at `skills/add-to-roadmap/insert_item.py` so
+      the skill can be invoked non-interactively (CI, hooks, scripted batch
+      ROADMAP updates). v1 is pure-prose (Claude reads ROADMAP.md and applies
+      the Edit tool); the helper version takes `<phase-or-section>` and
+      `<task-text>` as argv, performs the same fuzzy-match + bottom-of-section
+      insertion deterministically, and emits a unified diff to stdout. Added
+      to the roadmap 2026-04-27 as the v1 skill's first dogfood-eat — the
+      entry was authored by hand in the same PR that introduces the skill,
+      since the skill didn't yet exist to add itself.
