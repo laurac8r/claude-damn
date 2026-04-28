@@ -141,6 +141,37 @@ these operational directives:
 4. **Worktrees:** use `.worktrees/<slug>/` (hidden, gitignored). `CHECKPOINT.md`
    at worktree root is also gitignored — don't `git add` it.
 
+## Skill Development & Testing — active-dev / canonical isolation
+
+This repo (claude-damn) is **active-dev**. The operator's installed Claude
+config at `~/.claude/` is **canonical**. Active-dev work must NOT reach into
+canonical for proprietary content (rules, hooks, constants, personalization,
+memory) — that crosses the isolation boundary and risks leaking personal data
+into PR-bound artifacts.
+
+**Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill
+on `main`. Branch off into `.worktrees/<slug>/` and do all source-of-truth
+edits there. The worktree's `skills/<skill-name>/` is the source of truth.
+
+**Skill testing: spin off a `/tmp/` worktree and sync.** When the skill needs
+to be exercised end-to-end (live invocation against a fresh `~/.claude/skills/`
+surface), do not test against the operator's canonical install. Instead:
+
+1. Create a disposable test worktree under `/tmp/` (e.g.,
+   `/tmp/<skill>-test-worktree/`).
+2. Sync the source-of-truth skill from the active-dev worktree into the test
+   worktree's local `.claude/skills/<skill-name>/` directory.
+3. Drive the test environment with the test worktree's `.claude/` as the
+   skills surface — never the operator's canonical `~/.claude/`.
+
+Facilitate the sync via fixtures, ideally in `tests/conftest.py` or
+`tests/<skill-name>/conftest.py`. Other claude-damn skills already use this
+pattern — match it; don't reinvent.
+
+**Why:** keeps active-dev artifacts free of canonical proprietary content,
+keeps tests reproducible across machines/clones, and prevents accidental
+mutation of the operator's live skill install during a test run.
+
 ## ASCII and Unicode Diagram Alignment
 
 When asked to generate or modify ASCII or Unicode text diagrams, you MUST adhere
