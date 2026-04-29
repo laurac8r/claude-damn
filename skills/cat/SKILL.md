@@ -20,6 +20,27 @@ workflow. Use `AskUserQuestion` to request this:
 
 Wait for confirmation before continuing.
 
+### If the operator declines auto-accept
+
+If the operator declines auto-accept, **STOP**. Subagent `Write`/`Edit` tool
+calls will be silently denied by Claude Code's manual-approval permission
+system, producing the generic error
+`"Permission to use Write has been denied."`. Do NOT proceed into dispatch — the
+failures will look like hook denials and trigger misdiagnosis.
+
+Surface this tradeoff explicitly and require an explicit choice before
+proceeding:
+
+- **(a)** Flip auto-accept on now, then re-run.
+- **(b)** Operator-performed inline edits via the existing "No Shortcut for
+  'Trivial' Edits" tradeoff carve-out ( cat-only — duper has no inline-edit
+  equivalent).
+- **(c)** Abort and route the work elsewhere (different workflow, different
+  session).
+
+Do not silently proceed. The whole point of asking for auto-accept up front is
+that subagent dispatch is incompatible with manual-approval mode.
+
 ## Workflow
 
 `/cat` authorizes subagent dispatch for the work at hand. Pick the dispatch
@@ -63,6 +84,7 @@ short-circuiting. Never skip silently.
 | "Parallel `Edit` calls are faster than parallel agents" | Speed is one rationale for `/dispatching-parallel-agents` but not the only one — context isolation prevents bleed between independent investigations. If you want inline edits, the user should pick a different workflow. |
 | "The output will just say 'done', it's the same thing"  | Same output ≠ same process. Fresh-context-per-task is the value; skipping it defeats the skill.                                                                                                                            |
 | "Subagents + review loops take too long"                | That's the cost the user agreed to when they invoked `/cat`. If the budget is tight, ask — don't decide unilaterally.                                                                                                      |
+| "I can just dispatch anyway, denials are explicit"      | If the operator chose Manual approval, denials surface as generic `"Permission to use Write has been denied."` — easy to misattribute to a hook. Stop and re-prompt instead.                                               |
 
 **Red flag — STOP:** if you catch yourself writing "I'll do this directly
 instead of dispatching because [trivial/fast/simple]", you are violating `/cat`.
