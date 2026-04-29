@@ -144,10 +144,24 @@ these operational directives:
 ## Skill Development & Testing — active-dev / canonical isolation
 
 This repo (claude-damn) is **active-dev**. The operator's installed Claude
-config at `~/.claude/` is **canonical**. Active-dev work must NOT reach into
-canonical for proprietary content (rules, hooks, constants, personalization,
-memory) — that crosses the isolation boundary and risks leaking personal data
-into PR-bound artifacts.
+config at `~/.claude/` is **canonical**.
+
+The isolation boundary applies to **proprietary content**, not to the
+agent-runtime infrastructure that the rest of this CLAUDE.md already references.
+Concretely:
+
+- **Disallowed** — active-dev source code, tests, fixtures, or PR-bound
+  artifacts must not read from or embed canonical proprietary content:
+  `~/.claude/rules/` (including `PERSONALIZATION.md`),
+  `~/.claude/hooks/` (proprietary hooks), `~/.claude/projects/.../memory/`,
+  or `~/.tesseract/`. These risk leaking personal data into shipped artifacts.
+- **Permitted** — agent-runtime infra that lives in canonical by design and is
+  already referenced elsewhere in this doc: `~/.claude/extract_cost.py`,
+  `~/.claude/cost-log/` (the `/cost_` workflow above), and similar
+  install-wide tooling that doesn't carry proprietary content.
+
+When in doubt: would this path's contents be safe to commit verbatim into a
+public PR? If no, it's proprietary — keep active-dev away from it.
 
 **Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill
 on `main`. Branch off into `.worktrees/<slug>/` and do all source-of-truth
@@ -165,8 +179,9 @@ surface), do not test against the operator's canonical install. Instead:
    skills surface — never the operator's canonical `~/.claude/`.
 
 Facilitate the sync via fixtures, ideally in `tests/conftest.py` or
-`tests/<skill-name>/conftest.py`. Other claude-damn skills already use this
-pattern — match it; don't reinvent.
+`tests/<skill-name>/conftest.py`. Match the existing worktree-fixture style
+already used in this repo (e.g. `worker_worktree`); a per-skill
+`tmp_skill_worktree` sync fixture lands in a follow-up PR.
 
 **Why:** keeps active-dev artifacts free of canonical proprietary content,
 keeps tests reproducible across machines/clones, and prevents accidental
