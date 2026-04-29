@@ -81,6 +81,19 @@ For each row ask: **approve**, **skip**, or **reclassify**.
 
 ### 5. Apply approved fixes
 
+**Classify fix target before invoking /writing-skills.** Not every misfire is
+best fixed in a SKILL.md. Determine the target tier:
+
+| Target                             | Signal                                                                                                                              | How to fix                                                                                                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SKILL.md**                       | The misfire is specific to one skill's behavior, triggers, or rationalization counters.                                             | Invoke `/writing-skills` with the skill's path.                                                                                                            |
+| **CLAUDE.md / PERSONALIZATION.md** | The rule applies across all skills, or is operator-workflow preference (commit cadence, model routing, etc.).                       | Draft the proposed addition/edit and surface it to the operator for review. Do NOT auto-edit these files — they are global policy and need human approval. |
+| **Hookify rule**                   | The misfire is a recurring behavior pattern that a PreToolUse/Stop/etc. hook could prevent (e.g., "every time X happens, block Y"). | Route via `/writing-rules` (hookify) instead of `/writing-skills`.                                                                                         |
+| **settings.json**                  | The misfire is a permission, env-var, or harness configuration that should auto-allow/deny.                                         | Stage the proposed `settings.json` patch and instruct the operator to run `/update-config` to apply it. Include the exact JSON delta in your output.       |
+
+When in doubt: a behavior that **only one skill exhibits** is a SKILL.md fix; a
+behavior that **any skill could exhibit** is likely a CLAUDE.md / hookify fix.
+
 For each approved misfire, invoke `/writing-skills` with:
 
 - the skill's file path,
@@ -99,6 +112,20 @@ Edits are allowed in:
 Plugin-cache skills under `~/.claude/plugins/cache/**` are **read-only** —
 plugin updates overwrite local edits. If a misfire lives there, surface the
 finding but do not edit.
+
+**Non-skill targets:**
+
+- **CLAUDE.md / PERSONALIZATION.md** — drafts surfaced to operator; never
+  auto-edited. /learn produces a unified diff or a "Why / How to apply" entry
+  for review.
+- **Hookify rules** — delegated to `/writing-rules` (skill name `writing-rules`
+  or `hookify:writing-rules`). /learn surfaces the rule spec and target hook
+  event; /writing-rules carries TDD discipline.
+- **settings.json** — staged as a JSON delta with a recommendation to run
+  `/update-config`. /learn does not edit settings.json directly.
+
+Plugin-cache skills under `~/.claude/plugins/cache/**` remain read-only —
+surface findings only, suggest filing upstream against the plugin's source repo.
 
 ## What This Skill Does NOT Do
 
