@@ -51,13 +51,16 @@ DEFAULT_PRICING = PRICING["claude-sonnet-4-6"]
 
 COST_LOG_DIR = Path.home() / ".claude" / "cost-log"
 
+# Longest first so e.g. "claude-opus-4-6-fast" wins over "claude-opus-4-6".
+_PRICING_KEYS_BY_LEN: tuple[str, ...] = tuple(sorted(PRICING, key=len, reverse=True))
+
 
 def model_key(model_name: str) -> str:
     """Normalize model name to pricing key."""
     if not model_name:
         return ""
     name = model_name.lower()
-    for key in sorted(PRICING.keys(), key=lambda k: len(k), reverse=True):
+    for key in _PRICING_KEYS_BY_LEN:
         if key in name or key.replace("-", "") in name.replace("-", ""):
             return key
     # Fuzzy match
@@ -91,7 +94,7 @@ def calc_cost(model: str, usage: dict) -> float:
 
 def parse_session(jsonl_path: Path) -> dict:
     """Parse a session JSONL and return aggregated cost data."""
-    totals: dict[str, dict[str, int]] = {}  # model -> {field: count}
+    totals: dict[str, dict[str, float]] = {}  # model -> {field: count}
     total_cost = 0.0
     turn_count = 0
     first_ts = None
@@ -123,7 +126,6 @@ def parse_session(jsonl_path: Path) -> dict:
                 if cwd:
                     project_dir = cwd
 
-            # Capture last user prompt for context
             if entry.get("type") == "last-prompt":
                 last_prompt = entry.get("content", entry.get("message", ""))
                 if isinstance(last_prompt, dict):
@@ -154,6 +156,7 @@ def parse_session(jsonl_path: Path) -> dict:
                     "cache_read_input_tokens": 0,
                     "cache_creation_input_tokens": 0,
                     "turns": 0,
+                    "cost_usd": 0.0,
                 }
 
             totals[mk]["input_tokens"] += usage.get("input_tokens", 0)
@@ -166,7 +169,9 @@ def parse_session(jsonl_path: Path) -> dict:
             )
             totals[mk]["turns"] += 1
 
-            total_cost += calc_cost(model, usage)
+            turn_cost = calc_cost(model, usage)
+            totals[mk]["cost_usd"] += turn_cost
+            total_cost += turn_cost
 
     return {
         "session_id": session_id,
@@ -176,21 +181,7 @@ def parse_session(jsonl_path: Path) -> dict:
         "turns": turn_count,
         "total_cost_usd": round(total_cost, 4),
         "models": {
-            m: {
-                **v,
-                "cost_usd": round(
-                    calc_cost(
-                        m,
-                        {
-                            k: val
-                            for k, val in v.items()
-                            if k not in ("turns", "cost_usd")
-                        },
-                    ),
-                    4,
-                ),
-            }
-            for m, v in totals.items()
+            m: {**v, "cost_usd": round(v["cost_usd"], 4)} for m, v in totals.items()
         },
         "last_prompt": (last_prompt or "")[:120],
     }
@@ -245,7 +236,6 @@ def write_log_entry(data: dict) -> Path:
     except ValueError, AttributeError:
         dt = datetime.now(timezone.utc)
 
-    # Build filename: YYYY-MM-DD_HHmm_{session_short}.jsonl
     session_short = (session_id or "unknown")[:8]
     fname = f"{dt.strftime('%Y-%m-%d_%H%M')}_{session_short}.jsonl"
     fpath = COST_LOG_DIR / fname
@@ -274,18 +264,18 @@ def find_sessions_since(timestamp: str) -> list[Path]:
         return []
 
     projects_dir = Path.home() / ".claude" / "projects"
-    results = []
+    candidates: list[tuple[float, Path]] = []
     for jsonl in projects_dir.rglob("*.jsonl"):
         # Skip subagent files
         if "subagents" in str(jsonl):
             continue
         try:
-            mtime = datetime.fromtimestamp(jsonl.stat().st_mtime, tz=timezone.utc)
-            if mtime >= since:
-                results.append(jsonl)
+            mtime_ts = jsonl.stat().st_mtime
         except OSError:
             continue
-    return sorted(results, key=lambda p: p.stat().st_mtime)
+        if datetime.fromtimestamp(mtime_ts, tz=timezone.utc) >= since:
+            candidates.append((mtime_ts, jsonl))
+    return [p for _, p in sorted(candidates)]
 
 
 def main() -> None:
