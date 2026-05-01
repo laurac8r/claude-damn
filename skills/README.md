@@ -5,12 +5,14 @@
 Skills are composed from modifiers. Each modifier maps to a specific underlying
 skill:
 
-| Modifier | Skill invoked                  | What it adds                                                    |
-| -------- | ------------------------------ | --------------------------------------------------------------- |
-| `super`  | `/brainstorming` + `/tdd`      | Brainstorm requirements and design, then implement using `/tdd` |
-| `duper`  | `/using-git-worktrees`         | Isolated git worktree                                           |
-| `cat`    | `/subagent-driven-development` | Parallel subagent execution                                     |
-| `tdd`    | `/tdd`                         | Test-driven development                                         |
+| Modifier         | Skill invoked                  | What it adds                                                    |
+| ---------------- | ------------------------------ | --------------------------------------------------------------- |
+| `super`          | `/brainstorming` + `/tdd`      | Brainstorm requirements and design, then implement using `/tdd` |
+| `duper`          | `/using-git-worktrees`         | Isolated git worktree                                           |
+| `cat`            | `/subagent-driven-development` | Parallel subagent execution                                     |
+| `tdd`            | `/tdd`                         | Test-driven development                                         |
+| `skill-creator`  | `/skill-creator`               | Skill scaffolding + quant eval grid                             |
+| `writing-skills` | `/writing-skills`              | Pressure-scenario testing + rationalization tables              |
 
 ## Combinatorics
 

@@ -11,6 +11,12 @@ user-invocable: true
 /skill-creator but using /super-duper-cat for worktree + parallel subagents, and
 /writing-skills for pressure testing.
 
+**Iron Law:** this skill — and any skill built using this skill — ships only
+after a baseline (no-skill agents) is observed shortcutting under pressure. A
+passing baseline means no rationalization to address, which means no skill
+needed. See `evals/baseline-results/` for the canonical RED-phase evidence
+captured during this skill's own bring-up.
+
 ## Orchestration
 
 The tensions between `/skill-creator`'s quant eval loop and `/writing-skills`'

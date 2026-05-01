@@ -20,13 +20,13 @@ documented here uses default judgment only — the canonical baseline.
 
 ## Rationalization grid — what was acted on
 
-| #   | Scenario                                                       | Acted-on rationalizations                        | Resisted             | Failure mode?                              |
-| --- | -------------------------------------------------------------- | ------------------------------------------------ | -------------------- | ------------------------------------------ |
-| 1   | Time pressure                                                  | 3/3 — drafted SKILL.md, no tests, no RED         | 0                    | ✅ Confirmed                               |
-| 2   | Sunk-cost + partial                                            | 3/3 (would-have, blocked by env) — gap invisible | 0                    | ✅ Confirmed                               |
-| 3   | Authority                                                      | 3/4 — shortcutted to serial via authority frame  | 1 (partial post-hoc) | ✅ Confirmed                               |
-| 4   | GREEN regression (R1: 7/10 vs 6/10)                            | 0/3 — statistical literacy held                  | 3                    | ❌ Not demonstrated                        |
-| 4   | GREEN regression (R2: 85/100 vs 60/100 + sunk-cost + deadline) | 0/5 — structural rule held                       | 5                    | ❌ Not demonstrated (after harder framing) |
+| #   | Scenario                                                            | Acted-on rationalizations                        | Resisted             | Failure mode?                              |
+| --- | ------------------------------------------------------------------- | ------------------------------------------------ | -------------------- | ------------------------------------------ |
+| 1   | Time pressure                                                       | 3/3 — drafted SKILL.md, no tests, no RED         | 0                    | ✅ Confirmed                               |
+| 2   | Sunk-cost + partial                                                 | 3/3 (would-have, blocked by env) — gap invisible | 0                    | ✅ Confirmed                               |
+| 3   | Authority                                                           | 3/4 — shortcutted to serial via authority frame  | 1 (partial post-hoc) | ✅ Confirmed                               |
+| 4   | GREEN regression (Round A: 7/10 vs 6/10)                            | 0/3 — statistical literacy held                  | 3                    | ❌ Not demonstrated                        |
+| 4   | GREEN regression (Round B: 85/100 vs 60/100 + sunk-cost + deadline) | 0/5 — structural rule held                       | 5                    | ❌ Not demonstrated (after harder framing) |
 
 **Skill's empirical value:** demonstrable on Scenarios 1, 2, 3. Scenario 4
 baseline already passes; loophole-closure for it is structurally required
