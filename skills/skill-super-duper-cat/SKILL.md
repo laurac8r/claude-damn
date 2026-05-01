@@ -31,7 +31,7 @@ Workspace:
 ```
 <skill>-workspace/iteration-N/eval-<name>/
   baseline/{quant,pressure}/
-  with_skill/{quant,pressure}/
+  with-skill/{quant,pressure}/
 ```
 
 Draft only after ALL baseline subagents return. Drafting early invalidates the

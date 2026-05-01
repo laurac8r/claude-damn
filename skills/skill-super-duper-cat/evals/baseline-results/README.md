@@ -32,7 +32,7 @@ documented here uses default judgment only — the canonical baseline.
 baseline already passes; loophole-closure for it is structurally required
 (design contract) but not empirically grounded.
 
-## All 13 verbatim rationalizations (canonical loophole language)
+## All 18 verbatim rationalizations (canonical loophole language)
 
 ### Scenario 1 — Time pressure (3 ACTED)
 

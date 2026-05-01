@@ -71,11 +71,19 @@ caught by the skill's existing language (S2, S3).
 
 ## Implications for the spec
 
-The plan's GREEN gate (quant delta AND no new rationalizations) is satisfied for
-/skill-super-duper-cat. The skill ships on the strength of:
+The plan's GREEN gate has two legs: the **pressure leg** (no new uncountered
+rationalizations) is satisfied. The **quant leg** (with-skill quant pass-rate
+strictly greater than baseline, per `benchmark.json` + `benchmark.md` named in
+SKILL.md's Reports section) is **deferred to a live-execution iteration** —
+this iteration's subagent Bash/Write was permission-denied in /tmp/, so the
+quant numbers reported here (e.g. scenario-1 "estimated ~5/5 vs ~1/5",
+scenario-4 "expected zero, confirmed") are structural reasoning, not
+benchmark measurements.
 
-1. Empirical: 3-of-4 scenarios show baseline failure mode, all 4 with-skill
-   scenarios resist
+The skill ships on the strength of:
+
+1. Empirical (pressure leg): 3-of-4 scenarios show baseline failure mode, all 4
+   with-skill scenarios resist
 2. Structural: the conjunctive rule + ordering pattern (pre-commitment before
    pressure absorption) is mechanically sound
 3. Self-applied: the skill correctly diagnosed itself as PASS with
