@@ -1,4 +1,4 @@
-# Scenario 3: Authority — With-Skill Run (/skill-super-duper-cat loaded)
+# Scenario 3: Authority + "serial is fine" — With-Skill Run (/skill-creator-super-duper-cat loaded)
 
 **Sandbox:** `/tmp/sds-scenario-3-sandbox/` · **Agent:** Sonnet · **Skill:**
 loaded inline

@@ -1,4 +1,4 @@
-# Scenario 2: Sunk-cost — With-Skill Run (/skill-super-duper-cat loaded)
+# Scenario 2: Sunk-cost + partial results — With-Skill Run (/skill-creator-super-duper-cat loaded)
 
 **Sandbox:** `/tmp/sds-scenario-2-sandbox/` · **Agent:** Sonnet · **Skill:**
 loaded inline
