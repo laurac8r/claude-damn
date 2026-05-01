@@ -5,12 +5,14 @@
 Skills are composed from modifiers. Each modifier maps to a specific underlying
 skill:
 
-| Modifier | Skill invoked                  | What it adds                                                    |
-| -------- | ------------------------------ | --------------------------------------------------------------- |
-| `super`  | `/brainstorming` + `/tdd`      | Brainstorm requirements and design, then implement using `/tdd` |
-| `duper`  | `/using-git-worktrees`         | Isolated git worktree                                           |
-| `cat`    | `/subagent-driven-development` | Parallel subagent execution                                     |
-| `tdd`    | `/tdd`                         | Test-driven development                                         |
+| Modifier         | Skill invoked                  | What it adds                                                    |
+| ---------------- | ------------------------------ | --------------------------------------------------------------- |
+| `super`          | `/brainstorming` + `/tdd`      | Brainstorm requirements and design, then implement using `/tdd` |
+| `duper`          | `/using-git-worktrees`         | Isolated git worktree                                           |
+| `cat`            | `/subagent-driven-development` | Parallel subagent execution                                     |
+| `tdd`            | `/tdd`                         | Test-driven development                                         |
+| `skill-creator`  | `/skill-creator`               | Skill scaffolding + quant eval grid                             |
+| `writing-skills` | `/writing-skills`              | Pressure-scenario testing + rationalization tables              |
 
 ## Combinatorics
 
@@ -55,6 +57,12 @@ skill:
 | `/expert-duper-tdd-cat-review`   | expert + duper + tdd + cat         | /expert-review + /tdd + /using-git-worktrees + /subagent-driven-development                  |
 | `/expert-super-duper-review`     | expert + super + duper + tdd       | /expert-review + /brainstorming + /tdd + /using-git-worktrees                                |
 | `/expert-super-duper-cat-review` | expert + super + duper + tdd + cat | /expert-review + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
+
+### Base: Skill Creation
+
+| Skill                    | Modifiers                                            | Invokes                                                                                                        |
+| ------------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `/skill-super-duper-cat` | skill-creator + super + duper + cat + writing-skills | /skill-creator + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development + /writing-skills |
 
 ## Other Skills
 
