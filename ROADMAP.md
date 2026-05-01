@@ -69,6 +69,26 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       `/tesseract --input ./scratch/thread-dump.txt`) and read the artifact via
       the Read tool instead of expecting inline content. Error clearly when
       input >50KB and suggest file mode.
+- [ ] **`parse_frontmatter` consolidation** — defined 6× across
+      `tests/{behavioral,structural}/test_*.py` and 2× in
+      `tests/skills/{expert_review,sme_test}/conftest.py`. Move to
+      `tests/_skill_helpers.py` (regex vs `str.split` design choice pending).
+- [ ] **`run_hook` → in-process** — `tests/test_hook_inline_scripts.py:33`
+      spawns ~30 CPython subprocesses per suite run. Convert to a direct module
+      call; keep `subprocess.run` only for the 4 `TestHookMalformedInput` tests
+      that probe exit codes and stderr.
+- [ ] **Parametrize-consolidate `tests/test_analyze_perms.py`** — 7 scalar
+      tests + 3 None-returns tests at lines 39-137 fold into 2
+      `@pytest.mark.parametrize` blocks alongside the existing one.
+- [ ] **Lift `_load_hook_module` to `scope="module"` fixture** —
+      `tests/test_hook_inline_scripts.py:196-212`; parametrize the two
+      redirect-pattern tests (`>>` and `<<`) while there.
+- [ ] **Module-scope fixture for `tests/structural/test_red_transcript_fixture.py`**
+      — 3 separate `open()` calls on the same static fixture file at lines 22,
+      36, 44 should share one `scope="module"` parsed result.
+- [ ] **Bundle `invoke_skill` factory into `tests/conftest.py`** — currently
+      duplicated in `tests/{smoke,performance}/conftest.py`. One factory fixture
+      with configurable `model` / `timeout` defaults.
 
 ## Phase 3 — Harness integration
 
