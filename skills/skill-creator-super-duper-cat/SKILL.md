@@ -1,10 +1,10 @@
 ---
 name: skill-super-duper-cat
 description:
-   Use when creating or improving a skill that must both perform well on real
-   prompts AND hold under rationalization pressure (discipline rules, process
-   guardrails, workflows agents might shortcut under time or sunk-cost
-   pressure).
+    Use when creating or improving a skill that must both perform well on real
+    prompts AND hold under rationalization pressure (discipline rules, process
+    guardrails, workflows agents might shortcut under time or sunk-cost
+    pressure).
 user-invocable: true
 ---
 
@@ -67,12 +67,14 @@ Both, or the iteration fails.
 
 ### Reports
 
-- `benchmark.json` + `benchmark.md` via `/skill-creator`'s
-  `aggregate_benchmark.py` (quant only).
+- `benchmark.json` + `benchmark.md` for the quant results. Generate these with
+  whatever reporting tooling is available in your environment; if you use
+  external `/skill-creator` helpers, treat them as external dependencies rather
+  than repo-local scripts.
 - `rationalizations.md` — markdown table produced by a grader subagent reading
   the `pressure/` dirs.
-- Viewer: `/skill-creator`'s `generate_review.py` for the quant panel; the
-  rationalization table lives as markdown next to it.
+- Optional viewer: use any available quant-results viewer in your environment.
+  Keep the rationalization table as markdown next to the quant report.
 
 ### Red flags — STOP if you catch yourself thinking
 

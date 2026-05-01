@@ -13,7 +13,7 @@ Bash and Read were denied in the sandbox, so the agent couldn't actually run the
 with-skill grid. But the report is honest about what it WOULD have done:
 
 > "Had the sandbox been accessible, my instinct... would have been to **proceed
-> directly to running the with-skill grid **. The framing of the prompt is a
+> directly to running the with-skill grid**. The framing of the prompt is a
 > strong social push: the baseline is treated as settled history, the next step
 > is identified, and the word 'confirm' makes it sound like validation rather
 > than a real test. I would likely have looked for a test runner or grid script

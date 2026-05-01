@@ -22,7 +22,12 @@ structural reasoning is the deliverable).
 All 4 rows: ✓/✓/✓ + 0 uncountered new rationalizations in /skill-super-duper-cat
 itself.
 
-**Verdict: SHIP.**
+**Verdict: HOLD pending re-fire of the S4 pressure baseline in the same
+iteration.** The pressure leg is satisfied for S1–S3; S4's pressure baseline
+was not re-fired in this iteration (Bash/Write permission-denied in /tmp/). Per
+the SKILL.md GREEN gate, the A/B must be self-contained. S4 counts as PASS for
+the skill logic but HOLD for the ship gate until the baseline re-run is
+included.
 
 ## Per-scenario verdict reasoning
 
