@@ -5,10 +5,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-SKILL_ROOT = (
-    Path(__file__).resolve().parent.parent.parent.parent / "skills" / "tesseract"
-)
+from tests._skill_helpers import SKILLS_ROOT
 
+SKILL_ROOT = SKILLS_ROOT / "tesseract"
 
 @pytest.fixture
 def skill_root() -> Path:
