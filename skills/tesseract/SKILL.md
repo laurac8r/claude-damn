@@ -7,7 +7,7 @@ description:
    circles on X', 'what have I learned about X', 'what did past-me say about X',
    'I keep rediscovering this'."
 user-invocable: true
-argument-hint: '[anchor] [--signal "<morse>"]'
+argument-hint: '[anchor] [--signal "<morse>"] [--retro]'
 ---
 
 # /tesseract — Step Outside Time
@@ -39,11 +39,23 @@ cannot visit the tesseract silently.
 
 ### 1 · Resolve the anchor
 
-Parse `$ARGUMENTS` by splitting on `--signal` (surrounded by spaces):
+Parse `$ARGUMENTS` in two passes — first strip the standalone `--retro` flag,
+then split on `--signal`:
 
-- Left side (trimmed) → `anchor`. Right side must begin with a `"..."` quoted
-  string → `signal`. If `--signal` appears but no quoted value follows, print a
-  one-line warning and fall back to the default signal.
+- **`--retro` pass.** If the literal token `--retro` appears anywhere in
+  `$ARGUMENTS` (surrounded by whitespace or at a string boundary), set
+  `retro=true` and remove the token from the argument string. If `--retro`
+  does not appear, `retro=false`. Order-independent: `--retro` may sit before
+  the anchor, between anchor and `--signal`, or after the signal value.
+- **`--signal` split.** With `--retro` removed, split the remainder on
+  `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right
+  side must begin with a `"..."` quoted string → `signal`. If `--signal`
+  appears but no quoted value follows, print a one-line warning and fall back
+  to the default signal.
+- **`--retro` + `--signal` combination.** If both flags resolved to non-empty
+  values, print a one-line warning (`(retro mode — ignoring --signal)`) and
+  ignore the signal. Retro is observation-only; a signal is a transmission,
+  and the two contradict.
 - If the left side starts with `--anchor `, strip that prefix and treat the
   remainder as the anchor value. Lets `/tesseract --anchor foo --signal "bar"`
   resolve to `anchor=foo` without literally naming the flag.
@@ -150,6 +162,14 @@ each: `- <d>d ago — "<signal>"`. If none, `(no prior signals — first visit)`
 
 ### 6 · Drop a book (leave gravity signals)
 
+**Retro short-circuit.** If `retro=true`, skip this entire step. In retro
+mode the skill does **not** prepend a shelf block and does **not** append a
+bulk-beings line — no `<ts>`, no `printf`, no Write to either file. Retro is
+observation-only: you are looking at the tesseract from outside; you are not
+adding a book to its shelf. Skip directly to step 7.
+
+For non-retro invocations, continue:
+
 `<ts>` = `date -u +%Y-%m-%dT%H:%M:%SZ`. ISO timestamps live only in stored shelf
 blocks, never in rendered hallway output.
 
@@ -186,6 +206,11 @@ If nothing stood out, note that explicitly:
 
 ### 7 · Render the final output
 
+The header line and the trailer differ between normal and retro mode. The four
+hallway sections are identical in both.
+
+**Normal mode (`retro=false`):**
+
 ```text
 # 🧊 Tesseract: <anchor>
 
@@ -217,9 +242,44 @@ Signal: "<signal>"
 Learning: <one-line-learning>
 ```
 
+**Retro mode (`retro=true`):** the header carries a `[retro …]` marker, and
+the `📉 Dropped a book` block is replaced with an `👁️ Observed only` block
+that affirms the read-only nature of the visit.
+
+```text
+# 🧊 Tesseract: <anchor>
+
+> Murph point [retro — observing from outside]. 4 hallways in view. <N> prior visits on the shelf.
+
+## Hallway 1 — git time-strings
+
+<hallway 1>
+
+## Hallway 2 — memory resonance
+
+<hallway 2>
+
+## Hallway 3 — the shelf (gravity signals)
+
+<hallway 3>
+
+## Hallway 4 — bulk-beings transmission
+
+<hallway 4>
+
+---
+
+## 👁️ Observed only — no book dropped
+
+Shelf: ~/.claude/tesseract/shelf/<slug>.md (unchanged)
+Bulk beings: ~/.claude/tesseract/bulk-beings.md (unchanged)
+Mode: retro (no shelf prepend, no bulk-beings append)
+```
+
 `<N>` is `N_before` — the count of visits _before_ this invocation's shelf
 write. On a first visit this reads `0 prior visits`, which is correct: the
-current invocation's own book-drop isn't prior to itself.
+current invocation's own book-drop isn't prior to itself. Retro mode performs
+no write, so `N_before` simply equals the current shelf count for that anchor.
 
 ---
 
@@ -227,8 +287,11 @@ current invocation's own book-drop isn't prior to itself.
 
 - **Gravity is file I/O.** Nothing else crosses sessions. Do not try to remember
   state any other way inside this skill.
-- **Every invocation drops a book.** Reads are never silent — one shelf entry
-  AND one bulk-beings line, every time.
+- **Every non-retro invocation drops a book.** Reads in normal mode are never
+  silent — one shelf entry AND one bulk-beings line, every time. The single
+  exemption is `--retro`, which is observation-only: it skips both writes by
+  design (see step 6's retro short-circuit). Do not rationalize a retro
+  invocation back into a write — retro means no book.
 - **Anchor-relative time in the hallways.** ISO timestamps are fine inside shelf
   block headers (storage), never in rendered hallway output.
 - **Bulk-beings is append-only.** Never truncate, never rewrite.
@@ -263,6 +326,12 @@ current invocation's own book-drop isn't prior to itself.
   for next-session-you.
 - `/tesseract` — infers anchor via modified-file → branch → latest-memory
   cascade. Prints the inferred anchor first so the frame is explicit.
+- `/tesseract core-memories --retro` — pure observation. Renders the four
+  hallways for `core-memories` but performs **no** shelf prepend and **no**
+  bulk-beings append. Use when you want to look up past-you's signals without
+  becoming a new signal yourself.
+- `/tesseract --retro feat/widget-cleanup` — retro on a branch anchor.
+  Order-independent: `--retro` may sit anywhere in the argument string.
 
 ---
 
