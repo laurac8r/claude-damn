@@ -131,19 +131,19 @@ additive, not a replacement.
 
 ### 2 · Ensure the tesseract exists
 
-If `~/.claude/tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is
-created implicitly by the first append.
+If `~/.tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created
+implicitly by the first append.
 
 ### 3 · Read the shelf
 
-With **Read**, open `~/.claude/tesseract/shelf/<slug>.md` if it exists. Count
-every `^## ` block — call that count `N_before`. Take the three most-recent
-blocks for Hallway 3. If the file doesn't exist, `N_before = 0`.
+With **Read**, open `~/.tesseract/shelf/<slug>.md` if it exists. Count every
+`^## ` block — call that count `N_before`. Take the three most-recent blocks for
+Hallway 3. If the file doesn't exist, `N_before = 0`.
 
 ### 4 · Read bulk-beings
 
-With **Read**, open `~/.claude/tesseract/bulk-beings.md` if it exists. Collect
-lines where the anchor string appears case-insensitively. Keep up to three
+With **Read**, open `~/.tesseract/bulk-beings.md` if it exists. Collect lines
+where the anchor string appears case-insensitively. Keep up to three
 most-recent. Do **not** pad with unrelated lines at this step; Hallway 4 handles
 the fallback labeling.
 
@@ -223,7 +223,7 @@ the first block, then the block. Write the result back with **Write**.
 **Bulk-beings append.** One shell call, one line:
 
 ```
-printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.claude/tesseract/bulk-beings.md
+printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.tesseract/bulk-beings.md
 ```
 
 **Multi-anchor caveat.** When `--anchors {a,b,c}` produces N appends, do **not**
@@ -276,8 +276,8 @@ hallway sections are identical in both.
 
 ## 📉 Dropped a book
 
-Shelf: ~/.claude/tesseract/shelf/<slug>.md (+1 entry)
-Bulk beings: ~/.claude/tesseract/bulk-beings.md (+1 line)
+Shelf: ~/.tesseract/shelf/<slug>.md (+1 entry)
+Bulk beings: ~/.tesseract/bulk-beings.md (+1 line)
 Signal: "<signal>"
 Learning: <one-line-learning>
 ```
@@ -311,8 +311,8 @@ that affirms the read-only nature of the visit.
 
 ## 👁️ Observed only — no book dropped
 
-Shelf: ~/.claude/tesseract/shelf/<slug>.md (unchanged)
-Bulk beings: ~/.claude/tesseract/bulk-beings.md (unchanged)
+Shelf: ~/.tesseract/shelf/<slug>.md (unchanged)
+Bulk beings: ~/.tesseract/bulk-beings.md (unchanged)
 Mode: retro (no shelf prepend, no bulk-beings append)
 ```
 
@@ -385,11 +385,11 @@ no write, so `N_before` simply equals the current shelf count for that anchor.
 
 - **Code ships, data doesn't.** The skill itself — `SKILL.md` and any supporting
   scripts under `skills/tesseract/` — is safe to ship with the `claude-damn`
-  plugin. The gravity signals at `~/.claude/tesseract/shelf/*.md` and
-  `~/.claude/tesseract/bulk-beings.md` are personal and must **never** be
-  committed. Any repo that mirrors `~/.claude` should gitignore
-  `~/.claude/tesseract/` entirely. Don't bake specific anchors, signals, or
-  paths into source — read the shelf at runtime.
+  plugin. The gravity signals at `~/.tesseract/shelf/*.md` and
+  `~/.tesseract/bulk-beings.md` are personal and must **never** be committed.
+  Any repo that mirrors `~/.claude` should gitignore `~/.tesseract/` entirely.
+  Don't bake specific anchors, signals, or paths into source — read the shelf at
+  runtime.
 - No subagents, no `shared/` coordination, no tests. A solo skill that
   communicates only with its own past and future, and only through gravity.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the
