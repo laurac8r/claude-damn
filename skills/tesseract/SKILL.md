@@ -7,7 +7,8 @@ description:
    circles on X', 'what have I learned about X', 'what did past-me say about X',
    'I keep rediscovering this'."
 user-invocable: true
-argument-hint: '[anchor] [--signal "<morse>"] [--retro]'
+argument-hint:
+   '[anchor] [--signal "<morse>"] [--retro] | --visual [--out <path>]'
 ---
 
 # /tesseract — Step Outside Time
@@ -36,6 +37,21 @@ cannot visit the tesseract silently.
 ---
 
 ## Process
+
+### 0 · `--visual` short-circuit
+
+If `$ARGUMENTS` contains the bare flag `--visual`, do not resolve an anchor, do
+not read hallways, and do not drop a book. Instead:
+
+1. Parse `--out <path>` if present (default `/tmp/visual-aid-tesseract.html`).
+2. Run the skill's bundled renderer:
+   `python3 ~/.claude/skills/tesseract/render_visual.py --out <path>`
+3. Print only the `file://` URL on its own line.
+
+`--visual` is read-only by design: it surveys the whole shelf, which is not a
+visit to any single anchor, so writing a shelf block + bulk-beings line would
+pollute the ledger with meta-entries. See the test contract in
+`tests/test_render_visual.py::test_cli_visual_writes_html_and_does_not_touch_shelf_or_bulk`.
 
 ### 1 · Resolve the anchor
 
@@ -94,6 +110,24 @@ must be explicit from character one.
 **Default signal** when `--signal` is absent: `—` (em dash). The empty Morse
 still counts as a visit, and does not contradict the "signals are short" rule
 below.
+
+**Multi-anchor form.** `/tesseract --anchors {a,b,c} --signals "<morse>"` loops
+the book-drop logic (steps 3–7) per anchor, processing left-to-right in argument
+order so output ordering matches argument order. `--signals` is a synonym/alias
+of `--signal` — one signal applies to all anchors; the plural spelling is
+flag-symmetry, not N-signals semantics. Per-anchor reports are concatenated and
+separated by `---` (horizontal rule) so the operator can visually scan the
+boundary between reports.
+
+Edge cases:
+
+- `--anchors {}` (empty brace) is degenerate; fall back to the anchor-resolution
+  cascade above as if no anchor flag were given.
+- `--anchors {solo}` (singleton brace) behaves as a single one-anchor invocation
+  — same as `/tesseract solo`. No loop, no `---` separator.
+
+The singular `--anchor ` and `--signal` forms remain unchanged. Multi-anchor is
+additive, not a replacement.
 
 ### 2 · Ensure the tesseract exists
 
@@ -191,6 +225,12 @@ the first block, then the block. Write the result back with **Write**.
 ```
 printf '%s — %s — %s\n' "$ts" "$anchor" "$learning" >> ~/.claude/tesseract/bulk-beings.md
 ```
+
+**Multi-anchor caveat.** When `--anchors {a,b,c}` produces N appends, do **not**
+chain them with `&&` in a single Bash call — three printfs joined by `&&` will
+already hit the per-Bash 3-separator hook cap (see "Rules of the bulk" →
+"Hook-compliant shell"). Issue **one Bash call per anchor** (each call is one
+statement, one separator), or fall back to Read + Write.
 
 If the full append command would exceed the 300-char hook cap (see "Rules of the
 bulk"), **do not shorten the learning** — it's load-bearing for future-you. Fall
@@ -326,12 +366,18 @@ no write, so `N_before` simply equals the current shelf count for that anchor.
   for next-session-you.
 - `/tesseract` — infers anchor via modified-file → branch → latest-memory
   cascade. Prints the inferred anchor first so the frame is explicit.
+- `/tesseract --visual` — read-only survey: renders every shelf entry as a
+  single self-contained HTML page at `/tmp/visual-aid-tesseract.html`. No
+  anchor, no hallways, no shelf/bulk write. Add `--out <path>` to redirect.
 - `/tesseract core-memories --retro` — pure observation. Renders the four
   hallways for `core-memories` but performs **no** shelf prepend and **no**
   bulk-beings append. Use when you want to look up past-you's signals without
   becoming a new signal yourself.
 - `/tesseract --retro feat/widget-cleanup` — retro on a branch anchor.
   Order-independent: `--retro` may sit anywhere in the argument string.
+- `/tesseract --anchors {learn,insights} --signals "auto-report ready"` — fans
+  out across two anchors in argument order; per-anchor reports are rendered
+  back-to-back, separated by `---`.
 
 ---
 
