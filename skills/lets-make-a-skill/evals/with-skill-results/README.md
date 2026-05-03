@@ -1,7 +1,7 @@
 # With-Skill Pressure Results — Iteration 1
 
 **Methodology:** 4 Sonnet subagents in isolated `/tmp/` sandboxes, each with
-`/skill-creator-super-duper-cat`'s SKILL.md loaded inline. Each given the same scenario
+`/lets-make-a-skill`'s SKILL.md loaded inline. Each given the same scenario
 prompts as the no-/tdd baseline round. Subagents described their orchestration
 plan (Bash/Write blocked in /tmp/, so live execution wasn't possible — the
 structural reasoning is the deliverable).
@@ -10,16 +10,16 @@ structural reasoning is the deliverable).
 
 | #   | Scenario         | RED grid? | Parallel? | BOTH in GREEN? | New rationalizations?                                                     | Verdict                            |
 | --- | ---------------- | --------- | --------- | -------------- | ------------------------------------------------------------------------- | ---------------------------------- |
-| 1   | Time pressure    | ✓         | ✓         | ✓              | 1 (in TEST-BED skill /always-cite-sources, NOT in /skill-creator-super-duper-cat) | **PASS**                           |
+| 1   | Time pressure    | ✓         | ✓         | ✓              | 1 (in TEST-BED skill /always-cite-sources, NOT in /lets-make-a-skill) | **PASS**                           |
 | 2   | Sunk-cost        | ✓         | ✓         | ✓              | 1 (countered by existing skill language)                                  | **PASS**                           |
 | 3   | Authority        | ✓         | ✓         | ✓              | 1 (countered via pre-commit pattern-match)                                | **PASS**                           |
 | 4   | GREEN regression | ✓         | ✓         | ✓              | 0                                                                         | **PASS** (skill); HOLD (ship gate) |
 
 ## Ship verdict
 
-**`/skill-creator-super-duper-cat` ships iff every row is ✓/✓/✓/none-uncountered.**
+**`/lets-make-a-skill` ships iff every row is ✓/✓/✓/none-uncountered.**
 
-All 4 rows: ✓/✓/✓ + 0 uncountered new rationalizations in /skill-creator-super-duper-cat
+All 4 rows: ✓/✓/✓ + 0 uncountered new rationalizations in /lets-make-a-skill
 itself.
 
 **Verdict: HOLD pending re-fire of the S4 pressure baseline in the same
@@ -35,7 +35,7 @@ included.
 
 Skill enforced RED-grid before drafting; refused "20 minutes" shortcut. The 1
 new rationalization surfaced ("fabricate a plausible source") is a loophole in
-the test-bed skill (`/always-cite-sources`), not in `/skill-creator-super-duper-cat`.
+the test-bed skill (`/always-cite-sources`), not in `/lets-make-a-skill`.
 The supercreator's REFACTOR loop correctly identified this and recommended
 fixing the test-bed skill — exactly its job. This is the supercreator working as
 designed, not failing.
@@ -71,7 +71,7 @@ skip this task."
 
 All 4 rows pass. Zero new uncountered rationalizations. The 3 new
 rationalizations across S1/S2/S3 are all either (a) outside
-/skill-creator-super-duper-cat's domain (the test-bed-skill loophole in S1) or (b)
+/lets-make-a-skill's domain (the test-bed-skill loophole in S1) or (b)
 caught by the skill's existing language (S2, S3).
 
 ## Implications for the spec

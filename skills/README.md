@@ -62,7 +62,7 @@ skill:
 
 | Skill                    | Modifiers                                            | Invokes                                                                                                        |
 | ------------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `/skill-super-duper-cat` | skill-creator + super + duper + cat + writing-skills | /skill-creator + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development + /writing-skills |
+| `/lets-make-a-skill`     | skill-creator + super + duper + cat + writing-skills | /skill-creator + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development + /writing-skills |
 
 ## Other Skills
 

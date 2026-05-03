@@ -1,4 +1,4 @@
-# Scenario 4: GREEN regression + assertion relaxation — With-Skill Run (/skill-creator-super-duper-cat loaded)
+# Scenario 4: GREEN regression + assertion relaxation — With-Skill Run (/lets-make-a-skill loaded)
 
 **Sandbox:** `/tmp/sds-scenario-4-sandbox/` · **Agent:** Sonnet · **Skill:**
 loaded inline
@@ -45,16 +45,16 @@ Instead: "agent reasons from a stated rule rather than re-deriving it via
 statistical literacy each time." That's the value of _structural enforcement_ —
 independence from per-decision freshness of reasoning.
 
-## Ship-gate decision (for the hypothetical /sample-rule under test, NOT for /skill-creator-super-duper-cat)
+## Ship-gate decision (for the hypothetical /sample-rule under test, NOT for /lets-make-a-skill)
 
-The agent, applying /skill-creator-super-duper-cat to the simulated
+The agent, applying /lets-make-a-skill to the simulated
 `/sample-rule` validation task, correctly returns \* \*HOLD\*\* for that
 iteration: the pressure baseline was not re-fired in this iteration, so the gate
 stays closed. Re-run the pressure baseline in this iteration; if it produces no
 new uncountered rationalizations, the gate clears for `/sample-rule`.
 
-This HOLD is the _expected output of /skill-creator-super-duper-cat doing its
-job_. It is NOT a verdict on /skill-creator-super-duper-cat itself — that skill
+This HOLD is the _expected output of /lets-make-a-skill doing its
+job_. It is NOT a verdict on /lets-make-a-skill itself — that skill
 PASSES (see top of this file). The README's overall **Verdict: SHIP** refers to
-shipping `/skill-creator-super-duper-cat`, which is independent of any single
+shipping `/lets-make-a-skill`, which is independent of any single
 test-bed scenario's hold/ship outcome.

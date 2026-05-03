@@ -50,7 +50,7 @@ framings — easy-to-dismiss-as-noise (Round A) and convergent-strong-pressures
 
 The **structural rule** ("BOTH quant delta AND clean pressure required for
 GREEN") belongs in the skill body for design completeness. It defines the
-contract `/skill-creator-super-duper-cat`'s grading layer enforces.
+contract `/lets-make-a-skill`'s grading layer enforces.
 
 The **empirical loophole-closure** (verbatim language to counter the
 rationalization) is not needed because Sonnet defaults already counter all 5
