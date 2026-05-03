@@ -259,6 +259,104 @@ class TestMultipleViolations:
         assert "Too many chained statements" in reason
 
 
+class TestTesseractPathBypass:
+    """Tesseract path bypass: rules 2 & 3 are exempt; rule 1 still fires."""
+
+    def test_tilde_path_char_limit_bypassed(self) -> None:
+        """A long append to ~/.claude/tesseract/ must NOT be blocked by rule 2."""
+        long_content = "x" * 260
+        command = f"echo '{long_content}' >> ~/.claude/tesseract/bulk-beings.md"
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        assert output == {}, f"Should allow (tesseract bypass): {command!r}"
+
+    def test_absolute_path_char_limit_bypassed(self) -> None:
+        """Absolute /Users/<user>/.claude/tesseract/ path also bypasses rule 2."""
+        long_content = "x" * 260
+        command = (
+            f"echo '{long_content}' >> /Users/laura/.claude/tesseract/bulk-beings.md"
+        )
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        assert output == {}, f"Should allow (tesseract bypass): {command!r}"
+
+    def test_home_env_var_path_char_limit_bypassed(self) -> None:
+        """$HOME/.claude/tesseract/ path bypasses rule 2."""
+        long_content = "x" * 260
+        command = f"echo '{long_content}' >> $HOME/.claude/tesseract/bulk-beings.md"
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        assert output == {}, f"Should allow (tesseract bypass): {command!r}"
+
+    def test_tesseract_path_statement_limit_bypassed(self) -> None:
+        """A command with 4+ separators targeting tesseract path bypasses rule 3."""
+        spec = importlib.util.spec_from_file_location(
+            "block_inline_scripts",
+            Path(__file__).parent.parent / "hooks" / "block-inline-scripts.py",
+        )
+        assert spec is not None and spec.loader is not None
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        # 5 separators: &&, ;, |, ;, >>
+        command = (
+            "echo a && echo b; echo c | grep d;"
+            " echo e >> ~/.claude/tesseract/bulk-beings.md"
+        )
+        sep_count = len(mod.SEPARATOR_PATTERN.findall(command))
+        assert sep_count > mod.MAX_STATEMENT_COUNT, (
+            f"precondition: separator count ({sep_count}) must exceed"
+            f" MAX_STATEMENT_COUNT ({mod.MAX_STATEMENT_COUNT})"
+        )
+        output = run_hook("Bash", command)
+        assert output == {}, f"Should allow (tesseract bypass): {command!r}"
+
+    def test_inline_script_still_blocked_on_tesseract_path(self) -> None:
+        """Rule 1 (inline-script) MUST still fire even for tesseract paths."""
+        command = "python3 -c 'import os; os.system(\"ls\")' >> ~/.claude/tesseract/foo"
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Inline-script rule must fire even for tesseract path"
+        )
+        reason = hook_out.get("permissionDecisionReason", "")
+        assert "Inline non-Bash script detected" in reason
+
+    def test_non_tesseract_dot_claude_path_char_limit_fires(self) -> None:
+        """Long command to ~/.claude/NOT-tesseract/ is not exempt — rule 2 fires."""
+        long_content = "x" * 260
+        command = f"echo '{long_content}' >> ~/.claude/NOT-tesseract/file.md"
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Char-limit must fire for non-tesseract path"
+        )
+
+    def test_tesseract_backup_path_char_limit_fires(self) -> None:
+        """~/.claude/tesseract-backup/ is not exempt — bypass scoped to tesseract/."""
+        long_content = "x" * 260
+        command = f"echo '{long_content}' >> ~/.claude/tesseract-backup/file.md"
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Char-limit must fire for tesseract-backup path"
+        )
+
+    def test_memory_path_char_limit_fires(self) -> None:
+        """Long command targeting ~/.claude/projects/.../memory/ is NOT exempt."""
+        long_content = "x" * 260
+        command = (
+            f"echo '{long_content}' >> ~/.claude/projects/-Users-laura/memory/MEMORY.md"
+        )
+        assert len(command) > 300, "precondition: command must exceed 300 chars"
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Char-limit must fire for memory path"
+        )
+
+
 class TestHookIgnoresNonBash:
     """Non-Bash tools should pass through without inspection."""
 
@@ -337,6 +435,10 @@ class TestHookMalformedInput:
             text=True,
             timeout=10,
         )
+        # Error path: exit 1 + stderr message, no persistent systemMessage on stdout
+        assert result.returncode == 1
+        assert "Hook error" in result.stderr
+        assert result.stdout.strip() == ""
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert output == {}, f"Expected {{}}, got {output!r}"
