@@ -1,5 +1,5 @@
 ---
-name: skill-super-duper-cat
+name: lets-make-a-skill
 description:
     Use when creating or improving a skill that must both perform well on real
     prompts AND hold under rationalization pressure (discipline rules, process

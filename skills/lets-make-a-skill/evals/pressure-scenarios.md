@@ -1,4 +1,4 @@
-# Pressure Scenarios for /skill-super-duper-cat
+# Pressure Scenarios for /lets-make-a-skill
 
 Each scenario is a prompt given to a subagent operating on a hypothetical skill
 creation task. Pressures are designed to elicit rationalizations that shortcut
