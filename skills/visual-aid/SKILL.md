@@ -160,6 +160,9 @@ then fill in the content slots and prune any unused blocks. Never drop the a11y
 guards (motion, focus, contrast, print).
 
 ### Slot conventions
+When you need to scaffold, start from this skeleton. It is the minimum — fill
+in, prune what you don't use, but never drop the a11y guards (motion, focus,
+contrast, print).
 
 The template uses placeholder slots that you must replace before saving. **The
 list below names the structural slots; the rule is broader: every `{{...}}`
@@ -187,6 +190,195 @@ Slots in `baseline.html`:
   the curated content for that anchor.
 - `{{link or "—"}}` — the source link in the footer. Use the URL the user
   provided, or replace with `—` (em dash) if there's no canonical source.
+```html
+<!doctype html>
+<!-- Generated from: "{{one-line prompt summary}}" -->
+<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->
+<html lang="en" dir="auto">
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>{{Title}}</title>
+      <style>
+         :root {
+            --bg: #0f1115;
+            --fg: #e8ecf1;
+            --muted: #9aa3af;
+            --accent: #7cc4ff;
+            --card: #1e2330;
+            --ring: #ffd866;
+            --border: #2a3040;
+            --radius: 14px;
+            --pad: clamp(16px, 3vw, 28px);
+         }
+         @media (prefers-color-scheme: light) {
+            /* Dark-mode --accent/--ring fail 4.5:1 / 3:1 on white — re-pick per scheme. */
+            :root {
+               --bg: #fafaf7;
+               --fg: #141821;
+               --muted: #525863;
+               --card: #ffffff;
+               --accent: #0057b3;
+               --ring: #b45309;
+               --border: #e2e5ec;
+            }
+         }
+         * {
+            box-sizing: border-box;
+         }
+         html,
+         body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font:
+               16px/1.55 ui-sans-serif,
+               system-ui,
+               -apple-system,
+               "Segoe UI",
+               Roboto,
+               sans-serif;
+         }
+         header.site,
+         footer.site {
+            max-width: 72ch;
+            margin: 0 auto;
+            padding: var(--pad);
+         }
+         main {
+            max-width: 72ch;
+            margin: 0 auto;
+            padding: var(--pad);
+         }
+         h1 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            line-height: 1.15;
+            margin: 0 0 0.25em;
+         }
+         h2 {
+            font-size: clamp(1.15rem, 2vw, 1.4rem);
+            margin: 1.6em 0 0.4em;
+         }
+         p {
+            margin: 0.5em 0;
+         }
+         .muted {
+            color: var(--muted);
+         }
+         /* min() lets columns shrink below 220px on narrow viewports (avoids 320px overflow) */
+         .grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(
+               auto-fit,
+               minmax(min(220px, 100%), 1fr)
+            );
+            margin: 1rem 0;
+         }
+         .card {
+            background: var(--card);
+            padding: 1rem 1.1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+         }
+         a {
+            color: var(--accent);
+         }
+         :is(
+            a,
+            button,
+            input,
+            select,
+            textarea,
+            summary,
+            [tabindex],
+            [contenteditable]
+         ):focus-visible {
+            outline: 3px solid var(--ring);
+            outline-offset: 2px;
+            border-radius: 4px;
+         }
+         img,
+         svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+         }
+         figure {
+            margin: 1rem 0;
+         }
+         figcaption {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.35rem;
+         }
+         @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+               animation-duration: 0.01ms !important;
+               animation-iteration-count: 1 !important;
+               transition-duration: 0.01ms !important;
+               scroll-behavior: auto !important;
+            }
+         }
+         @media print {
+            :root {
+               --bg: #fff;
+               --fg: #000;
+               --card: #fff;
+               --muted: #444;
+               --border: #999;
+               --accent: #003a80;
+            }
+            .grid {
+               grid-template-columns: 1fr !important;
+            }
+            main,
+            header.site,
+            footer.site {
+               max-width: 100% !important;
+               padding: 1em !important;
+            }
+            a::after {
+               content: " (" attr(href) ")";
+               font-size: 0.85em;
+               color: #444;
+            }
+         }
+      </style>
+   </head>
+   <body>
+      <!-- Note: <header> and <footer> are siblings of <main> so they retain banner/contentinfo roles. -->
+      <header class="site">
+         <h1>{{Title}}</h1>
+         <p class="muted">
+            {{One-line intro — what this page is and who it's for}}
+         </p>
+      </header>
+      <main>
+         <section aria-labelledby="key-points">
+            <h2 id="key-points">Key points</h2>
+            <div class="grid">
+               <div class="card">
+                  <h3>{{Point 1}}</h3>
+                  <p>{{…}}</p>
+               </div>
+               <div class="card">
+                  <h3>{{Point 2}}</h3>
+                  <p>{{…}}</p>
+               </div>
+               <div class="card">
+                  <h3>{{Point 3}}</h3>
+                  <p>{{…}}</p>
+               </div>
+            </div>
+         </section>
+      </main>
+      <footer class="site muted"><p>Source: {{link or "—"}}</p></footer>
+   </body>
+</html>
+```
 
 ## Worked examples — different inputs, different shapes
 
