@@ -9,23 +9,20 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-> **⏳ Status:** v1.0.0 submitted to the official Claude Code marketplace on
-> 2026-04-23; **awaiting Anthropic review**. Until approval lands, install via
-> the local / git path below (the `/plugin install` command will start working
-> once the submission is accepted — watch `CHANGELOG.md` for the flip).
+> **✅ Status:** v1.0.0 is **live** in the
+> [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
+> marketplace as of the 2026-04-28 batch sync (commit
+> [`4749e7a`](https://github.com/anthropics/claude-plugins-community/commit/4749e7a),
+> "sync: 1921 plugins (+285)") — 5 days after the 2026-04-23 submission. v1.7.0
+> was re-submitted on 2026-05-03 and is currently pending review; a future batch
+> sync will bump the marketplace's pinned SHA. See `CHANGELOG.md` for what's in
+> each version.
 
-Install ahead of marketplace approval:
+Install:
 
-```bash
-# Point Claude Code at a local clone
-git clone https://github.com/laurac8r/claude-damn
-claude --plugin-dir ./claude-damn
-```
-
-Once approved, this becomes:
-
-```
-/plugin install claude-damn@claude-plugins-official
+```shell
+claude plugin marketplace add anthropics/claude-plugins-community
+claude plugin install claude-damn@claude-community
 ```
 
 See [`ROADMAP.md`](ROADMAP.md) for what's next and
@@ -85,25 +82,37 @@ See [`skills/README.md`](skills/README.md) for the full combinatoric table.
   and authenticated
 - Git
 
-### Install from the marketplace (post-approval)
+### Install from the marketplace
 
-> **Not yet available.** v1.0.0 is awaiting Anthropic marketplace review as of
-> 2026-04-23. Once accepted, the command below will work. Until then, use the
-> pre-approval install path under "Manual install" below.
+`claude-damn` is published in the
+[`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
+marketplace. If you haven't already added that marketplace, do so first:
 
+```shell
+claude plugin marketplace add anthropics/claude-plugins-community
 ```
-/plugin install claude-damn@claude-plugins-official
+
+Then install:
+
+```shell
+claude plugin install claude-damn@claude-community
 ```
 
 This will register every skill, command, and the inline-script PreToolUse hook.
 Restart or reload the session once to pick up the hook.
+
+To pull the latest published version later:
+
+```shell
+claude plugin update claude-damn@claude-community
+```
 
 ### Companion plugins
 
 `claude-damn` layers on top of `superpowers`. Install it if you don't have it
 already:
 
-```
+```shell
 /plugin install superpowers@claude-plugins-official
 ```
 
@@ -140,19 +149,18 @@ Operator-specific preferences (commit style, model routing, subagent delegation
 targets) go in `~/.claude/rules/PERSONALIZATION.md`. Copy the template and edit
 to taste:
 
-```bash
+```shell
 cp rules/PERSONALIZATION.example.md ~/.claude/rules/PERSONALIZATION.md
 ```
 
 `CLAUDE.md` holds general engineering rules that apply to every clone and should
 stay in sync with upstream.
 
-### Manual install (pre-approval, and for contributors)
+### Manual install (for contributors)
 
-Until the marketplace submission is approved, this is the primary install path.
-It's also the right path if you're hacking on `claude-damn` itself:
+If you're hacking on `claude-damn` itself, install from a local clone:
 
-```bash
+```shell
 git clone https://github.com/laurac8r/claude-damn
 cd claude-damn
 uv sync        # dev/test dependencies
@@ -160,27 +168,32 @@ uv run pytest  # 422 tests green
 ```
 
 Then point Claude Code at the local checkout so skills, commands, and the
-PreToolUse hook load:
+PreToolUse hook load from your working tree (not the published marketplace
+copy):
 
-```bash
+```shell
 claude --plugin-dir /absolute/path/to/claude-damn
 ```
 
 Or use `--add-dir` to allow tool access without registering as a plugin:
 
-```bash
+```shell
 claude --add-dir /absolute/path/to/claude-damn
 ```
 
-Once the marketplace submission is approved, you can remove the local clone and
-switch to `/plugin install claude-damn@claude-plugins-official`.
+When you're done hacking, drop the local install and go back to the marketplace
+copy:
+
+```shell
+claude plugin install claude-damn@claude-community
+```
 
 ## Quickstart
 
 A few skill invocations to get a feel for the workflow:
 
-```
-/tdd                 # Start a test-driven development loop
+```claude-like
+/tdd                  # Start a test-driven development loop
 /super                # Brainstorm first, then TDD
 /super-duper-cat      # Brainstorm + worktree isolation + parallel subagents
 /expert-review        # Multi-phase expert code review
@@ -194,7 +207,7 @@ how `super` / `duper` / `cat` / `tdd` compose into 20+ skill variants.
 
 ## Project structure
 
-```
+```tree-like
 .
 ├── .claude-plugin/
 │   └── plugin.json            # Plugin manifest (name, version, author, keywords)
@@ -244,13 +257,13 @@ except `smoke` and `performance` (see `pyproject.toml` markers).
 
 Run everything cheap and deterministic:
 
-```bash
+```shell
 uv run pytest
 ```
 
 Run the full suite including live/expensive tests:
 
-```bash
+```shell
 uv run pytest -m ""
 ```
 
@@ -259,7 +272,7 @@ uv run pytest -m ""
 For the slower suites (`performance/`, `smoke/`, or `-m ""`), run tests in
 parallel with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/):
 
-```bash
+```shell
 uv add --dev pytest-xdist # one-time install
 uv run pytest -n auto # auto = one worker per CPU core
 uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress matrix
