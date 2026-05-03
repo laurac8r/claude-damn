@@ -1,13 +1,11 @@
 """Integration regression tests: /proceed skill repo integration."""
 
-from pathlib import Path
-
 import pytest
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-SKILLS_DIR = PROJECT_ROOT / "skills"
-SKILL_DIR = SKILLS_DIR / "proceed"
+from tests._skill_helpers import SKILLS_ROOT
+
+SKILL_DIR = SKILLS_ROOT / "proceed"
 SKILL_PATH = SKILL_DIR / "SKILL.md"
 
 
@@ -15,7 +13,7 @@ class TestSkillPresence:
     """Verify the skill directory and file exist in the repo."""
 
     def test_proceed_dir_in_skills(self) -> None:
-        skill_dirs = [d.name for d in SKILLS_DIR.iterdir() if d.is_dir()]
+        skill_dirs = [d.name for d in SKILLS_ROOT.iterdir() if d.is_dir()]
         assert "proceed" in skill_dirs
 
     def test_proceed_skill_md_exists(self) -> None:
