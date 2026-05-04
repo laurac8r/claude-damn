@@ -13,14 +13,14 @@ plugin.
 > [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
 > marketplace as of the 2026-04-28 batch sync (commit
 > [`4749e7a`](https://github.com/anthropics/claude-plugins-community/commit/4749e7a),
-> "sync: 1921 plugins (+285)") — 5 days after the 2026-04-23 submission. v1.7.0
-> was re-submitted on 2026-05-03 and is currently pending review; a future batch
-> sync will bump the marketplace's pinned SHA. See `CHANGELOG.md` for what's in
-> each version.
+> "sync: 1921 plugins (+285)") — 5 days after the 2026-04-23 submission.
+> v1.7.0 was re-submitted on 2026-05-03 and is currently pending review; a
+> future batch sync will bump the marketplace's pinned SHA. See `CHANGELOG.md`
+> for what's in each version.
 
 Install:
 
-```shell
+```bash
 claude plugin marketplace add anthropics/claude-plugins-community
 claude plugin install claude-damn@claude-community
 ```
@@ -88,13 +88,13 @@ See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
 marketplace. If you haven't already added that marketplace, do so first:
 
-```shell
+```
 claude plugin marketplace add anthropics/claude-plugins-community
 ```
 
 Then install:
 
-```shell
+```
 claude plugin install claude-damn@claude-community
 ```
 
@@ -103,7 +103,7 @@ Restart or reload the session once to pick up the hook.
 
 To pull the latest published version later:
 
-```shell
+```
 claude plugin update claude-damn@claude-community
 ```
 
@@ -112,7 +112,7 @@ claude plugin update claude-damn@claude-community
 `claude-damn` layers on top of `superpowers`. Install it if you don't have it
 already:
 
-```shell
+```
 /plugin install superpowers@claude-plugins-official
 ```
 
@@ -149,7 +149,7 @@ Operator-specific preferences (commit style, model routing, subagent delegation
 targets) go in `~/.claude/rules/PERSONALIZATION.md`. Copy the template and edit
 to taste:
 
-```shell
+```bash
 cp rules/PERSONALIZATION.example.md ~/.claude/rules/PERSONALIZATION.md
 ```
 
@@ -160,7 +160,7 @@ stay in sync with upstream.
 
 If you're hacking on `claude-damn` itself, install from a local clone:
 
-```shell
+```bash
 git clone https://github.com/laurac8r/claude-damn
 cd claude-damn
 uv sync        # dev/test dependencies
@@ -171,20 +171,20 @@ Then point Claude Code at the local checkout so skills, commands, and the
 PreToolUse hook load from your working tree (not the published marketplace
 copy):
 
-```shell
+```bash
 claude --plugin-dir /absolute/path/to/claude-damn
 ```
 
 Or use `--add-dir` to allow tool access without registering as a plugin:
 
-```shell
+```bash
 claude --add-dir /absolute/path/to/claude-damn
 ```
 
 When you're done hacking, drop the local install and go back to the marketplace
 copy:
 
-```shell
+```
 claude plugin install claude-damn@claude-community
 ```
 
@@ -192,8 +192,8 @@ claude plugin install claude-damn@claude-community
 
 A few skill invocations to get a feel for the workflow:
 
-```claude-like
-/tdd                  # Start a test-driven development loop
+```
+/tdd                 # Start a test-driven development loop
 /super                # Brainstorm first, then TDD
 /super-duper-cat      # Brainstorm + worktree isolation + parallel subagents
 /expert-review        # Multi-phase expert code review
@@ -207,7 +207,7 @@ how `super` / `duper` / `cat` / `tdd` compose into 20+ skill variants.
 
 ## Project structure
 
-```tree-like
+```
 .
 ├── .claude-plugin/
 │   └── plugin.json            # Plugin manifest (name, version, author, keywords)
@@ -257,13 +257,13 @@ except `smoke` and `performance` (see `pyproject.toml` markers).
 
 Run everything cheap and deterministic:
 
-```shell
+```bash
 uv run pytest
 ```
 
 Run the full suite including live/expensive tests:
 
-```shell
+```bash
 uv run pytest -m ""
 ```
 
@@ -272,7 +272,7 @@ uv run pytest -m ""
 For the slower suites (`performance/`, `smoke/`, or `-m ""`), run tests in
 parallel with [`pytest-xdist`](https://pytest-xdist.readthedocs.io/):
 
-```shell
+```bash
 uv add --dev pytest-xdist # one-time install
 uv run pytest -n auto # auto = one worker per CPU core
 uv run pytest -n 4 -m performance # pin worker count for the 18-combo stress matrix
