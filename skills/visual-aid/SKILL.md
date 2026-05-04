@@ -292,6 +292,22 @@ for rapid iteration where you only want the HTML output).
 3. **Open in browser.** Use `navigate_page` to load
    `http://localhost:<port>/<filename>` (not the `file://` URL).
 
+   **Profile-lock fallback.** If `new_page` / `navigate_page` / `list_pages`
+   return the error
+   `The browser is already running for <userDataDir>. Use --isolated to run multiple browser instances`,
+   the operator's own Chrome session is holding the profile lock and you cannot
+   drive a second instance against the same `userDataDir`. Do **not** retry the
+   same call — it will keep returning the same error. Either:
+   - Retry chrome-devtools-mcp invocations with the `--isolated` flag (creates
+     a separate ephemeral profile dir, no conflict with the operator's
+     session), then resume the SOP from step 3, **or**
+   - Stop the SOP, **execute step 8 (kill the http.server) before exiting** —
+     the server was started in step 2 and leaving it running risks port
+     collisions on the next invocation — and skip verification per the matching
+     `chrome-devtools-mcp profile lock` opt-out below. Name the actual cause in
+     your response — do **not** repackage a profile-lock under "fast iteration"
+     or "not installed."
+
 4. **Desktop screenshot.** Use `take_screenshot` — save to
    `/tmp/visual-aid/<slug>/desktop.png`.
 
@@ -329,6 +345,14 @@ Pass `--no-verify` when:
 - `chrome-devtools-mcp` is not installed in the current environment.
 - Fast iteration: you want the raw HTML first and will verify manually.
 - CI / headless environments without a browser.
+- **chrome-devtools-mcp profile lock** — the operator's own Chrome session is
+  already running on the same `userDataDir` and the plugin returns
+  `browser already running ... use --isolated`. The plugin IS installed and
+  the environment IS interactive; the blocker is environmental (a held profile
+  lock), not a preference. First try retrying chrome-devtools-mcp with
+  `--isolated` if available; if not, skip verification and **name the
+  profile-lock cause in your response** — do not silently route through "fast
+  iteration" or "not installed."
 
 ## Common mistakes
 
@@ -350,6 +374,7 @@ Pass `--no-verify` when:
 | Cloning the worked-example shape for every input                                      | A comparison input doesn't get three cards + SVG — pick from the Input shapes table                                                                                                                                                                                                                                               |
 | Claiming the self-check passed without running it                                     | The self-check is not a ceremony — lying in it means the page ships with real defects                                                                                                                                                                                                                                             |
 | Ticking "contrast computed" without applying the WCAG sRGB formula                    | Visual inspection ("looks high-contrast") and appeal to template authority ("these are baseline colors, they're known-passing") are both the "borderline escape hatch" the self-check bans. Either apply `L = 0.2126·R' + 0.7152·G' + 0.0722·B'` per color pair and write the ratio, or flag for human verification — don't tick. |
+| Routing an environmental blocker through a preference-coded opt-out (e.g. citing "fast iteration" when chrome-devtools-mcp returned a profile-lock error, or stretching "not installed" to cover "installed but blocked") | The opt-out reasons aren't fungible — each names a specific cause. Repackaging a profile-lock as "fast iteration" hides the real failure mode from the operator and from future-you reading the response. The skill defines a `chrome-devtools-mcp profile lock` opt-out for exactly this case — use it and name the cause verbatim. If a new environmental blocker doesn't match any listed opt-out, surface that as a gap rather than stretching the closest preference-coded exit to fit. |
 
 ## When NOT to use this skill
 
