@@ -78,8 +78,8 @@ HTML comment (`<!-- Input: text; layout: cards -->`).
      inline runs, add `lang` on the span.
    - Color contrast ≥ 4.5:1 for body text, ≥ 3:1 for large text and focus rings.
      If unsure, run a Lighthouse a11y audit (e.g. via the `chrome-devtools-mcp`
-     plugin's `lighthouse_audit` tool, if installed). A score below 90 should
-     be treated as a fail — see the Verification SOP below.
+     plugin's `lighthouse_audit` tool, if installed). A score below 90 should be
+     treated as a fail — see the Verification SOP below.
    - `:focus-visible` ring on every interactive element — cover
      `a, button, input, select, textarea, summary, [tabindex], [contenteditable]`
      in the selector. Never `outline: none` without a replacement.
@@ -154,10 +154,10 @@ different OS.
 
 ## Baseline template
 
-The full HTML skeleton lives in the sibling file `skills/visual-aid/baseline.html`.
-When scaffolding a new visual aid, **copy** `baseline.html` as your starting point,
-then fill in the content slots and prune any unused blocks. Never drop the a11y
-guards (motion, focus, contrast, print).
+The full HTML skeleton lives in the sibling file
+`skills/visual-aid/baseline.html`. When scaffolding a new visual aid, **copy**
+`baseline.html` as your starting point, then fill in the content slots and prune
+any unused blocks. Never drop the a11y guards (motion, focus, contrast, print).
 
 ### Slot conventions
 
@@ -177,14 +177,13 @@ Slots in `baseline.html`:
 - `{{X}}`, `{{Y}}`, `{{Z}}` — the 3–6 anchor points you curated from the source,
   listed in `<!-- Anchors: {{X}}, {{Y}}, {{Z}} -->` so the user can see what was
   included and what was left out.
-- `{{One-line intro — what this page is and who it's for}}` — the lede
-  paragraph under the `<h1>`. Replace with a real sentence; do not leave the
-  hint text.
+- `{{One-line intro — what this page is and who it's for}}` — the lede paragraph
+  under the `<h1>`. Replace with a real sentence; do not leave the hint text.
 - `{{Point 1}}`, `{{Point 2}}`, `{{Point 3}}` — card titles in the default
   three-card layout. Add or remove cards to match your chosen shape from the
   Input shapes table; don't pad to three if the source has two.
-- `{{…}}` — card body text under each card title. One per card; replace with
-  the curated content for that anchor.
+- `{{…}}` — card body text under each card title. One per card; replace with the
+  curated content for that anchor.
 - `{{link or "—"}}` — the source link in the footer. Use the URL the user
   provided, or replace with `—` (em dash) if there's no canonical source.
 
@@ -258,9 +257,8 @@ Verifiable by the agent:
 
 Layout (automated) and print (manual) checks:
 
-- [ ] Renders sanely at 320px width and at 200% browser zoom — **automated**
-      via mobile-viewport screenshot in the chrome-devtools verification step
-      below.
+- [ ] Renders sanely at 320px width and at 200% browser zoom — **automated** via
+      mobile-viewport screenshot in the chrome-devtools verification step below.
 - [ ] Printed preview looks right — **manual**: run the OS print-to-PDF flow
       (see `reference_html_to_pdf_sop`) after the chrome-devtools verification
       passes. The chrome-devtools SOP does not cover print rendering.
@@ -269,25 +267,25 @@ Layout (automated) and print (manual) checks:
 
 Automated browser verification runs **by default** on every `/visual-aid`
 invocation. It drives Chrome via the `chrome-devtools-mcp` plugin. Pass
-`--no-verify` to skip (e.g., when chrome-devtools-mcp is not installed, or
-for rapid iteration where you only want the HTML output).
+`--no-verify` to skip (e.g., when chrome-devtools-mcp is not installed, or for
+rapid iteration where you only want the HTML output).
 
 ### SOP
 
-> **Note on artifact vs verification URL.** The HTTP server below exists
-> *only* for the verification pass. The final artifact the agent surfaces to
-> the user is always the durable `file://` path to the on-disk HTML — the
-> localhost URL disappears the moment the server stops in step 8.
+> **Note on artifact vs verification URL.** The HTTP server below exists _only_
+> for the verification pass. The final artifact the agent surfaces to the user
+> is always the durable `file://` path to the on-disk HTML — the localhost URL
+> disappears the moment the server stops in step 8.
 
 1. **Resolve slug + dirs.** Lowercase the prompt, replace spaces/punctuation
    with dashes. Create `/tmp/visual-aid/<slug>/` (`mkdir -p`).
 
 2. **Start a local HTTP server.** Pick an unused high port (e.g., 8765), then
-   run `python3 -m http.server <port>` rooted at the *directory containing the
-   output HTML* in the background. Capture the PID/job id so you can stop it
-   in step 8. *Why HTTP:* Lighthouse rejects `file://` URLs with `INVALID_URL`
-   and requires an HTTP origin — a bare `file://` path causes the Lighthouse
-   audit to fail before it can score the page.
+   run `python3 -m http.server <port>` rooted at the _directory containing the
+   output HTML_ in the background. Capture the PID/job id so you can stop it in
+   step 8. _Why HTTP:_ Lighthouse rejects `file://` URLs with `INVALID_URL` and
+   requires an HTTP origin — a bare `file://` path causes the Lighthouse audit
+   to fail before it can score the page.
 
 3. **Open in browser.** Use `navigate_page` to load
    `http://localhost:<port>/<filename>` (not the `file://` URL).
@@ -298,9 +296,9 @@ for rapid iteration where you only want the HTML output).
    the operator's own Chrome session is holding the profile lock and you cannot
    drive a second instance against the same `userDataDir`. Do **not** retry the
    same call — it will keep returning the same error. Either:
-   - Retry chrome-devtools-mcp invocations with the `--isolated` flag (creates
-     a separate ephemeral profile dir, no conflict with the operator's
-     session), then resume the SOP from step 3, **or**
+   - Retry chrome-devtools-mcp invocations with the `--isolated` flag (creates a
+     separate ephemeral profile dir, no conflict with the operator's session),
+     then resume the SOP from step 3, **or**
    - Stop the SOP, **execute step 8 (kill the http.server) before exiting** —
      the server was started in step 2 and leaving it running risks port
      collisions on the next invocation — and skip verification per the matching
@@ -311,24 +309,24 @@ for rapid iteration where you only want the HTML output).
 4. **Desktop screenshot.** Use `take_screenshot` — save to
    `/tmp/visual-aid/<slug>/desktop.png`.
 
-5. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812)
-   to switch to a mobile viewport, then `take_screenshot` — save to
-   `/tmp/visual-aid/<slug>/mobile.png`. This covers the "renders sanely at
-   320 px / small viewport" self-check.
+5. **Mobile viewport screenshot.** Use `resize_page` (width 375, height 812) to
+   switch to a mobile viewport, then `take_screenshot` — save to
+   `/tmp/visual-aid/<slug>/mobile.png`. This covers the "renders sanely at 320
+   px / small viewport" self-check.
 
 6. **Console check.** Use `list_console_messages`. If any error-level console
-   errors are present, abort and attach the console errors to the response.
-   Do not emit the file path until all console errors are resolved.
+   errors are present, abort and attach the console errors to the response. Do
+   not emit the file path until all console errors are resolved.
 
-7. **Lighthouse a11y audit.** Use `lighthouse_audit` (threshold 90) against
-   the same `http://localhost:<port>/<filename>` URL. If the accessibility
-   score is below 90, abort and attach the failing audits. A score below that
-   threshold means the page ships with real a11y defects — fix them before
-   surfacing the output.
+7. **Lighthouse a11y audit.** Use `lighthouse_audit` (threshold 90) against the
+   same `http://localhost:<port>/<filename>` URL. If the accessibility score is
+   below 90, abort and attach the failing audits. A score below that threshold
+   means the page ships with real a11y defects — fix them before surfacing the
+   output.
 
 8. **Stop the server.** Kill the background `http.server` job (e.g.,
-   `pkill -f "http.server <port>"`). The server is one-shot — leaving it
-   running risks port collisions on subsequent invocations.
+   `pkill -f "http.server <port>"`). The server is one-shot — leaving it running
+   risks port collisions on subsequent invocations.
 
 9. **Surface artifacts.** On success, print the artifact paths inline:
    - `file://<absolute-path-to-output.html>` ← the durable on-disk HTML
@@ -347,8 +345,8 @@ Pass `--no-verify` when:
 - CI / headless environments without a browser.
 - **chrome-devtools-mcp profile lock** — the operator's own Chrome session is
   already running on the same `userDataDir` and the plugin returns
-  `browser already running ... use --isolated`. The plugin IS installed and
-  the environment IS interactive; the blocker is environmental (a held profile
+  `browser already running ... use --isolated`. The plugin IS installed and the
+  environment IS interactive; the blocker is environmental (a held profile
   lock), not a preference. First try retrying chrome-devtools-mcp with
   `--isolated` if available; if not, skip verification and **name the
   profile-lock cause in your response** — do not silently route through "fast
@@ -356,24 +354,24 @@ Pass `--no-verify` when:
 
 ## Common mistakes
 
-| Mistake                                                                               | Why it breaks the "quick aid" promise                                                                                                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| External `<link>`/`<script>` to a CDN                                                 | Fails offline; breaks "open on double-click"                                                                                                                                                                                                                                                                                      |
-| Adding interactive controls the user didn't ask for                                   | That's `playground`, not `visual-aid` — stay in your lane                                                                                                                                                                                                                                                                         |
-| Dumping the full source text into the page                                            | Visual aid means _chosen_ points — dump is not aid                                                                                                                                                                                                                                                                                |
-| Dark text on dark card (contrast fail)                                                | First thing a11y-debugging's Lighthouse pass will catch                                                                                                                                                                                                                                                                           |
-| Decorative icons without `aria-hidden="true"`                                         | Screen reader reads "image, image, image"                                                                                                                                                                                                                                                                                         |
-| Fixed px widths that overflow on mobile                                               | Breaks the "works on phone and laptop" baseline                                                                                                                                                                                                                                                                                   |
-| `minmax(220px, 1fr)` without a `min()` wrapper                                        | Causes horizontal overflow at 320px — the template's old default had this bug                                                                                                                                                                                                                                                     |
-| `<header>` or `<footer>` placed inside `<main>`                                       | Loses their `banner`/`contentinfo` landmark roles — screen readers miss the chrome                                                                                                                                                                                                                                                |
-| Color-coded status (pill pros/cons, traffic-light dots) with no text/icon alternative | The color _is_ the meaning — breaks for color-blind users and most b/w prints                                                                                                                                                                                                                                                     |
-| Reusing dark-mode `--accent`/`--ring` in light mode                                   | Pale blues/golds that look great on black fail 4.5:1 / 3:1 on white — re-pick both                                                                                                                                                                                                                                                |
-| Hardcoded color literals (`#fff`, `color: black`) in CSS class bodies                 | Breaks dark mode, print mode, and theming — everything should flow from `:root`                                                                                                                                                                                                                                                   |
-| `!important` sprinkled across rule bodies                                             | Fights with `prefers-color-scheme` and `@media print` overrides you need to work                                                                                                                                                                                                                                                  |
-| Deprecated tags (`<center>`, `<font>`, `<b>`/`<i>` for emphasis vs style)             | Non-semantic; use CSS for presentation and `<strong>`/`<em>` for emphasis                                                                                                                                                                                                                                                         |
-| Cloning the worked-example shape for every input                                      | A comparison input doesn't get three cards + SVG — pick from the Input shapes table                                                                                                                                                                                                                                               |
-| Claiming the self-check passed without running it                                     | The self-check is not a ceremony — lying in it means the page ships with real defects                                                                                                                                                                                                                                             |
-| Ticking "contrast computed" without applying the WCAG sRGB formula                    | Visual inspection ("looks high-contrast") and appeal to template authority ("these are baseline colors, they're known-passing") are both the "borderline escape hatch" the self-check bans. Either apply `L = 0.2126·R' + 0.7152·G' + 0.0722·B'` per color pair and write the ratio, or flag for human verification — don't tick. |
+| Mistake                                                                                                                                                                                                                   | Why it breaks the "quick aid" promise                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| External `<link>`/`<script>` to a CDN                                                                                                                                                                                     | Fails offline; breaks "open on double-click"                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Adding interactive controls the user didn't ask for                                                                                                                                                                       | That's `playground`, not `visual-aid` — stay in your lane                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Dumping the full source text into the page                                                                                                                                                                                | Visual aid means _chosen_ points — dump is not aid                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Dark text on dark card (contrast fail)                                                                                                                                                                                    | First thing a11y-debugging's Lighthouse pass will catch                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Decorative icons without `aria-hidden="true"`                                                                                                                                                                             | Screen reader reads "image, image, image"                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Fixed px widths that overflow on mobile                                                                                                                                                                                   | Breaks the "works on phone and laptop" baseline                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `minmax(220px, 1fr)` without a `min()` wrapper                                                                                                                                                                            | Causes horizontal overflow at 320px — the template's old default had this bug                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `<header>` or `<footer>` placed inside `<main>`                                                                                                                                                                           | Loses their `banner`/`contentinfo` landmark roles — screen readers miss the chrome                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Color-coded status (pill pros/cons, traffic-light dots) with no text/icon alternative                                                                                                                                     | The color _is_ the meaning — breaks for color-blind users and most b/w prints                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Reusing dark-mode `--accent`/`--ring` in light mode                                                                                                                                                                       | Pale blues/golds that look great on black fail 4.5:1 / 3:1 on white — re-pick both                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Hardcoded color literals (`#fff`, `color: black`) in CSS class bodies                                                                                                                                                     | Breaks dark mode, print mode, and theming — everything should flow from `:root`                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `!important` sprinkled across rule bodies                                                                                                                                                                                 | Fights with `prefers-color-scheme` and `@media print` overrides you need to work                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Deprecated tags (`<center>`, `<font>`, `<b>`/`<i>` for emphasis vs style)                                                                                                                                                 | Non-semantic; use CSS for presentation and `<strong>`/`<em>` for emphasis                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Cloning the worked-example shape for every input                                                                                                                                                                          | A comparison input doesn't get three cards + SVG — pick from the Input shapes table                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Claiming the self-check passed without running it                                                                                                                                                                         | The self-check is not a ceremony — lying in it means the page ships with real defects                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Ticking "contrast computed" without applying the WCAG sRGB formula                                                                                                                                                        | Visual inspection ("looks high-contrast") and appeal to template authority ("these are baseline colors, they're known-passing") are both the "borderline escape hatch" the self-check bans. Either apply `L = 0.2126·R' + 0.7152·G' + 0.0722·B'` per color pair and write the ratio, or flag for human verification — don't tick.                                                                                                                                                            |
 | Routing an environmental blocker through a preference-coded opt-out (e.g. citing "fast iteration" when chrome-devtools-mcp returned a profile-lock error, or stretching "not installed" to cover "installed but blocked") | The opt-out reasons aren't fungible — each names a specific cause. Repackaging a profile-lock as "fast iteration" hides the real failure mode from the operator and from future-you reading the response. The skill defines a `chrome-devtools-mcp profile lock` opt-out for exactly this case — use it and name the cause verbatim. If a new environmental blocker doesn't match any listed opt-out, surface that as a gap rather than stretching the closest preference-coded exit to fit. |
 
 ## When NOT to use this skill
