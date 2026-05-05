@@ -107,7 +107,14 @@ Each hallway expresses time **relative to the anchor** — `3 commits ago`,
 `11d ago`, `5 days since last signal`. Never render absolute ISO timestamps
 inside a hallway (storage is a separate concern — see step 6).
 
-**Hallway 1 — git time-strings.** Cascade; stop at first match:
+**Hallway 1 — git time-strings.** Run a precondition check first:
+`git rev-parse --is-inside-work-tree 2>/dev/null`. If this exits non-zero (cwd
+isn't a git repository), print
+`(not in a git repository — Hallway 1 silent)` and skip the cascade entirely.
+Do **not** synthesize a custom message ("not in a git repo at /path/x") and do
+**not** fall through to the free-text grep — both leak cwd or produce noise.
+
+Otherwise cascade; stop at first match:
 
 1. `git ls-files --error-unmatch "<anchor>"` exits 0 → **tracked path**:
    `git log --follow --max-count=5 --pretty='format:%h %ar — %s' -- "<anchor>"`.
