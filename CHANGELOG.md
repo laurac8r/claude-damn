@@ -12,7 +12,9 @@ PATCH: `/visual-aid` SKILL.md — profile-lock opt-out + rationalization counter
 
 - `tests/skills/visual_aid/pressure/eval_profile_lock_rationalizations.md` —
   RED→GREEN→REFACTOR evidence log for the `chrome-devtools-mcp` profile-lock
-  opt-out fix (5 sonnet subagents per CLAUDE.md no-Opus-subagents rule).
+  opt-out fix (6 sonnet subagents per CLAUDE.md no-Opus-subagents rule:
+  1 leaked RED + 2 clean RED + 1 baseline GREEN + 1 with-skill GREEN + 1
+  REFACTOR re-fire).
 
 ### Fixed (v1.7.1)
 
@@ -61,6 +63,7 @@ tests first, then SKILL.md) and the
   (PR #59)
 - `ROADMAP.md`: expanded with checkpoint-system persistence-layer details.
   (PR #60)
+- `ROADMAP.md`: Phase 5 expansion entries. (PR #56)
 - `README.md`: marketplace-install flow + listing copy updated for v1.7.0.
   (PR #69)
 - `.claude-plugin/plugin.json`, `pyproject.toml`: version bumped to 1.7.0
