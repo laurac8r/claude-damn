@@ -1,14 +1,18 @@
 # Changelog
 
 All notable changes to `claude-damn` are documented here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project is pre-1.0
-so entries are grouped by development phase rather than SemVer.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Pre-1.0 entries
+(`[1.0.0]` and earlier) are grouped by development phase; from 1.7.0 onward,
+entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
+PERSONALIZATION versioning rule.
 
 ## [1.7.2] — 2026-05-05
 
 PATCH: `/tesseract` SKILL.md — Hallway 1 no-git-repo precondition + smoke
-regression. Includes `uv.lock` catch-up sync (1.0.0 → 1.7.0 in this worktree)
-prior to the 1.7.2 bump.
+regression. Brings `uv.lock` to 1.7.2 in two steps: a catch-up sync
+1.0.0 → 1.7.0 (commit `c2a06d7`, aligning with manifests bumped in
+`04fc3c4`), then the 1.7.2 PATCH bump alongside `plugin.json` and
+`pyproject.toml`.
 
 ### Added (v1.7.2)
 
@@ -27,9 +31,33 @@ prior to the 1.7.2 bump.
   implicitly assumed a git repo at cwd; pre-fix paths either errored
   noisily, leaked cwd via a synthesized message, or fell through to the
   free-text grep branch.
-- `uv.lock`: catch-up sync (1.0.0 → 1.7.0). Package manifests bumped to
+- `uv.lock`: 1.0.0 → 1.7.2 in two steps. Package manifests bumped to
   1.7.0 in `04fc3c4` but uv.lock was still at 1.0.0 in this worktree
-  (pre-existing drift, addressed before the 1.7.2 bump).
+  (pre-existing drift). Step 1: catch-up sync 1.0.0 → 1.7.0 (commit
+  `c2a06d7`). Step 2: 1.7.0 → 1.7.2 alongside the lockstep PATCH bump
+  of the manifests.
+
+## [1.7.1] — 2026-05-05
+
+PATCH: `/visual-aid` SKILL.md — profile-lock opt-out + rationalization counter.
+
+### Added (v1.7.1)
+
+- `tests/skills/visual_aid/pressure/eval_profile_lock_rationalizations.md` —
+  RED→GREEN→REFACTOR evidence log for the `chrome-devtools-mcp` profile-lock
+  opt-out fix (6 sonnet subagents per CLAUDE.md no-Opus-subagents rule:
+  1 leaked RED + 2 clean RED + 1 baseline GREEN + 1 with-skill GREEN + 1
+  REFACTOR re-fire).
+
+### Fixed (v1.7.1)
+
+- `skills/visual-aid/SKILL.md`: 3 coordinated edits closing a rationalization
+  gap where the `chrome-devtools-mcp` profile-lock error was being routed
+  through unrelated opt-outs ("fast iteration", "not installed") instead of
+  named verbatim. Adds explicit profile-lock fallback (SOP step 3),
+  `chrome-devtools-mcp profile lock` opt-out bullet (with `--isolated` retry
+  path + step-8 cleanup requirement), and common-mistakes table row flagging
+  environmental-blocker repackaging as a preference-coded opt-out.
 
 ## [1.7.0] — 2026-05-03
 
