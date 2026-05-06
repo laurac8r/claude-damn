@@ -315,14 +315,15 @@ rapid iteration where you only want the HTML output).
    px / small viewport" self-check.
 
 6. **Console check.** Use `list_console_messages`. If any error-level console
-   errors are present, abort and attach the console errors to the response. Do
-   not emit the file path until all console errors are resolved.
+   errors are present, **execute step 8 (kill the http.server) before
+   aborting**, then attach the console errors to the response. Do not emit the
+   file path until all console errors are resolved.
 
 7. **Lighthouse a11y audit.** Use `lighthouse_audit` (threshold 90) against the
    same `http://localhost:<port>/<filename>` URL. If the accessibility score is
-   below 90, abort and attach the failing audits. A score below that threshold
-   means the page ships with real a11y defects — fix them before surfacing the
-   output.
+   below 90, **execute step 8 (kill the http.server) before aborting**, then
+   attach the failing audits. A score below that threshold means the page ships
+   with real a11y defects — fix them before surfacing the output.
 
 8. **Stop the server.** Kill the background `http.server` job (e.g.,
    `pkill -f "http.server <port>"`). The server is one-shot — leaving it running

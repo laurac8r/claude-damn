@@ -73,5 +73,5 @@ Edit added to step 3's profile-lock fallback:
 Total: 6 sonnet subagent calls (1 leaked RED + 2 clean RED + 1 baseline GREEN +
 1 with-skill GREEN + 1 with-skill REFACTOR re-fire). The leaked RED-1 was
 disqualified for the analysis but the call was still made and counts toward
-the budget. 0 Opus subagents per
-CLAUDE.md no-Opus-subagents rule. /batch override not used.
+the budget. 0 Opus subagents used (Opus reserved for architectural decisions
+and complex cross-cutting debugging per CLAUDE.md). /batch override not used.
