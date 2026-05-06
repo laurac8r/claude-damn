@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to `claude-damn` are documented here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Pre-1.0 entries
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Pre-SemVer entries
 (`[1.0.0]` and earlier) are grouped by development phase; from 1.7.0 onward,
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
