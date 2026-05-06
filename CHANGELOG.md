@@ -1,8 +1,41 @@
 # Changelog
 
 All notable changes to `claude-damn` are documented here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project is pre-1.0
-so entries are grouped by development phase rather than SemVer.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Pre-SemVer entries
+(`[1.0.0]` and earlier) are grouped by development phase; from 1.7.0 onward,
+entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
+PERSONALIZATION versioning rule.
+
+## [1.7.2] — 2026-05-05
+
+PATCH: `/tesseract` SKILL.md — Hallway 1 no-git-repo precondition + smoke
+regression. Brings `uv.lock` to 1.7.2 in two steps: a catch-up sync
+1.0.0 → 1.7.0 (commit `c2a06d7`, aligning with manifests bumped in
+`04fc3c4`), then the 1.7.2 PATCH bump alongside `plugin.json` and
+`pyproject.toml`.
+
+### Added (v1.7.2)
+
+- `tests/skills/tesseract/smoke/test_hallway1_precondition.py` — 4 static
+  text-presence regression assertions (PR #21 `TestTesseractRegressions`
+  pattern) covering: precondition probe, fixed silent-skip line, both
+  anti-pattern callouts (no-cwd-leak + no-grep-fallthrough), ordering
+  (precondition must appear textually before the cascade).
+
+### Fixed (v1.7.2)
+
+- `skills/tesseract/SKILL.md` Hallway 1: adds explicit
+  `git rev-parse --is-inside-work-tree 2>/dev/null` precondition; on
+  non-zero exit prints fixed line `(not in a git repository — Hallway 1
+  silent)` and skips the cascade. Closes a spec gap where Hallway 1
+  implicitly assumed a git repo at cwd; pre-fix paths either errored
+  noisily, leaked cwd via a synthesized message, or fell through to the
+  free-text grep branch.
+- `uv.lock`: 1.0.0 → 1.7.2 in two steps. Package manifests bumped to
+  1.7.0 in `04fc3c4` but uv.lock was still at 1.0.0 in this worktree
+  (pre-existing drift). Step 1: catch-up sync 1.0.0 → 1.7.0 (commit
+  `c2a06d7`). Step 2: 1.7.0 → 1.7.2 alongside the lockstep PATCH bump
+  of the manifests.
 
 ## [1.7.1] — 2026-05-05
 
