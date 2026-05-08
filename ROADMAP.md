@@ -240,3 +240,23 @@ canonical principle reference to read from.
       findings** → stage context for `/update-config` rather than editing
       settings.json directly. `/learn` produces the WHAT (which key) and WHY
       (which session evidence); operator runs `/update-config` to apply.
+
+## Phase 6 — Skill-chain orchestration & enforcement
+
+Beyond individual skill quality (Phases 2 / 5), Phase 6 tackles enforcement
+across multi-skill chains — how the harness guarantees that a `/listen`-wrapped
+prompt actually invokes every referenced skill, and how SME (subject-matter
+expert) Skills can graduate to SME Agents that supervise compositional flows.
+
+- [ ] **`/listen` enforcement hardening** — strengthen `/listen` so it cannot
+      silently drop a referenced skill from the chain. Two candidate paths:
+      (1) **hook-based** — PreToolUse hook on `Skill` calls inside a
+      `/listen`-wrapped turn, tracking referenced-vs-invoked skills and
+      blocking end-of-turn until the checklist is complete;
+      (2) **agent-based** — once SME (subject-matter-expert) Skills mature
+      enough, graduate them to SME Agents that supervise multi-skill
+      compositional flows. Triggered by 2026-05-03 `/listen` chain misfire:
+      `/listen "/visual-aid from /legalzoom:review-contract of [URL]"` skipped
+      `/visual-aid` because the prior skill produced a complete-looking
+      markdown deliverable; the rationalization counter table in `/listen`
+      doesn't yet cover the analysis→transformation chain pattern.
