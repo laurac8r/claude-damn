@@ -190,6 +190,33 @@ class TestTesseractRetroFlag:
             "Process must reference the `--retro` flag in argument-parsing prose."
         )
 
+    def test_retro_skips_step_2_mkdir(self, skill_md: str) -> None:
+        """Step 2 (`Ensure the tesseract exists`) runs `mkdir -p` to create
+        the shelf directory. In retro mode that is still a write — file-
+        system state changes from "absent" to "present empty dir" — so the
+        observation-only invariant is violated unless step 2 is explicitly
+        retro-gated. Convergent finding from two independent offline
+        reviewers (Conf 85/88), separate from the GitHub Copilot inline
+        review.
+        """
+        step_2_match = re.search(
+            r"^### 2 · .*?(?=^### \d+ · |\Z)",
+            skill_md,
+            re.MULTILINE | re.DOTALL,
+        )
+        assert step_2_match, "Step 2 (`### 2 · ...`) is missing from SKILL.md."
+        step_2 = step_2_match.group(0)
+        pattern = re.compile(
+            r"retro\b[^\n]{0,200}\b(skip|do not|don't|no)\b",
+            re.IGNORECASE,
+        )
+        assert pattern.search(step_2), (
+            "Step 2 must explicitly retro-gate the mkdir (e.g., 'if "
+            "retro=true, skip this step'). Without this, retro invocations "
+            "create the shelf directory and violate the observation-only "
+            "invariant."
+        )
+
     def test_retro_skips_shelf_prepend(self, skill_md: str) -> None:
         """Step 6 (or its retro branch) must explicitly state that retro
         skips the shelf prepend. Without this, agents will follow the
@@ -222,19 +249,24 @@ class TestTesseractRetroFlag:
 
     def test_retro_signal_combination_warning_specced(self, skill_md: str) -> None:
         """`--retro` + `--signal "..."` is a contradiction (you're observing,
-        but also leaving a signal?). Spec must say: warn and ignore the
-        signal in retro mode. Without this, agents either silently drop the
-        signal or perform the write anyway.
+        but also leaving a signal?). Spec must say: warn and discard/ignore
+        the signal in retro mode. Without this, agents either silently drop
+        the signal or perform the write anyway.
+
+        Match-window spans multiple lines (re.DOTALL): the retro/signal
+        combination bullet wraps across 3-4 lines once the prose tightens
+        to spell out 'discard ... do not write, log, or emit'.
         """
+        verb = r"(warn\w*|ignor\w*|discard\w*)"
         pattern = re.compile(
-            r"retro\b[^\n]{0,200}\bsignal\b[^\n]{0,200}\b(warn|ignore)\b"
-            r"|\bsignal\b[^\n]{0,200}\bretro\b[^\n]{0,200}\b(warn|ignore)\b"
-            r"|\b(warn|ignore)\b[^\n]{0,200}\bsignal\b[^\n]{0,200}\bretro\b",
-            re.IGNORECASE,
+            rf"retro\b.{{0,300}}\bsignal\b.{{0,300}}\b{verb}\b"
+            rf"|\bsignal\b.{{0,300}}\bretro\b.{{0,300}}\b{verb}\b"
+            rf"|\b{verb}\b.{{0,300}}\bsignal\b.{{0,300}}\bretro\b",
+            re.IGNORECASE | re.DOTALL,
         )
         assert pattern.search(skill_md), (
             "Spec must say what happens when --retro and --signal are passed "
-            "together (warn-and-ignore)."
+            "together (warn-and-discard/ignore)."
         )
 
     def test_retro_footer_replaces_dropped_a_book(self, skill_md: str) -> None:

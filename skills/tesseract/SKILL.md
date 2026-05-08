@@ -74,8 +74,9 @@ scanned for `--retro` or any other flag syntax.
   to the default signal.
 - **`--retro` + `--signal` combination.** If `retro=true` and `--signal` was
   provided, print a one-line warning (`(retro mode — ignoring --signal)`) and
-  ignore the signal. Retro is observation-only; a signal is a transmission,
-  and the two contradict.
+  discard the signal entirely — do not write, log, or emit it in the rendered
+  output. Retro is observation-only; a signal is a transmission, and the two
+  contradict.
 - If the left side starts with `--anchor `, strip that prefix and treat the
   remainder as the anchor value. Lets `/tesseract --anchor foo --signal "bar"`
   resolve to `anchor=foo` without literally naming the flag.
@@ -135,8 +136,15 @@ additive, not a replacement.
 
 ### 2 · Ensure the tesseract exists
 
-If `~/.tesseract/shelf` is absent, `mkdir -p` it. `bulk-beings.md` is created
-implicitly by the first append.
+If `retro=true`, **skip this step entirely** — read-only invocations may not
+create directories. Step 3 already handles the missing-file case gracefully
+(`N_before = 0`), and Hallway 3 renders `(no prior signals — first visit)` if
+the shelf dir is absent. Creating the directory in retro mode would mutate
+file-system state ("absent" → "present empty dir"), which violates the
+observation-only invariant.
+
+For non-retro invocations, if `~/.tesseract/shelf` is absent, `mkdir -p` it.
+`bulk-beings.md` is created implicitly by the first append.
 
 ### 3 · Read the shelf
 
