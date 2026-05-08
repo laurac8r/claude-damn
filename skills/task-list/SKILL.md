@@ -1,6 +1,7 @@
 ---
 name: task-list
 description: TaskCreate / TaskUpdate / render the current TaskList in response to `/task-list` (with or without flags). The skill body executes immediately on the syntax — no permission-seeking, no echoing the list back as plain text.
+user-invocable: true
 ---
 
 # /task-list
@@ -38,7 +39,7 @@ from session context.
 
 ### 3. `--update <#> :: <new subject/description>`: in-place rewrite
 
-Call **TaskUpdate(taskId=&lt;#&gt;, subject=&lt;new&gt;)** (or `description=`) on the
+Call `TaskUpdate(taskId=<#>, subject=<new>)` (or `description=`) on the
 **same task ID**. The original ID is preserved.
 
 - The `::` separator splits the task ID from the new content.
