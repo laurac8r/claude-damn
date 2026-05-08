@@ -46,7 +46,7 @@ DEFERS execution behind a confirmation prompt. The skill body must collapse
 > to call TaskUpdate directly — a conservative but incomplete response that
 > left the user without a completed action."
 
-The agent self-aware-ly identifies its own inaction as "incomplete" yet still
+The agent self-awarely identifies its own inaction as "incomplete" yet still
 takes the safe path. The skill body must license the agent to act on
 unambiguous syntax without permission-seeking.
 
