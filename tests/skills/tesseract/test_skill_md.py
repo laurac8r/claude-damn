@@ -163,8 +163,9 @@ class TestTesseractRetroFlag:
     no book dropped. Spec'd in feat/tesseract-retro.
 
     RED state was proven against pre-feature SKILL.md (no `--retro` mention
-    anywhere). All assertions below fail on `main` and pass on the GREEN
-    skill update.
+    anywhere). Most assertions below therefore fail on `main` and pass on
+    the GREEN skill update; one assertion is a guardrail rather than a
+    strict RED-state check.
     """
 
     def test_retro_in_argument_hint(self, frontmatter: dict) -> None:
@@ -179,7 +180,13 @@ class TestTesseractRetroFlag:
         otherwise step 1's argument-resolution prose is silently wrong about
         what flags exist.
         """
-        assert re.search(r"`--retro`", skill_md), (
+        process_match = re.search(
+            r"^## Process\b.*?(?=^## \S|\Z)", skill_md, re.MULTILINE | re.DOTALL
+        )
+        assert process_match, "SKILL.md must contain a ## Process section."
+
+        process_section = process_match.group(0)
+        assert re.search(r"`--retro`", process_section), (
             "Process must reference the `--retro` flag in argument-parsing prose."
         )
 

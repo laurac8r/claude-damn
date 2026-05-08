@@ -56,20 +56,24 @@ pollute the ledger with meta-entries. See the test contract in
 ### 1 · Resolve the anchor
 
 Parse `$ARGUMENTS` in two passes — first strip the standalone `--retro` flag,
-then split on `--signal`:
+then split on `--signal`. Treat a quoted `--signal "..."` value as opaque
+signal text while parsing flags: tokens inside that quoted string are not
+scanned for `--retro` or any other flag syntax.
 
-- **`--retro` pass.** If the literal token `--retro` appears anywhere in
-  `$ARGUMENTS` (surrounded by whitespace or at a string boundary), set
-  `retro=true` and remove the token from the argument string. If `--retro`
-  does not appear, `retro=false`. Order-independent: `--retro` may sit before
-  the anchor, between anchor and `--signal`, or after the signal value.
+- **`--retro` pass.** If the standalone token `--retro` appears in
+  `$ARGUMENTS` outside any quoted `--signal` value, set `retro=true` and
+  remove that token from the argument string. If no such standalone token
+  appears, `retro=false`. Order-independent among top-level arguments:
+  `--retro` may sit before the anchor, between anchor and `--signal`, or after
+  the signal value; if `--signal` is also present, only a separate standalone
+  `--retro` token outside the quoted signal value counts.
 - **`--signal` split.** With `--retro` removed, split the remainder on
   `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right
   side must begin with a `"..."` quoted string → `signal`. If `--signal`
   appears but no quoted value follows, print a one-line warning and fall back
   to the default signal.
-- **`--retro` + `--signal` combination.** If both flags resolved to non-empty
-  values, print a one-line warning (`(retro mode — ignoring --signal)`) and
+- **`--retro` + `--signal` combination.** If `retro=true` and `--signal` was
+  provided, print a one-line warning (`(retro mode — ignoring --signal)`) and
   ignore the signal. Retro is observation-only; a signal is a transmission,
   and the two contradict.
 - If the left side starts with `--anchor `, strip that prefix and treat the
