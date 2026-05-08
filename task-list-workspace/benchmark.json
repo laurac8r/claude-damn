@@ -1,0 +1,44 @@
+{
+  "skill": "task-list",
+  "iteration": 1,
+  "model": "sonnet",
+  "evals": [
+    {
+      "name": "bare-simple",
+      "baseline": {"quant": "FAIL", "rationalization_observed": "R1"},
+      "with_skill": {"quant": "PASS", "rationalization_observed": null}
+    },
+    {
+      "name": "bare-pressure",
+      "baseline": {"quant": "PASS", "rationalization_observed": null},
+      "with_skill": {"quant": "PASS", "rationalization_observed": null}
+    },
+    {
+      "name": "update-noarg-reconcile",
+      "baseline": {"quant": "FAIL", "rationalization_observed": "R2"},
+      "with_skill": {"quant": "PASS", "rationalization_observed": null}
+    },
+    {
+      "name": "update-witharg-rewrite",
+      "baseline": {"quant": "FAIL", "rationalization_observed": "R3"},
+      "with_skill": {"quant": "PASS", "rationalization_observed": null}
+    },
+    {
+      "name": "display-fulllist",
+      "baseline": {"quant": "PASS", "rationalization_observed": null},
+      "with_skill": {"quant": "PASS", "rationalization_observed": null}
+    }
+  ],
+  "totals": {
+    "baseline_pass_rate": "2/5",
+    "with_skill_pass_rate": "5/5",
+    "delta": "+3",
+    "new_rationalizations_in_with_skill": 0
+  },
+  "green_gates": {
+    "with_skill_quant_strictly_greater": true,
+    "no_new_rationalizations": true,
+    "both_pass": true
+  },
+  "verdict": "PASS"
+}
