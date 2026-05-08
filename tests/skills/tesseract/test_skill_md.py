@@ -248,37 +248,55 @@ class TestTesseractRetroFlag:
         )
 
     def test_retro_signal_combination_warning_specced(self, skill_md: str) -> None:
-        """`--retro` + `--signal "..."` is a contradiction (you're observing,
-        but also leaving a signal?). Spec must say: warn and discard/ignore
-        the signal in retro mode. Without this, agents either silently drop
-        the signal or perform the write anyway.
-
-        Match-window spans multiple lines (re.DOTALL): the retro/signal
-        combination bullet wraps across 3-4 lines once the prose tightens
-        to spell out 'discard ... do not write, log, or emit'.
+        """`--retro` + `--signal "..."` is a contradiction. Spec must say
+        what happens (warn-and-discard/ignore) — and the assertion must
+        be scoped to the bullet that documents the combination, not a
+        wider DOTALL window. A wide window false-positives by matching
+        retro/signal/verb stems across unrelated paragraphs (mutation-
+        proven against `/tmp/tesseract_mutation_test` M2 fixture).
         """
-        verb = r"(warn\w*|ignor\w*|discard\w*)"
-        pattern = re.compile(
-            rf"retro\b.{{0,300}}\bsignal\b.{{0,300}}\b{verb}\b"
-            rf"|\bsignal\b.{{0,300}}\bretro\b.{{0,300}}\b{verb}\b"
-            rf"|\b{verb}\b.{{0,300}}\bsignal\b.{{0,300}}\bretro\b",
-            re.IGNORECASE | re.DOTALL,
+        marker = "**`--retro` + `--signal` combination.**"
+        start = skill_md.find(marker)
+        assert start >= 0, (
+            f"Step 1 must contain the bullet '{marker}' that documents "
+            "the --retro + --signal combination."
         )
-        assert pattern.search(skill_md), (
-            "Spec must say what happens when --retro and --signal are passed "
-            "together (warn-and-discard/ignore)."
+        rest = skill_md[start + len(marker) :]
+        end_match = re.search(r"\n- |\n\n", rest)
+        body = rest[: end_match.start()] if end_match else rest
+        assert re.search(r"\b(warn\w*|ignor\w*|discard\w*)\b", body, re.IGNORECASE), (
+            "The --retro + --signal combination bullet must specify a "
+            "behavioral verb (warn|ignor|discard stem) inside the bullet "
+            "body — not just rely on nearby paragraphs."
         )
 
     def test_retro_footer_replaces_dropped_a_book(self, skill_md: str) -> None:
-        """The final-output template currently ends with a `📉 Dropped a
-        book` block. In retro mode, the footer must be replaced with an
-        observation-only marker — otherwise the output lies about whether
-        a book was dropped.
+        """In retro mode the footer must REPLACE the `📉 Dropped a book`
+        header — not coexist alongside it. The fenced output template
+        following `**Retro mode (`retro=true`):**` must contain
+        'Observed only' AND must NOT contain '📉 Dropped a book' as a
+        standalone header. A document-wide 'Observed only' search passes
+        vacuously if both headers appear (mutation-proven against
+        `/tmp/tesseract_mutation_test` M1 fixture).
         """
-        # Look for an `Observed only` footer marker (literal phrase).
-        assert re.search(r"Observed only|observed-only", skill_md, re.IGNORECASE), (
-            "Retro footer marker (e.g., '👁️ Observed only — no book dropped') "
-            "must be present in the spec."
+        intro = "**Retro mode (`retro=true`):**"
+        intro_idx = skill_md.find(intro)
+        assert intro_idx >= 0, (
+            f"Step 7 must contain the retro template intro '{intro}'."
+        )
+        after_intro = skill_md[intro_idx:]
+        fence_match = re.search(r"```text\n(.*?)\n```", after_intro, re.DOTALL)
+        assert fence_match, (
+            "The retro template intro must be followed by a ```text fenced "
+            "block containing the retro-mode output template."
+        )
+        fence_body = fence_match.group(1)
+        assert "Observed only" in fence_body, (
+            "Retro fenced template must contain an 'Observed only' footer."
+        )
+        assert "📉 Dropped a book" not in fence_body, (
+            "Retro fenced template must NOT contain '📉 Dropped a book' — "
+            "that header is being replaced, not coexisting."
         )
 
     def test_retro_header_marker(self, skill_md: str) -> None:
