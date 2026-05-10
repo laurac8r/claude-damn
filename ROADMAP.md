@@ -88,6 +88,21 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       Special-case anchors matching `^/[a-z][a-z0-9-]*$` — fall through to
       free-text `--grep` instead of path-heuristic. Misfire surfaced
       2026-05-09 in `/tesseract /learn` invocation.
+- [ ] **Pressure-test PERSONALIZATION.example.md rules via
+      `/lets-make-a-skill`** — dispatch `/duper`-parallelized
+      `/lets-make-a-skill` runs, one per rule in
+      `.claude/rules/PERSONALIZATION.example.md`. Each rule gets a
+      dedicated pressure-test skill that asserts the rule's expected
+      behavior under representative inputs (e.g., the "no Opus
+      subagents" rule fires a Task call w/ `model=opus` and asserts
+      the `block_opus_subagent.py` hook denies it; the "cd-first"
+      Bash rule fires a chained `cd <dir>; <cmd>` and asserts the
+      permission-gate response shape). Surfaces drift between
+      documented operator personalization and real agent behavior;
+      produces a per-rule conformance report. Independent per-rule
+      tests → natural fan-out via `/duper`. Output:
+      `tests/skills/` coverage matrix mapping each PERSONALIZATION
+      rule to ≥1 pressure test.
 
 ## Phase 3 — Harness integration
 
