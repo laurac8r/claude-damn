@@ -69,6 +69,25 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       `/tesseract --input ./scratch/thread-dump.txt`) and read the artifact via
       the Read tool instead of expecting inline content. Error clearly when
       input >50KB and suggest file mode.
+- [ ] **`/checkpoint-save` post-squash-merge content-delta verification** —
+      add a verification gate for the branch-deleted-post-merge case (symptom:
+      `git status` says "Your branch is based on 'origin/<branch>', but the
+      upstream is gone"). The skill MUST verify content-delta between any
+      "ahead-of-upstream" commits and the merge target before classifying
+      them as "not yet shipped." Squash-merges flatten the entire PR HEAD;
+      commits made before the squash-cutoff are content-equivalent on the
+      target. Add rationalization counter for "these were committed AFTER
+      the squash-merge…" → reality: the squash takes the PR HEAD at merge
+      time, not the operator's local merge commit. Misfire surfaced
+      2026-05-09 during a `/checkpoint-save` invocation on a feature-branch
+      worktree post-PR-squash-merge.
+- [ ] **`/tesseract` slash-prefixed skill-name anchor handling** — anchor
+      cascade Step 3 ("anchor contains `/`") misclassifies slash-prefixed
+      skill-name anchors like `/learn` as paths and routes them to
+      `git log --follow -- /learn`, which fails with "outside repository".
+      Special-case anchors matching `^/[a-z][a-z0-9-]*$` — fall through to
+      free-text `--grep` instead of path-heuristic. Misfire surfaced
+      2026-05-09 in `/tesseract /learn` invocation.
 
 ## Phase 3 — Harness integration
 
