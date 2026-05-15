@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mutual NDA Review — Acme Corp &amp; Beta LLC</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.55;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Layout Shell ─────────────────────────────────────────────── */
+    .page { max-width: 900px; margin: 0 auto; }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+    .header .subtitle { font-size: 0.9rem; color: #a8b2d8; margin-top: 0.35rem; }
+    .header .meta { font-size: 0.78rem; color: #6a7595; margin-top: 0.5rem; }
+
+    /* ── Score Banner ─────────────────────────────────────────────── */
+    .score-banner {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem 2rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .score-dial {
+      width: 88px; height: 88px; flex-shrink: 0;
+      position: relative;
+    }
+    .score-dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .score-dial .track { fill: none; stroke: #e8ecf0; stroke-width: 9; }
+    .score-dial .fill  { fill: none; stroke: #e8a838; stroke-width: 9;
+                         stroke-dasharray: 220; stroke-dashoffset: 88;
+                         stroke-linecap: round; }
+    .score-label {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transform: rotate(0deg);
+    }
+    .score-label .num { font-size: 1.55rem; font-weight: 800; color: #e8a838; line-height: 1; }
+    .score-label .den { font-size: 0.65rem; color: #888; }
+    .score-text h2 { font-size: 1.15rem; font-weight: 700; }
+    .score-text p  { font-size: 0.84rem; color: #555; margin-top: 0.3rem; max-width: 560px; }
+
+    /* ── Section heading ─────────────────────────────────────────── */
+    .section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #6a7595;
+      margin: 0 0 0.75rem;
+    }
+
+    /* ── Risk Table ───────────────────────────────────────────────── */
+    .findings-grid {
+      display: grid;
+      gap: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .finding-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: start;
+      gap: 0.75rem 1rem;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+      border-left: 5px solid #ccc;
+    }
+    .finding-card.high   { border-left-color: #d64045; }
+    .finding-card.medium { border-left-color: #e8a838; }
+    .finding-card.low    { border-left-color: #4caf7d; }
+    .finding-card.info   { border-left-color: #5b8dee; }
+
+    .clause-tag {
+      font-size: 0.72rem; font-weight: 700; color: #fff;
+      background: #1a1a2e;
+      border-radius: 5px;
+      padding: 0.2rem 0.5rem;
+      white-space: nowrap;
+      line-height: 1.4;
+    }
+    .finding-body .title { font-weight: 700; font-size: 0.95rem; }
+    .finding-body .desc  { font-size: 0.83rem; color: #444; margin-top: 0.25rem; }
+    .finding-body .fix   {
+      font-size: 0.78rem; background: #f4f6fa;
+      border-radius: 5px; padding: 0.4rem 0.65rem;
+      margin-top: 0.5rem; color: #333;
+    }
+    .finding-body .fix strong { color: #0f3460; }
+
+    .risk-badge {
+      font-size: 0.72rem; font-weight: 700;
+      border-radius: 20px;
+      padding: 0.2rem 0.6rem;
+      white-space: nowrap;
+      line-height: 1.6;
+    }
+    .risk-badge.high   { background: #fde8e8; color: #a61c1c; }
+    .risk-badge.medium { background: #fef3e0; color: #7a5000; }
+    .risk-badge.low    { background: #e5f7ed; color: #1a6b3c; }
+    .risk-badge.info   { background: #e8edfc; color: #1a3a8f; }
+
+    /* ── Summary Stats Bar ────────────────────────────────────────── */
+    .stats-bar {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .stat-chip {
+      flex: 1; min-width: 120px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      text-align: center;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+    }
+    .stat-chip .stat-num { font-size: 1.6rem; font-weight: 800; }
+    .stat-chip .stat-lbl { font-size: 0.73rem; color: #666; margin-top: 0.15rem; }
+    .stat-chip.high   .stat-num { color: #d64045; }
+    .stat-chip.medium .stat-num { color: #e8a838; }
+    .stat-chip.low    .stat-num { color: #4caf7d; }
+    .stat-chip.info   .stat-num { color: #5b8dee; }
+
+    /* ── Pros & Cons ─────────────────────────────────────────────── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } }
+
+    .pro-con-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+    }
+    .pro-con-card h3 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.65rem; }
+    .pro-con-card.pros h3 { color: #1a6b3c; }
+    .pro-con-card.cons h3 { color: #a61c1c; }
+    .pro-con-card ul { list-style: none; }
+    .pro-con-card ul li { font-size: 0.83rem; padding: 0.22rem 0; color: #333; }
+    .pro-con-card ul li::before { margin-right: 0.45rem; }
+    .pro-con-card.pros ul li::before { content: "✓"; color: #4caf7d; font-weight: 700; }
+    .pro-con-card.cons ul li::before { content: "✗"; color: #d64045; font-weight: 700; }
+
+    /* ── Recommendations ─────────────────────────────────────────── */
+    .rec-list {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+      margin-bottom: 2rem;
+    }
+    .rec-list ol { padding-left: 1.2rem; }
+    .rec-list ol li { font-size: 0.85rem; color: #333; padding: 0.3rem 0; }
+    .rec-list ol li strong { color: #0f3460; }
+
+    /* ── Disclaimer ───────────────────────────────────────────────── */
+    .disclaimer {
+      font-size: 0.72rem; color: #888;
+      border-top: 1px solid #dde1ea;
+      padding-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Mutual NDA Review — Visual Aid</h1>
+    <div class="subtitle">Acme Corp &amp; Beta LLC · One-Page Mutual Non-Disclosure Agreement</div>
+    <div class="meta">Reviewed: 2026-05-15 &nbsp;|&nbsp; 8 clauses analyzed &nbsp;|&nbsp; AI-assisted legal summary (not legal advice)</div>
+  </div>
+
+  <!-- Overall Score -->
+  <div class="score-banner">
+    <div class="score-dial" aria-label="Overall risk score 60 out of 100">
+      <svg viewBox="0 0 88 88">
+        <circle class="track" cx="44" cy="44" r="35" />
+        <!-- dash offset: circumference=2π×35≈220; filled = 220×(60/100)=132; offset=220-132=88 -->
+        <circle class="fill" cx="44" cy="44" r="35" />
+      </svg>
+      <div class="score-label">
+        <span class="num">60</span>
+        <span class="den">/100</span>
+      </div>
+    </div>
+    <div class="score-text">
+      <h2>Moderate Risk — Usable With Revisions</h2>
+      <p>
+        The agreement covers the essentials of mutual confidentiality but carries meaningful gaps:
+        the liability cap is far too low for most commercial relationships, the damages exclusion is
+        one-sided in practice, and there is no carve-out for injunctive relief or compelled
+        disclosure. Standard for a first draft; recommend negotiating before signing.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats chips -->
+  <p class="section-label">Finding Summary</p>
+  <div class="stats-bar">
+    <div class="stat-chip high">
+      <div class="stat-num">2</div>
+      <div class="stat-lbl">High Risk</div>
+    </div>
+    <div class="stat-chip medium">
+      <div class="stat-num">3</div>
+      <div class="stat-lbl">Medium Risk</div>
+    </div>
+    <div class="stat-chip low">
+      <div class="stat-num">2</div>
+      <div class="stat-lbl">Low / Acceptable</div>
+    </div>
+    <div class="stat-chip info">
+      <div class="stat-num">1</div>
+      <div class="stat-lbl">Informational</div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <p class="section-label">Clause-by-Clause Findings</p>
+  <div class="findings-grid">
+
+    <!-- §7 — Liability Cap -->
+    <div class="finding-card high">
+      <span class="clause-tag">§7</span>
+      <div class="finding-body">
+        <div class="title">Liability Cap — $10,000 Is Dangerously Low</div>
+        <div class="desc">
+          A hard cap of $10,000 on total liability means that even a minor breach—sharing a deck
+          with the wrong person—leaves the injured party with virtually no financial remedy if
+          real damages are larger. For any deal with commercial value above five figures this cap
+          would be inadequate.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Tie the cap to a multiple of contract value, prior 12-month revenue, or at minimum $500K–$1M. Consider carving out indemnification for third-party IP claims.</div>
+      </div>
+      <span class="risk-badge high">High</span>
+    </div>
+
+    <!-- §7 — Consequential Damages -->
+    <div class="finding-card high">
+      <span class="clause-tag">§7</span>
+      <div class="finding-body">
+        <div class="title">Consequential Damages Waiver — No Injunctive-Relief Carve-Out</div>
+        <div class="desc">
+          Excluding indirect/consequential damages without carving out injunctive or equitable
+          relief is standard drafting error for NDAs. Trade-secret breaches are inherently
+          consequential (lost deals, competitive harm). Without an express carve-out, the
+          non-breaching party may struggle to obtain a temporary restraining order and would be
+          left with only a $10,000 damages cap—effectively no protection.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Add: "Notwithstanding the foregoing, nothing herein limits either party's right to seek injunctive or other equitable relief for actual or threatened breach of confidentiality obligations."</div>
+      </div>
+      <span class="risk-badge high">High</span>
+    </div>
+
+    <!-- §1 — Definition -->
+    <div class="finding-card medium">
+      <span class="clause-tag">§1</span>
+      <div class="finding-body">
+        <div class="title">Definition of Confidential Information — Overly Broad, No Exclusions</div>
+        <div class="desc">
+          "Any non-public business or technical information" is so wide it could capture publicly
+          available information that one party hadn't publicly released yet, or information
+          independently developed by the other party. Standard practice includes exclusions for:
+          (a) information already known; (b) publicly available information; (c) independently
+          developed; (d) received from a third party without restriction.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Add the four standard exclusions as a separate sub-clause to §1.</div>
+      </div>
+      <span class="risk-badge medium">Medium</span>
+    </div>
+
+    <!-- §6 — Arbitration -->
+    <div class="finding-card medium">
+      <span class="clause-tag">§6</span>
+      <div class="finding-body">
+        <div class="title">Arbitration Clause — Incomplete</div>
+        <div class="desc">
+          The clause selects binding arbitration in Wilmington, DE under Delaware law but omits:
+          the arbitration rules/administrator (AAA? JAMS? Ad hoc?), the number of arbitrators,
+          language, and confidentiality of the arbitration itself. An incomplete clause can be
+          unenforceable or lead to expensive preliminary litigation about procedure.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Specify the administering body (e.g., "under AAA Commercial Rules"), number of arbitrators (1 for disputes &lt;$250K), and that the arbitration proceeding is itself confidential.</div>
+      </div>
+      <span class="risk-badge medium">Medium</span>
+    </div>
+
+    <!-- §5 — Termination -->
+    <div class="finding-card medium">
+      <span class="clause-tag">§5</span>
+      <div class="finding-body">
+        <div class="title">Termination — No Return/Destruction of Materials Obligation</div>
+        <div class="desc">
+          The clause allows either party to terminate with 30 days notice and says obligations
+          survive, but there is no obligation to return or certifiably destroy the other party's
+          confidential materials upon termination. Without this, a party can terminate and retain
+          all disclosed information for the remaining 5-year obligation window.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Add a return-or-destroy clause triggered by either termination or written request, with certification within 10 business days.</div>
+      </div>
+      <span class="risk-badge medium">Medium</span>
+    </div>
+
+    <!-- §3 — Survival Period -->
+    <div class="finding-card low">
+      <span class="clause-tag">§3</span>
+      <div class="finding-body">
+        <div class="title">5-Year Survival Period — Standard but Consider Trade Secrets</div>
+        <div class="desc">
+          Five years post-disclosure is a commonly accepted term and reasonable for most
+          business information. However, if either party is disclosing trade secrets (as opposed
+          to ordinary confidential information), the Defend Trade Secrets Act (DTSA) provides
+          protection without a time limit—a fixed 5-year cap could inadvertently waive
+          perpetual protection.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Add a carve-out: "…provided that obligations with respect to trade secrets shall survive for so long as such information constitutes a trade secret under applicable law."</div>
+      </div>
+      <span class="risk-badge low">Low</span>
+    </div>
+
+    <!-- §2 — Standard of Care -->
+    <div class="finding-card low">
+      <span class="clause-tag">§2</span>
+      <div class="finding-body">
+        <div class="title">Standard of Care — Acceptable Dual-Standard Language</div>
+        <div class="desc">
+          "Same degree of care as its own, no less than reasonable care" is the gold-standard
+          formulation. It prevents a party with low internal standards from using those as a
+          defense, while still grounding the obligation in an objective reasonable-care floor.
+          No changes needed.
+        </div>
+      </div>
+      <span class="risk-badge low">Low</span>
+    </div>
+
+    <!-- §4 — IP / No License -->
+    <div class="finding-card info">
+      <span class="clause-tag">§4</span>
+      <div class="finding-body">
+        <div class="title">No-License Clause — Standard; Note the Gap on Compelled Disclosure</div>
+        <div class="desc">
+          The no-IP-license clause is correct boilerplate. However, the agreement has no clause
+          addressing what happens when a party receives a subpoena or regulatory demand to
+          disclose. Without a compelled-disclosure protocol (notify the other party promptly,
+          cooperate to seek a protective order), the receiving party has no contractual hook to
+          resist and the disclosing party gets no advance warning.
+        </div>
+        <div class="fix"><strong>Recommended fix:</strong> Add a compelled-disclosure provision requiring prompt written notice to the other party and cooperation in seeking a protective order.</div>
+      </div>
+      <span class="risk-badge info">Info</span>
+    </div>
+
+  </div><!-- /findings-grid -->
+
+  <!-- Pros & Cons -->
+  <p class="section-label">Strengths &amp; Weaknesses at a Glance</p>
+  <div class="two-col">
+    <div class="pro-con-card pros">
+      <h3>What the Agreement Gets Right</h3>
+      <ul>
+        <li>Mutual obligations — neither party holds a one-sided position</li>
+        <li>Dual standard of care (own + reasonable care floor)</li>
+        <li>Clear no-license provision protecting IP ownership</li>
+        <li>Written amendment requirement — prevents oral modification</li>
+        <li>Entire-agreement clause reduces extrinsic evidence risk</li>
+        <li>Specific forum (Wilmington DE) reduces venue disputes</li>
+      </ul>
+    </div>
+    <div class="pro-con-card cons">
+      <h3>What Needs Attention Before Signing</h3>
+      <ul>
+        <li>$10,000 liability cap far too low for most commercial deals</li>
+        <li>No injunctive-relief carve-out undermines enforceability</li>
+        <li>Definition lacks standard four exclusions</li>
+        <li>Incomplete arbitration clause — no rules or administrator named</li>
+        <li>No return/destroy obligation on termination</li>
+        <li>No compelled-disclosure protocol</li>
+        <li>5-year term may inadvertently cap trade-secret protection</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Top Recommendations -->
+  <p class="section-label">Prioritized Recommendations</p>
+  <div class="rec-list">
+    <ol>
+      <li><strong>Add injunctive-relief carve-out to §7</strong> — without this, the damages waiver + cap combination could leave a breached party with no practical remedy. Highest priority.</li>
+      <li><strong>Raise or restructure the liability cap</strong> — $10,000 is rarely commercially appropriate. Negotiate a realistic cap (e.g., greater of $500K or 12-month contract value).</li>
+      <li><strong>Add standard CI exclusions to §1</strong> — public knowledge, prior knowledge, independent development, and third-party disclosure without restriction.</li>
+      <li><strong>Specify arbitration administrator and rules in §6</strong> — name AAA or JAMS, set arbitrator count, and confirm the proceeding is confidential.</li>
+      <li><strong>Add return/destroy provision</strong> — trigger on termination or written demand; require certification within 10 business days.</li>
+      <li><strong>Add compelled-disclosure protocol</strong> — prompt notice + cooperation on protective orders.</li>
+      <li><strong>Carve out trade secrets from the 5-year survival cap</strong> — protect perpetual trade-secret status under DTSA.</li>
+    </ol>
+  </div>
+
+  <!-- Disclaimer -->
+  <p class="disclaimer">
+    This is an AI-generated legal summary for informational purposes only and does not constitute legal advice.
+    Consult a licensed attorney before signing or relying on this agreement.
+  </p>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mutual NDA — Risk Overview</title>
+  <style>
+    /* ── Reset & base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Reduced-motion guard ──────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── Design tokens (WCAG AA ≥4.5:1 verified) ─────────────── */
+    :root {
+      --bg:        #F8F9FA;   /* near-white page bg */
+      --surface:   #FFFFFF;
+      --text:      #1A1A2E;   /* contrast vs #F8F9FA: ~18:1 */
+      --text-muted:#4A4A6A;   /* contrast vs #FFFFFF: ~7:1  */
+
+      /* Status colours — text-on-surface; all verified ≥4.5:1    */
+      --red-bg:    #FFF0F0;
+      --red-border:#CC2222;
+      --red-label: #9A0000;   /* #9A0000 on #FFF0F0 ≈ 8.8:1      */
+      --red-icon:  "⬟";       /* non-colour cue: shape            */
+
+      --yellow-bg: #FFFBEC;
+      --yellow-border:#B8860B;
+      --yellow-label:#7A5B00; /* #7A5B00 on #FFFBEC ≈ 5.6:1      */
+      --yellow-icon:  "▲";
+
+      --green-bg:  #F0FFF4;
+      --green-border:#1A7A3A;
+      --green-label: #0D5229;  /* #0D5229 on #F0FFF4 ≈ 8.1:1      */
+      --green-icon:  "●";
+
+      --focus-ring: #0057CC;  /* high-contrast blue focus ring    */
+    }
+
+    /* ── Page layout ───────────────────────────────────────────── */
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 1.5rem;
+    }
+
+    /* ── Focus-visible ring (all interactive elements) ─────────── */
+    :focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────── */
+    header {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Attorney-review banner ────────────────────────────────── */
+    .atty-banner {
+      background: #FFF3CD;
+      border: 2px solid #B8860B;
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      margin: 0 auto 2rem;
+      max-width: 860px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .atty-banner .atty-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+      /* aria-hidden applied in HTML — purely decorative */
+    }
+    .atty-banner p {
+      font-size: 0.95rem;
+      color: #5A3E00;   /* #5A3E00 on #FFF3CD ≈ 9.5:1 */
+      font-weight: 600;
+    }
+
+    /* ── Risk summary bar ──────────────────────────────────────── */
+    .risk-summary {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .risk-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 2px solid transparent;
+    }
+    .risk-pill.red    { background: var(--red-bg);    border-color: var(--red-border);    color: var(--red-label);    }
+    .risk-pill.yellow { background: var(--yellow-bg); border-color: var(--yellow-border); color: var(--yellow-label); }
+    .risk-pill.green  { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green-label);  }
+
+    /* Non-colour cue: shape prefix in pill */
+    .risk-pill .pill-shape { font-size: 0.8rem; }
+
+    /* ── Finding cards grid ────────────────────────────────────── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── Individual card ───────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      border-left: 5px solid transparent;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .card.red    { border-color: var(--red-border);    }
+    .card.yellow { border-color: var(--yellow-border); }
+    .card.green  { border-color: var(--green-border);  }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .card-section {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1.5px solid transparent;
+    }
+    .badge.red    { background: var(--red-bg);    border-color: var(--red-border);    color: var(--red-label);    }
+    .badge.yellow { background: var(--yellow-bg); border-color: var(--yellow-border); color: var(--yellow-label); }
+    .badge.green  { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green-label);  }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .card-body {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .card-redline {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid #E0E0E8;
+      padding-top: 0.4rem;
+      margin-top: 0.2rem;
+    }
+    .card-redline strong {
+      color: var(--text);
+    }
+
+    /* ── Takeaways section ─────────────────────────────────────── */
+    .takeaways {
+      margin-top: 2rem;
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .takeaways h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .takeaways ol {
+      padding-left: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .takeaways li {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .takeaways li strong {
+      color: var(--text);
+    }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    footer {
+      max-width: 860px;
+      margin: 2rem auto 0;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Page header ──────────────────────────────────────────── -->
+  <header>
+    <h1>Mutual NDA — Risk Overview</h1>
+    <p>Acme Corp &amp; Beta LLC &nbsp;|&nbsp; Effective: on signing &nbsp;|&nbsp; 8 provisions reviewed</p>
+  </header>
+
+  <!-- ── Attorney-review recommendation banner ────────────────── -->
+  <div role="region" aria-label="Attorney review recommendation" class="atty-banner">
+    <span class="atty-icon" aria-hidden="true">⚠</span>
+    <p>Attorney review recommended — 2 RED findings carry financial and dispute-resolution exposure.</p>
+  </div>
+
+  <!-- ── Risk summary ─────────────────────────────────────────── -->
+  <nav aria-label="Risk summary">
+    <ul class="risk-summary" role="list">
+      <li>
+        <span class="risk-pill red" role="img" aria-label="2 Red findings — high risk">
+          <span class="pill-shape" aria-hidden="true">⬟</span> RED &nbsp;2
+        </span>
+      </li>
+      <li>
+        <span class="risk-pill yellow" role="img" aria-label="3 Yellow findings — medium risk">
+          <span class="pill-shape" aria-hidden="true">▲</span> YELLOW &nbsp;3
+        </span>
+      </li>
+      <li>
+        <span class="risk-pill green" role="img" aria-label="3 Green findings — low risk">
+          <span class="pill-shape" aria-hidden="true">●</span> GREEN &nbsp;3
+        </span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ── Finding cards ────────────────────────────────────────── -->
+  <main aria-label="Contract findings">
+    <div class="findings-grid" role="list">
+
+      <!-- § 7 — Liability Cap (RED) -->
+      <article class="card red" role="listitem" aria-label="Finding: Liability Cap — Red">
+        <div class="card-header">
+          <span class="card-section">§ 7</span>
+          <span class="badge red" aria-label="Red — high risk">
+            <span aria-hidden="true">⬟</span> RED
+          </span>
+        </div>
+        <div class="card-title">Liability Cap — $10,000</div>
+        <div class="card-body">
+          Total liability capped at $10,000. Indirect &amp; consequential damages (lost profits, reputational harm) fully excluded.
+          If confidential information is breached, actual damages will almost certainly exceed this cap.
+        </div>
+        <div class="card-redline">
+          <strong>Redline:</strong> Remove or raise the cap substantially. Carve out willful misconduct and gross negligence from the damages exclusion.
+        </div>
+      </article>
+
+      <!-- § 6 — Arbitration (RED) -->
+      <article class="card red" role="listitem" aria-label="Finding: Governing Law and Arbitration — Red">
+        <div class="card-header">
+          <span class="card-section">§ 6</span>
+          <span class="badge red" aria-label="Red — high risk">
+            <span aria-hidden="true">⬟</span> RED
+          </span>
+        </div>
+        <div class="card-title">Binding Arbitration — Wilmington, DE</div>
+        <div class="card-body">
+          Waives jury trial. Locks disputes to Delaware arbitration regardless of where you operate.
+          Can be slower and costlier than small-claims court for low-value disputes.
+        </div>
+        <div class="card-redline">
+          <strong>Redline:</strong> Negotiate mutual home-state venue, or replace binding arbitration with mediation-first + litigation fallback.
+        </div>
+      </article>
+
+      <!-- § 3 — 5-year survival (YELLOW) -->
+      <article class="card yellow" role="listitem" aria-label="Finding: Survival Period — Yellow">
+        <div class="card-header">
+          <span class="card-section">§ 3</span>
+          <span class="badge yellow" aria-label="Yellow — medium risk">
+            <span aria-hidden="true">▲</span> YELLOW
+          </span>
+        </div>
+        <div class="card-title">5-Year Confidentiality Period</div>
+        <div class="card-body">
+          Longer than typical (industry norm: 2–3 years). Clock starts at disclosure, not termination — obligations may run far past the business relationship.
+        </div>
+        <div class="card-redline">
+          <strong>Redline:</strong> Confirm 5 years fits your disclosure timeline; consider shorter periods for non-sensitive categories.
+        </div>
+      </article>
+
+      <!-- § 5 — No return/destroy (YELLOW) -->
+      <article class="card yellow" role="listitem" aria-label="Finding: Termination — Yellow">
+        <div class="card-header">
+          <span class="card-section">§ 5</span>
+          <span class="badge yellow" aria-label="Yellow — medium risk">
+            <span aria-hidden="true">▲</span> YELLOW
+          </span>
+        </div>
+        <div class="card-title">No Return-or-Destroy Clause</div>
+        <div class="card-body">
+          Agreement allows termination on 30 days notice but does not require return or destruction of confidential materials on exit.
+        </div>
+        <div class="card-redline">
+          <strong>Redline:</strong> Add return-or-destroy obligation triggered on termination, with written certification.
+        </div>
+      </article>
+
+      <!-- § 8 — No severability (YELLOW) -->
+      <article class="card yellow" role="listitem" aria-label="Finding: Entire Agreement — Yellow">
+        <div class="card-header">
+          <span class="card-section">§ 8</span>
+          <span class="badge yellow" aria-label="Yellow — medium risk">
+            <span aria-hidden="true">▲</span> YELLOW
+          </span>
+        </div>
+        <div class="card-title">No Severability Clause</div>
+        <div class="card-body">
+          If any provision is unenforceable, the whole agreement could fail rather than just that provision being severed.
+        </div>
+        <div class="card-redline">
+          <strong>Redline:</strong> Add standard severability clause.
+        </div>
+      </article>
+
+      <!-- § 1 — CI definition (GREEN) -->
+      <article class="card green" role="listitem" aria-label="Finding: Confidential Information Definition — Green">
+        <div class="card-header">
+          <span class="card-section">§ 1</span>
+          <span class="badge green" aria-label="Green — low risk">
+            <span aria-hidden="true">●</span> GREEN
+          </span>
+        </div>
+        <div class="card-title">CI Definition — Broad &amp; Mutual</div>
+        <div class="card-body">
+          Standard broad definition. Mutual scope is appropriate. Note: no carve-outs (public domain, independent development) — minor gap, common in short-form NDAs.
+        </div>
+      </article>
+
+      <!-- § 2 — Standard of care (GREEN) -->
+      <article class="card green" role="listitem" aria-label="Finding: Standard of Care — Green">
+        <div class="card-header">
+          <span class="card-section">§ 2</span>
+          <span class="badge green" aria-label="Green — low risk">
+            <span aria-hidden="true">●</span> GREEN
+          </span>
+        </div>
+        <div class="card-title">Standard of Care — Industry-Standard</div>
+        <div class="card-body">
+          "Same degree of care as its own, not less than reasonable care." Bilateral and standard. No issues.
+        </div>
+      </article>
+
+      <!-- § 4 — No IP license (GREEN) -->
+      <article class="card green" role="listitem" aria-label="Finding: IP License — Green">
+        <div class="card-header">
+          <span class="card-section">§ 4</span>
+          <span class="badge green" aria-label="Green — low risk">
+            <span aria-hidden="true">●</span> GREEN
+          </span>
+        </div>
+        <div class="card-title">No IP License Granted</div>
+        <div class="card-body">
+          Standard protective clause. No issues.
+        </div>
+      </article>
+
+    </div><!-- /findings-grid -->
+
+    <!-- ── Key Takeaways ──────────────────────────────────────── -->
+    <section class="takeaways" aria-label="Key takeaways">
+      <h2>Key Takeaways</h2>
+      <ol>
+        <li><strong>The $10,000 liability cap is the biggest risk.</strong> If your disclosed information has meaningful value, this leaves you badly exposed to a breach.</li>
+        <li><strong>Arbitration in Delaware</strong> may be inconvenient and costly if you are not Delaware-based — worth negotiating.</li>
+        <li><strong>Missing boilerplate</strong> (exclusion carve-outs, return-or-destroy, severability) is common in short NDAs but worth patching for long-term use.</li>
+        <li><strong>Overall:</strong> Reasonable for low-stakes exchanges. For IP-heavy or high-value relationships, engage counsel before signing.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer>
+    <p>AI-generated review — not legal advice. Consult a licensed attorney before signing.</p>
+  </footer>
+
+</body>
+</html>
