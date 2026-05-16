@@ -6,6 +6,25 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.8.0] — 2026-05-15
+
+MINOR: New skill `/legal-visual-aid` — composes
+`/legalzoom:review-contract` (contract review, by reference to the
+legalzoom plugin) with `/visual-aid` (single-page HTML explainer):
+review a contract, then render the risk-scored findings as an
+accessible visual aid. Built via `/lets-make-a-skill`'s baseline-first
+gate — a RED baseline showed no-skill agents drop the `/visual-aid`
+accessibility guards under "quick / rough" contract-review pressure;
+the skill body counters that rationalization and a GREEN with-skill
+run held all six a11y guards. Manifests bumped 1.7.2 → 1.8.0 in
+lockstep.
+
+### Added (v1.8.0)
+
+- `skills/legal-visual-aid/SKILL.md` — composition skill with an
+  accessibility-floor discipline section and a 5-row rationalization
+  table.
+
 ## [1.7.2] — 2026-05-05
 
 PATCH: `/tesseract` SKILL.md — Hallway 1 no-git-repo precondition + smoke
