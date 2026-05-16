@@ -94,7 +94,7 @@ def calc_cost(model: str, usage: dict) -> float:
 
 def parse_session(jsonl_path: Path) -> dict:
     """Parse a session JSONL and return aggregated cost data."""
-    totals: dict[str, dict[str, float]] = {}  # model -> {field: count}
+    totals: dict[str, dict[str, float]] = {}  # model -> token/turn counts + cost_usd
     total_cost = 0.0
     turn_count = 0
     first_ts = None
