@@ -10,12 +10,12 @@ that SHOULD fail the assertion, confirming the test is not a vacuous pass.
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import pytest
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+from tests._skill_helpers import PROJECT_ROOT
+
 SKILL_PATH = PROJECT_ROOT / "skills" / "listen" / "SKILL.md"
 
 # ---------------------------------------------------------------------------
