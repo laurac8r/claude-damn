@@ -3,9 +3,9 @@
 **Methodology:** Each scenario was dispatched to a Sonnet subagent in an
 isolated `/tmp/` sandbox with no access to `pressure-scenarios.md` or any
 worktree files. Subagents were given **default judgment only** — no `/tdd`, no
-`/writing-skills`, no `/skill-creator`, no `/skill-super-duper-cat`, and no
-controller-mandated `/listen` directive. This is the canonical baseline per the
-plan's intent.
+`/writing-skills`, no `/skill-creator`, no `/lets-make-a-skill`, and
+no controller-mandated `/listen` directive. This is the canonical baseline per
+the plan's intent.
 
 **Reports written by:** main agent (Opus), based on subagent inline-text
 outputs. Subagent Bash/Write was permission-denied in `/tmp/` sandboxes
