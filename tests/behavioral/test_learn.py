@@ -79,7 +79,7 @@ class TestSignalTableRowCount:
 
 
 class TestSlashReferences:
-    @pytest.mark.parametrize("token", ["/listen", "/writing-skills"])
+    @pytest.mark.parametrize("token", ["/listen", "/lets-make-a-skill"])
     def test_token_present(self, skill_content: str, token: str) -> None:
         assert token in skill_content, f"Expected {token!r} in SKILL.md"
 
@@ -87,10 +87,12 @@ class TestSlashReferences:
         """TDD mutation: removing the tokens from SKILL.md should break
         test_token_present — asserting both original presence and mutated
         absence proves the mutation is effective, not tautological."""
-        mutated = skill_content.replace("/listen", "X").replace("/writing-skills", "Y")
+        mutated = skill_content.replace("/listen", "X").replace(
+            "/lets-make-a-skill", "Y"
+        )
         assert "/listen" in skill_content and "/listen" not in mutated
-        assert "/writing-skills" in skill_content
-        assert "/writing-skills" not in mutated
+        assert "/lets-make-a-skill" in skill_content
+        assert "/lets-make-a-skill" not in mutated
 
 
 class TestUpdateScopeMentioned:
