@@ -268,6 +268,86 @@ class TestHttpServerSop:
         )
 
 
+class TestProfileLockFallback:
+    """The verification SOP must cover chrome-devtools profile-lock failures."""
+
+    def test_profile_lock_error_string_documented(self, skill_md: str) -> None:
+        """The canonical profile-lock error substring must appear in the SOP."""
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        assert "browser already running" in sop_section.lower(), (
+            "The SOP must document the canonical profile-lock error substring "
+            "'browser already running' so agents can recognize it."
+        )
+
+    def test_isolated_flag_retry_path_documented(self, skill_md: str) -> None:
+        """The SOP must mention retrying chrome-devtools-mcp with --isolated."""
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        assert "--isolated" in sop_section, (
+            "The SOP must document the '--isolated' retry path so agents try "
+            "an ephemeral profile before giving up on the browser step."
+        )
+
+    def test_step8_cleanup_required_on_profile_lock_exit(self, skill_md: str) -> None:
+        """The profile-lock stop-the-SOP branch must require step-8 cleanup."""
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        # The profile-lock fallback block starts with "Profile-lock fallback"
+        fallback_match = re.search(r"Profile-lock fallback", sop_section, re.IGNORECASE)
+        assert fallback_match, (
+            "'Profile-lock fallback' block must exist in the Verification SOP."
+        )
+        # The cleanup instruction ("execute step 8" or "kill") must appear in
+        # the fallback block (up to ~800 chars covers the full bullet list)
+        window = sop_section[fallback_match.start() : fallback_match.start() + 800]
+        has_step8 = "step 8" in window.lower()
+        has_kill = bool(
+            re.search(r"kill|stop.*server|server.*stop", window, re.IGNORECASE)
+        )
+        assert has_step8 or has_kill, (
+            "The profile-lock early-exit branch must instruct the agent to run "
+            "step 8 (kill the http.server) before exiting — to prevent port "
+            "collisions on the next invocation."
+        )
+
+    def test_step8_cleanup_required_on_console_error_abort(self, skill_md: str) -> None:
+        """The console-error abort path must require step-8 cleanup first."""
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        console_match = re.search(r"list_console_messages", sop_section)
+        assert console_match, "'list_console_messages' must appear in the SOP."
+        window = sop_section[
+            max(0, console_match.start() - 50) : console_match.end() + 400
+        ]
+        has_step8 = "step 8" in window.lower()
+        has_kill = bool(
+            re.search(r"kill|stop.*server|server.*stop", window, re.IGNORECASE)
+        )
+        assert has_step8 or has_kill, (
+            "The console-error abort step must instruct the agent to run step 8 "
+            "(kill the http.server) before aborting, to avoid port leaks."
+        )
+
+    def test_step8_cleanup_required_on_lighthouse_failure_abort(
+        self, skill_md: str
+    ) -> None:
+        """The Lighthouse-failure abort path must require step-8 cleanup first."""
+        sop_section = _extract_verification_section(skill_md)
+        assert sop_section, "## Verification (chrome-devtools) section must exist."
+        lh_match = re.search(r"lighthouse_audit", sop_section)
+        assert lh_match, "'lighthouse_audit' must appear in the SOP."
+        window = sop_section[max(0, lh_match.start() - 50) : lh_match.end() + 400]
+        has_step8 = "step 8" in window.lower()
+        has_kill = bool(
+            re.search(r"kill|stop.*server|server.*stop", window, re.IGNORECASE)
+        )
+        assert has_step8 or has_kill, (
+            "The Lighthouse-failure abort step must instruct the agent to run "
+            "step 8 (kill the http.server) before aborting, to avoid port leaks."
+        )
+
+
 class TestSlotCrossCheck:
     """Every {{...}} placeholder in baseline.html must appear in SKILL.md slot docs."""
 

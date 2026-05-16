@@ -65,6 +65,44 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       composition rules documented in `skills/README.md`
 - [ ] Canonicalize the error-handling contract from `sme-test/errors/` as a
       shared skill pattern
+- [ ] `/tesseract` file-input mode: accept `--input <path>` (e.g.
+      `/tesseract --input ./scratch/thread-dump.txt`) and read the artifact via
+      the Read tool instead of expecting inline content. Error clearly when
+      input >50KB and suggest file mode.
+- [ ] **`/checkpoint-save` post-squash-merge content-delta verification** —
+      add a verification gate for the branch-deleted-post-merge case (symptom:
+      `git status` says "Your branch is based on 'origin/<branch>', but the
+      upstream is gone"). The skill MUST verify content-delta between any
+      "ahead-of-upstream" commits and the merge target before classifying
+      them as "not yet shipped." Squash-merges flatten the entire PR HEAD;
+      commits made before the squash-cutoff are content-equivalent on the
+      target. Add rationalization counter for "these were committed AFTER
+      the squash-merge…" → reality: the squash takes the PR HEAD at merge
+      time, not the operator's local merge commit. Misfire surfaced
+      2026-05-09 during a `/checkpoint-save` invocation on a feature-branch
+      worktree post-PR-squash-merge.
+- [ ] **`/tesseract` slash-prefixed skill-name anchor handling** — anchor
+      cascade Step 3 ("anchor contains `/`") misclassifies slash-prefixed
+      skill-name anchors like `/learn` as paths and routes them to
+      `git log --follow -- /learn`, which fails with "outside repository".
+      Special-case anchors matching `^/[a-z][a-z0-9-]*$` — fall through to
+      free-text `--grep` instead of path-heuristic. Misfire surfaced
+      2026-05-09 in `/tesseract /learn` invocation.
+- [ ] **Pressure-test PERSONALIZATION.example.md rules via
+      `/lets-make-a-skill`** — dispatch `/duper`-parallelized
+      `/lets-make-a-skill` runs, one per rule in
+      `.claude/rules/PERSONALIZATION.example.md`. Each rule gets a
+      dedicated pressure-test skill that asserts the rule's expected
+      behavior under representative inputs (e.g., the "no Opus
+      subagents" rule fires a Task call w/ `model=opus` and asserts
+      the `block_opus_subagent.py` hook denies it; the "cd-first"
+      Bash rule fires a chained `cd <dir>; <cmd>` and asserts the
+      permission-gate response shape). Surfaces drift between
+      documented operator personalization and real agent behavior;
+      produces a per-rule conformance report. Independent per-rule
+      tests → natural fan-out via `/duper`. Output:
+      `tests/skills/` coverage matrix mapping each PERSONALIZATION
+      rule to ≥1 pressure test.
 
 ## Phase 3 — Harness integration
 
@@ -75,6 +113,15 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       hooks)
 - [ ] Generalize the inline-script guardrail into a shared hook the plugin can
       install
+- [ ] **Checkpoint-system persistence layer** — define JSON schema for
+      `.checkpoints/latest.json` (`worktree`, `branch`, `task_list`,
+      `next_action`, `timestamp`); update `/checkpoint-save` to write it; update
+      `/checkpoint-resume` to read it and continue without `AskUserQuestion`;
+      add a `Stop` hook that auto-saves on session end. Build via
+      `/writing-skills` (TDD; spec-doc layout per `feedback_spec_doc_layout.md`;
+      frozen-dataclass tests per `feedback_frozen_dataclass_test_exception.md`).
+      Fixes the 2026-04-28 `/checkpoint-save` Step-3 delayed-invocation misfire
+      (bulk-302).
 
 ## Phase 4 — Distribution
 
@@ -165,3 +212,85 @@ declarative control over when a named set of skills applies to ongoing work:
       operator positively flagged the card-grid render produced on-the-fly
       during that session's retrospective; the flag makes it the canonical
       rendering path for future `/learn` runs rather than a one-off.
+- [ ] **`/add-to-roadmap` helper script** — replace the v1 prose-skill with a
+      deterministic Python helper at `skills/add-to-roadmap/insert_item.py` so
+      the skill can be invoked non-interactively (CI, hooks, scripted batch
+      ROADMAP updates). v1 is pure-prose (Claude reads ROADMAP.md and applies
+      the Edit tool); the helper version takes `<phase-or-section>` and
+      `<task-text>` as argv, performs the same fuzzy-match + bottom-of-section
+      insertion deterministically, and emits a unified diff to stdout. Added to
+      the roadmap 2026-04-27 as the v1 skill's first dogfood-eat — the entry was
+      authored by hand in the same PR that introduces the skill, since the skill
+      didn't yet exist to add itself.
+
+### SOLID & SWE composition
+
+Added to the roadmap 2026-04-25 from the `self-improvement` tesseract anchor.
+Lands AFTER the PERSONALIZATION SOLID section (below) so `/solid` has a
+canonical principle reference to read from.
+
+- [ ] **`/solid`** — single skill enforcing SOLID principles across three
+      temporal modes, mapped to the 5.2 control-triad vocabulary: -
+      **feed-forward** (before writing) — suggest SOLID-compliant designs
+      upfront; flag violations during `/brainstorming`. - **feed-back** (during
+      writing) — catch SOLID violations as code is being written; emit warnings
+      during the implementation phase of `/tdd` GREEN. - **retro-active** (after
+      writing) — scan existing code for refactor candidates (god classes, fat
+      interfaces, hidden coupling); produce `/super-swe`-ready findings.
+- [ ] **`/swe`** — composite skill `/solid ⨷ /tdd ⨷ /fixer`. Standard operating
+      loop for non-trivial software-engineering work: design under SOLID, drive
+      via TDD, debug via systematic-debugging. The `⨷` tensor-product is the
+      composition operator from `/ops` / `/bra-ket` (5.4) — `/swe` will need to
+      reconcile its informal-`⨷` notation with whatever `/ops` formalizes.
+- [ ] **SWE combinatoric family** — derived skills following the existing `/tdd`
+      and `/fixer` family density. Proposed initial 8 (cardinality matched to
+      existing families; full 2^N permutation deferred to `/ops` 5.4 when that
+      lands): - `/super-swe` — brainstorm + swe - `/duper-swe` — worktree +
+      swe - `/swe-cat` — swe + subagent-driven-development - `/super-cat-swe` —
+      brainstorm + cat + swe - `/duper-tdd-swe` — worktree + tdd + swe
+      (TDD-explicit on top of swe's tdd, for cases where the tdd phase is the
+      primary surface) - `/super-duper-swe-tdd-cat` — full stack -
+      `/expert-swe-review` — expert review through SOLID lens -
+      `/super-fixer-swe` — expert-debug + fix via swe
+
+### PERSONALIZATION & rules updates
+
+- [ ] **SOLID emphasis in PERSONALIZATION** — add a
+      `## SOLID Software Engineering [policy] [soft]` section to all three:
+      `~/.claude/rules/PERSONALIZATION.md` (operator runtime),
+      `~/.claude/rules/PERSONALIZATION.example.md` (active-dev clone), and this
+      repo's `rules/PERSONALIZATION.example.md` (canonical, public). Five
+      principles (SRP / OCP / LSP / ISP / DIP) with one-line when-to-apply each.
+      Lands BEFORE `/solid` is implemented — `/solid` reads from this section as
+      its principle source.
+
+### `/learn` scope extension
+
+- [ ] **`/learn` config-surface coverage** — extend `/learn` beyond Skills to
+      also produce learnings against `CLAUDE.md`, `PERSONALIZATION.md`, hookify
+      rules, and `settings.json`. Three new emit modes: - **rule findings** →
+      propose edits to CLAUDE.md / PERSONALIZATION.md. - **hook findings** →
+      propose hookify rules (delegate to `/hookify:writing-rules`). - **settings
+      findings** → stage context for `/update-config` rather than editing
+      settings.json directly. `/learn` produces the WHAT (which key) and WHY
+      (which session evidence); operator runs `/update-config` to apply.
+
+## Phase 6 — Skill-chain orchestration & enforcement
+
+Beyond individual skill quality (Phases 2 / 5), Phase 6 tackles enforcement
+across multi-skill chains — how the harness guarantees that a `/listen`-wrapped
+prompt actually invokes every referenced skill, and how SME (subject-matter
+expert) Skills can graduate to SME Agents that supervise compositional flows.
+
+- [ ] **`/listen` enforcement hardening** — strengthen `/listen` so it cannot
+      silently drop a referenced skill from the chain. Two candidate paths:
+      (1) **hook-based** — PreToolUse hook on `Skill` calls inside a
+      `/listen`-wrapped turn, tracking referenced-vs-invoked skills and
+      blocking end-of-turn until the checklist is complete;
+      (2) **agent-based** — once SME (subject-matter-expert) Skills mature
+      enough, graduate them to SME Agents that supervise multi-skill
+      compositional flows. Triggered by 2026-05-03 `/listen` chain misfire:
+      `/listen "/visual-aid from /legalzoom:review-contract of [URL]"` skipped
+      `/visual-aid` because the prior skill produced a complete-looking
+      markdown deliverable; the rationalization counter table in `/listen`
+      doesn't yet cover the analysis→transformation chain pattern.

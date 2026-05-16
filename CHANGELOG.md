@@ -1,8 +1,111 @@
 # Changelog
 
 All notable changes to `claude-damn` are documented here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the project is pre-1.0
-so entries are grouped by development phase rather than SemVer.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Pre-SemVer entries
+(`[1.0.0]` and earlier) are grouped by development phase; from 1.7.0 onward,
+entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
+PERSONALIZATION versioning rule.
+
+## [1.7.2] — 2026-05-05
+
+PATCH: `/tesseract` SKILL.md — Hallway 1 no-git-repo precondition + smoke
+regression. Brings `uv.lock` to 1.7.2 in two steps: a catch-up sync
+1.0.0 → 1.7.0 (commit `c2a06d7`, aligning with manifests bumped in
+`04fc3c4`), then the 1.7.2 PATCH bump alongside `plugin.json` and
+`pyproject.toml`.
+
+### Added (v1.7.2)
+
+- `tests/skills/tesseract/smoke/test_hallway1_precondition.py` — 4 static
+  text-presence regression assertions (PR #21 `TestTesseractRegressions`
+  pattern) covering: precondition probe, fixed silent-skip line, both
+  anti-pattern callouts (no-cwd-leak + no-grep-fallthrough), ordering
+  (precondition must appear textually before the cascade).
+
+### Fixed (v1.7.2)
+
+- `skills/tesseract/SKILL.md` Hallway 1: adds explicit
+  `git rev-parse --is-inside-work-tree 2>/dev/null` precondition; on
+  non-zero exit prints fixed line `(not in a git repository — Hallway 1
+  silent)` and skips the cascade. Closes a spec gap where Hallway 1
+  implicitly assumed a git repo at cwd; pre-fix paths either errored
+  noisily, leaked cwd via a synthesized message, or fell through to the
+  free-text grep branch.
+- `uv.lock`: 1.0.0 → 1.7.2 in two steps. Package manifests bumped to
+  1.7.0 in `04fc3c4` but uv.lock was still at 1.0.0 in this worktree
+  (pre-existing drift). Step 1: catch-up sync 1.0.0 → 1.7.0 (commit
+  `c2a06d7`). Step 2: 1.7.0 → 1.7.2 alongside the lockstep PATCH bump
+  of the manifests.
+
+## [1.7.1] — 2026-05-05
+
+PATCH: `/visual-aid` SKILL.md — profile-lock opt-out + rationalization counter.
+
+### Added (v1.7.1)
+
+- `tests/skills/visual_aid/pressure/eval_profile_lock_rationalizations.md` —
+  RED→GREEN→REFACTOR evidence log for the `chrome-devtools-mcp` profile-lock
+  opt-out fix (6 sonnet subagents per CLAUDE.md no-Opus-subagents rule:
+  1 leaked RED + 2 clean RED + 1 baseline GREEN + 1 with-skill GREEN + 1
+  REFACTOR re-fire).
+
+### Fixed (v1.7.1)
+
+- `skills/visual-aid/SKILL.md`: 3 coordinated edits closing a rationalization
+  gap where the `chrome-devtools-mcp` profile-lock error was being routed
+  through unrelated opt-outs ("fast iteration", "not installed") instead of
+  named verbatim. Adds explicit profile-lock fallback (SOP step 3),
+  `chrome-devtools-mcp profile lock` opt-out bullet (with `--isolated` retry
+  path + step-8 cleanup requirement), and common-mistakes table row flagging
+  environmental-blocker repackaging as a preference-coded opt-out.
+
+## [1.7.0] — 2026-05-03
+
+Phase 5 skill catalog expansion + Phase 6 `/listen` enforcement + plugin
+manifest bump to v1.7.0. Each new skill ships through TDD discipline (RED
+tests first, then SKILL.md) and the
+`tests/skills/<skill>/{helpers,smoke,pressure,performance}/` test taxonomy.
+
+### Added
+
+- **`/add-to-roadmap` (v1, prose)** — appends a checkbox task to the project's
+  `ROADMAP.md` under a fuzzy-resolved `## Phase` or `### Subsection` header.
+  Walks up from CWD to repo root, fuzzy contains-match (case-insensitive),
+  bottom-of-section insertion, unified-diff confirmation gate before write.
+  Pure-prose v1; deterministic Python helper roadmapped for v2. (PR #58)
+- `tests/skills/add_to_roadmap/` — 28 tests across 4 layers (structural 9,
+  smoke 9, pressure 7, performance 2). Doc-length budget calibrated on
+  observed sibling-skill rates (`tesseract` ~270 lines, `checkpoint-save`
+  ~80). (PR #58)
+- **`/skill-creator-super-duper-cat` (the supercreator)** — composed-skill
+  dispatcher for the skill-creation workflow. (PR #62)
+- **`/cat` parallel-dispatch decision branch** + active-dev/canonical
+  isolation rule baked into the skill body. (PR #61)
+- **Phase-6 `/listen` enforcement** — additional rationalization counters
+  for the listen workflow. (PR #68)
+- `ROADMAP.md` Phase 5: `/add-to-roadmap` helper-script entry under "Flag
+  additions to existing skills" — first dogfood-eat of the new skill (added
+  manually since the skill couldn't add itself). (PR #58)
+
+### Changed
+
+- **Rename `/skill-creator` → `/lets-make-a-skill`** — final naming for the
+  create-a-skill flow. Internal references and test fixtures updated.
+  (PR #66)
+- `ROADMAP.md`: added `/tesseract --input` file-mode entry under Phase 2.
+  (PR #59)
+- `ROADMAP.md`: expanded with checkpoint-system persistence-layer details.
+  (PR #60)
+- `ROADMAP.md`: Phase 5 expansion entries. (PR #56)
+- `README.md`: marketplace-install flow + listing copy updated for v1.7.0.
+  (PR #69)
+- `.claude-plugin/plugin.json`, `pyproject.toml`: version bumped to 1.7.0
+  (`04fc3c4`, PR #67).
+
+### Fixed
+
+- `tests/performance/test_learn.py`, `tests/smoke/test_learn.py`: trailing-
+  newline / whitespace fixes from `uv run ruff format` (no behavior change).
 
 ## [1.0.0] — 2026-04-23 (submitted, review pending)
 

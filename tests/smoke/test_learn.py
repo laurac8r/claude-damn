@@ -62,8 +62,7 @@ class TestDelegatesToWritingSkills:
 
     def test_names_writing_skills_as_delegate(self, invoke_skill) -> None:
         result = invoke_skill(
-            "/learn : in one line, which skill does /learn delegate "
-            "approved fixes to?"
+            "/learn : in one line, which skill does /learn delegate approved fixes to?"
         )
         assert result.returncode == 0, (
             f"claude exited non-zero: {result.returncode}\n"
