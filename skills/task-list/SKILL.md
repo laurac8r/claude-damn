@@ -43,10 +43,12 @@ Call `TaskUpdate(taskId=<#>, subject=<new>)` (or `description=`) on the
 **same task ID**. The original ID is preserved.
 
 - The `::` separator splits the task ID from the new content.
-- Do NOT delete + re-create. That's a different operation; the spec
-  preserves IDs.
-- If the new content reads more like a description than a one-line subject,
-  use `description=`; otherwise `subject=`.
+- Do NOT delete + re-create — that is a different operation. TaskUpdate
+  preserves the original ID; use it.
+- Default to `subject=`. Use `description=` (stripping the prefix) only
+  when the new content carries an explicit `desc:` prefix.
+- If `<#>` does not match any task in the current TaskList, surface an
+  inline error and do NOT call TaskUpdate.
 
 ### 4. `--display`: render the full TaskList
 
@@ -80,8 +82,10 @@ Render every task in your response — id, status, subject (and owner if set).
 
 → `TaskCreate(...)` for the emerged task.
 → `TaskUpdate(taskId=5, status=deleted)` for the dropped task.
-→ `TaskUpdate(taskId=4, ...)` or split via TaskCreate + delete, depending
-on whether the rewrite preserves enough of #4 to keep its ID.
+→ For #4: if it is being *rewritten in place*, `TaskUpdate(taskId=4, ...)`.
+If it is being *split into multiple tasks*, `TaskCreate` the new tasks and
+`TaskUpdate(taskId=4, status=deleted)` the original — splitting is a
+distinct operation from rewriting, and only splitting may delete.
 
 ### `--update <#> :: <new>`
 
@@ -100,7 +104,9 @@ on whether the rewrite preserves enough of #4 to keep its ID.
 → `TaskGet(...)` × 15 for the remaining IDs.
 → Render all 20 inline in the response.
 
-## Anti-patterns (these are the captured baseline rationalizations — do NOT do them)
+## Anti-patterns
+
+These are the captured baseline rationalizations — do NOT do them.
 
 - ❌ **"Would you like me to proceed?"** The syntax is unambiguous. Act.
 - ❌ **"The skill is not available, here is your list as plain text."** The
@@ -110,8 +116,10 @@ on whether the rewrite preserves enough of #4 to keep its ID.
 - ❌ **"I'll surface the proposed changes for confirmation."** For
   `--update`, derive and execute. The user will see the result and can
   correct it via another `/task-list --update <#> :: <fix>` if wrong.
-- ❌ **For `--update <#>`: delete + recreate.** The spec preserves IDs.
-  Use TaskUpdate's `subject=` / `description=` parameters.
+- ❌ **For a single-task `--update <#>` rewrite: delete + recreate.**
+  TaskUpdate preserves the original ID; use its `subject=` /
+  `description=` parameters. (Splitting one task into several is a
+  different operation — see Mode 2.)
 - ❌ **For `--display`: render only the visible 5.** Default truncation is
   the problem this mode exists to solve.
 
