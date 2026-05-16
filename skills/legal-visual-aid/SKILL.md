@@ -30,6 +30,17 @@ of claude-damn. This skill composes it by reference. If the legalzoom plugin is
 not installed, say so and offer to run `/visual-aid` against a review the user
 supplies, rather than silently degrading.
 
+## Input handling
+
+The argument may arrive as raw contract text, a file path, or an attached
+file. Normalize it to contract text before stage 1:
+
+- **Pasted text** → pass straight through to `/legalzoom:review-contract`.
+- **File path or attachment** → read the file first, then pass its contents.
+
+This keeps the composition deterministic regardless of which input form the
+user supplies.
+
 ## Workflow
 
 1. **Review.** Invoke `/legalzoom:review-contract` on the contract. Let it run
@@ -68,7 +79,7 @@ review; they cannot waive accessibility on behalf of every future viewer.
 | "It's for a 2-minute meeting, nobody will screen-read it"                | The visual aid outlives the meeting — saved, pasted, reshared. Accessibility is a property of the file, not the moment.                |
 | "The user explicitly waived accessibility"                               | A requester scopes their own review depth; they cannot waive accessibility for every future viewer. a11y is not polish.                |
 | "The review was abbreviated, so the visual aid should be rough to match" | The two stages are independent. An abbreviated review still gets a fully accessible visual aid.                                        |
-| "Skipping `/visual-aid`'s chrome-devtools verification saves a step"     | Skip verification only under `/visual-aid`'s own documented `--no-verify` conditions — never because the contract request felt rushed. |
+| "Skipping `/visual-aid`'s chrome-devtools verification saves a step"     | Skip verification only under `/visual-aid`'s own documented `--no-verify` conditions (chrome-devtools-mcp absent, CI / headless, or a profile lock) — never because the contract request felt rushed. |
 
 ## When NOT to use
 
