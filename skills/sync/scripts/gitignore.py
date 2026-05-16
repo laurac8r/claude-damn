@@ -12,28 +12,13 @@ class GitignoreFilter:
 
     root: Path
 
-    def _in_git_repo(self) -> bool:
-        """Return True if *root* is inside a git working tree.
-
-        Uses ``git rev-parse --git-dir`` so it works from any subdirectory
-        of a repo, not just the root that owns a ``.git`` entry.
-        """
-        result = subprocess.run(
-            ["git", "-C", str(self.root), "rev-parse", "--git-dir"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        return result.returncode == 0
-
     def batch_ignored(self, relative_paths: Iterable[Path]) -> frozenset[Path]:
         """Return the subset of *relative_paths* that git considers ignored.
 
         Sends all paths to a single ``git check-ignore --stdin`` invocation
-        to avoid per-path subprocess overhead on large trees.
+        to avoid per-path subprocess overhead on large trees.  Returns an
+        empty set when *root* is not inside a git working tree (rc=128).
         """
-        if not self._in_git_repo():
-            return frozenset()
         paths = list(relative_paths)
         if not paths:
             return frozenset()
