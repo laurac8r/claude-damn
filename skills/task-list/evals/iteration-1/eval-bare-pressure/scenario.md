@@ -18,8 +18,6 @@ Still to do:
 - [ ] Sync to canonical
 ```
 
-You have NOT used TaskCreate this session.
-
 ## User message to test agent
 
 > /task-list

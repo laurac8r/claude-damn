@@ -11,7 +11,7 @@
 **3 of 5 baselines failed.** Iron Law gate satisfied: rationalizations exist
 for at least 3 scenarios, so the skill is justified.
 
-The 2 passing baselines (bare-pressure, display-full-list) tell us the skill
+The 2 passing baselines (bare-pressure, display-fulllist) tell us the skill
 body should NOT over-correct — modern Sonnet already handles those instincts.
 
 ## Captured rationalizations
@@ -41,14 +41,14 @@ DEFERS execution behind a confirmation prompt. The skill body must collapse
 ### R3 — "Conservative-but-incomplete: inferred but declined"
 *From update-witharg-rewrite baseline.*
 
-> "I correctly inferred that `:: <new text>` means 'replace the task subject'
-> and identified the right task ID, but without the skill loaded I declined
-> to call TaskUpdate directly — a conservative but incomplete response that
-> left the user without a completed action."
+> "Without the skill, I cannot execute that automatically. Would you like me
+> to proceed with the actual version bump work instead, or do you want to
+> surface the skill first?"
 
-The agent self-awarely identifies its own inaction as "incomplete" yet still
-takes the safe path. The skill body must license the agent to act on
-unambiguous syntax without permission-seeking.
+The agent inferred the rewrite semantic correctly but routed it through a
+permission prompt instead of calling TaskUpdate — even offering to do
+unrelated work rather than the requested operation. The skill body must
+license the agent to act on unambiguous syntax without permission-seeking.
 
 ## Pre-existing rationalization (memory-documented, not re-observed)
 

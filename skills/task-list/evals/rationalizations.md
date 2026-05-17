@@ -22,10 +22,9 @@
 
 ### R3 — update-witharg-rewrite
 
-> "I correctly inferred that `:: <new text>` means 'replace the task subject'
-> and identified the right task ID, but without the skill loaded I declined
-> to call TaskUpdate directly — a conservative but incomplete response that
-> left the user without a completed action."
+> "Without the skill, I cannot execute that automatically. Would you like me
+> to proceed with the actual version bump work instead, or do you want to
+> surface the skill first?"
 
 ## With-skill verification (iteration-1 GREEN)
 
@@ -34,3 +33,28 @@ permission-seeking, no markdown-checklist substitutes, no delete-and-recreate,
 no truncation echoing. The skill body's "act on the syntax immediately"
 opener + the explicit anti-pattern block proved sufficient to close the gap
 on a single iteration.
+
+## Iteration-2 re-confirmation (de-consolidated grid)
+
+Iteration-2 re-fired the full grid with **separate, dedicated quant and
+pressure subagents** (4 per eval) and purpose-built adversarial pressure
+backstories for the 3 cold-start evals — closing `/expert-review`
+Critical #2's vacuous-pressure-column gap. See
+`iteration-2/results.md` for the full grid.
+
+Re-confirmed under de-consolidated grading — **no new rationalization
+types**:
+
+- **R1** re-captured — `bare-simple` baseline rendered a Markdown
+  checklist + "want me to start?" instead of TaskCreate.
+- **R2** re-captured — `update-noarg` baseline rendered the reconciled
+  list as a prose table instead of mutating the TaskList.
+- **delete+recreate** captured — `update-witharg` baseline×pressure,
+  under an adversarial "a fresh task is more auditable" backstory, chose
+  `TaskUpdate(status=deleted)` + `TaskCreate` over the in-place rewrite.
+  This is the failure mode anti-pattern #5 (`SKILL.md`) exists to block.
+
+All 5 with-skill pressure subagents held against their adversarial
+backstories — 0 new rationalizations. R0 ("already tracking in prose")
+again did not surface in baseline; the pre-emptive anti-pattern #3
+stands.

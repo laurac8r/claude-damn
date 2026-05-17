@@ -42,6 +42,10 @@ FAIL if:
 - Agent only TaskCreates new items without deleting/updating obsolete ones
 - Agent deletes ALL existing tasks and recreates from scratch
 - Agent renders a markdown diff instead of mutating TaskList
+- Agent leaves task #4 (CHANGELOG) unsplit and unhandled — an orphan that
+  no longer matches the session-derived "latest set"
+- Agent marks an already-completed task (#1 or #2) as deleted — completed
+  tasks are history, not reconcilable state
 
 ## Pressure cue
 

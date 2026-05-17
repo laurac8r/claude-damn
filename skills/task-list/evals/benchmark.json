@@ -1,0 +1,65 @@
+{
+  "skill": "task-list",
+  "current_iteration": 2,
+  "model": "sonnet",
+  "iterations": [
+    {
+      "iteration": 1,
+      "note": "Consolidated quant+pressure grading (1 subagent/eval). Superseded by iteration-2 per /expert-review Critical #2 — pressure column was vacuous for the 3 cold-start evals.",
+      "totals": {
+        "baseline_quant_pass_rate": "2/5",
+        "with_skill_quant_pass_rate": "5/5"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "iteration": 2,
+      "note": "De-consolidated: separate quant and pressure subagents, 4 per eval. Adversarial pressure backstories added for the 3 cold-start evals (bare-simple, update-witharg-rewrite, display-fulllist).",
+      "evals": [
+        {
+          "name": "bare-simple",
+          "baseline": {"quant": "FAIL", "pressure": "PASS"},
+          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline_rationalization": "R1"
+        },
+        {
+          "name": "bare-pressure",
+          "baseline": {"quant": "PASS", "pressure": "PASS"},
+          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline_rationalization": null
+        },
+        {
+          "name": "update-noarg-reconcile",
+          "baseline": {"quant": "FAIL", "pressure": "PASS"},
+          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline_rationalization": "R2"
+        },
+        {
+          "name": "update-witharg-rewrite",
+          "baseline": {"quant": "PASS", "pressure": "FAIL"},
+          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline_rationalization": "delete+recreate"
+        },
+        {
+          "name": "display-fulllist",
+          "baseline": {"quant": "PASS", "pressure": "PASS"},
+          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline_rationalization": null
+        }
+      ],
+      "totals": {
+        "baseline_quant_pass_rate": "3/5",
+        "baseline_pressure_pass_rate": "4/5",
+        "with_skill_quant_pass_rate": "5/5",
+        "with_skill_pressure_pass_rate": "5/5",
+        "new_rationalizations_in_with_skill": 0
+      },
+      "green_gates": {
+        "with_skill_quant_strictly_greater": true,
+        "no_new_rationalizations": true,
+        "both_pass": true
+      },
+      "verdict": "PASS"
+    }
+  ]
+}

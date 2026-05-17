@@ -26,7 +26,7 @@ closing an `/expert-review` methodology finding. Manifests bumped
 
 - `skills/task-list/SKILL.md` — four-mode skill with an anti-pattern
   block keyed to the captured baseline rationalizations.
-- `task-list-workspace/` — `/lets-make-a-skill` eval workspace:
+- `skills/task-list/evals/` — `/lets-make-a-skill` eval workspace:
   iteration-1 and iteration-2 grids, `benchmark.{json,md}`,
   `rationalizations.md`, and the persisted `/expert-review` findings.
 
