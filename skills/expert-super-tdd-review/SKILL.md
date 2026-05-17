@@ -1,6 +1,7 @@
 ---
 name: expert-super-tdd-review
 description: Expert-level review, then brainstorm and fix using TDD
+argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
 

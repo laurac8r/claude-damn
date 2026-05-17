@@ -1,10 +1,11 @@
 ---
 name: lets-make-a-skill
 description:
-    Use when creating or improving a skill that must both perform well on real
-    prompts AND hold under rationalization pressure (discipline rules, process
-    guardrails, workflows agents might shortcut under time or sunk-cost
-    pressure).
+   Use when creating or improving a skill that must both perform well on real
+   prompts AND hold under rationalization pressure (discipline rules, process
+   guardrails, workflows agents might shortcut under time or sunk-cost
+   pressure).
+argument-hint: "<skill-name> [create|update|<directive>]"
 user-invocable: true
 ---
 
