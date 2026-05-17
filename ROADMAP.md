@@ -187,6 +187,12 @@ declarative control over when a named set of skills applies to ongoing work:
       skill-testing methodology currently embedded inside `/writing-skills` into
       a standalone invocation so skills can be pressure-tested independently of
       authoring.
+- [ ] **Harden `/lets-make-a-skill` eval-subagent dispatch** — eval subagents
+      that *simulate* a test agent must run as pure roleplay — no real tool
+      calls, no file reads. The `/task-list` iteration-2 build hit subagents
+      exploring the real repo and contaminating transcripts; a hardened 'no real
+      tools' preamble fixed it on re-run. Bake that preamble into the skill's
+      RED/GREEN subagent-dispatch instructions.
 
 ### Compositional / algebraic skills
 
