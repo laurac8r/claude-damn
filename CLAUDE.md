@@ -9,11 +9,27 @@ these operational directives:
   linters. After modifying code, autonomously execute `uv run ruff check`,
   `uv run ruff format`, and `uv run pytest` to verify your changes before
   reporting completion.
+- **Iron Rule — Recoverable Deletes:** NEVER use `rm`, `rm -rf`, `rm -f`, or any
+  `rm` variant for deletion. ALWAYS use `trash` (`/usr/bin/trash` on macOS) so
+  deletions land in the system Trash and are recoverable.
+   - Applies to files, directories, and globs — no exceptions for "empty" or
+     "obviously safe" targets.
+   - Applies to the main agent AND all subagents.
+   - If `trash` is unavailable in an environment (CI, remote Linux without
+     `trash-cli`), stop and ask the user rather than falling back to `rm`.
+   - Rationale: `rm` is unrecoverable; `trash` gives a one-click restore if the
+     wrong thing gets targeted.
 - **Cost Optimization & Model Routing:**
    - Offload routine work (boilerplate, repetitive CRUD, test stubs, file
      exploration) to Sonnet/Haiku subagents.
    - Reserve Opus for architectural decisions, complex debugging, and business
      logic.
+   - **Hard rule — No Opus subagents:** Never spawn a subagent with `model=opus`
+     via the Task tool. Use `model=sonnet` or `model=haiku` exclusively. The
+     ONLY override is `/batch` (built-in parallel-dispatch command). Enforced by
+     PreToolUse hook `~/.claude/hooks/block_opus_subagent.py`. To override
+     manually (outside `/batch`): set env `CLAUDE_BATCH_MODE=1`, or include the
+     sentinel `[BATCH_OVERRIDE]` in the Task prompt/description.
    - Be aware of when to recommend a manual switch of models:
       - **Suggest `/model opus`** when the task requires sustained deep
         reasoning throughout execution, not just planning — e.g., debugging a
@@ -35,6 +51,12 @@ these operational directives:
      delegate ≥30% of turns to Sonnet/Haiku subagents. Actively look for
      opportunities: file reads, glob/grep searches, test execution, boilerplate
      generation, and commit preparation are all Sonnet-appropriate.
+   - **Prefer `/cat` for subagent dispatch — Claude Max has daily token
+     limits.** Even on Max plans, daily usage caps apply. Dispatch subagents via
+     `/cat` (or compositions like `/super-cat`, `/duper-tdd-cat`) for any
+     token-saveable work: file reads, grep sweeps, test execution, boilerplate,
+     commit preparation, and exploratory research. The main Opus agent should
+     coordinate, not execute, wherever a Sonnet/Haiku subagent can do the work.
    - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus
      session costs ~$0.15-0.35 in cache creation alone. If the task is a quick
      lookup, config tweak, or single-file edit, prefer Sonnet.
@@ -82,14 +104,65 @@ these operational directives:
    - Generate your own if the user is not sure or cannot provide them, and
      reference those for the project from now on.
 
-## Hook Authoring (PreToolUse)
+## Workflow Discipline
 
-- **Per-call feedback (deny / allow / ask):** emit via
-  `hookSpecificOutput.permissionDecisionReason`. The top-level `systemMessage`
-  persists as a `<system-reminder>` across turns — avoid it unless you _want_
-  the text to follow every subsequent tool call.
-- **Hook errors:** write to stderr + `sys.exit(1)`. Do not emit a
-  `systemMessage` on stdout for errors (same persistence problem).
+- Use TDD (RED→GREEN) discipline for hook/skill implementation; never
+  blind-write implementation before tests.
+- All non-trivial work happens in a worktree off main, not directly on main.
+  Stop and create a worktree if you catch yourself editing main.
+- When source + test files are paired changes, commit them together as one
+  atomic commit, not separate commits.
+
+## Scope Discipline
+
+- When user says "explore only", do not propose implementation paths until
+  explicitly invited.
+- Do not pivot to unrequested tasks (e.g. PR reviews) when given a specific
+  request.
+- Match user pacing: if mid-brainstorm, do not silently switch into execute
+  mode.
+
+## Tool Usage Rules
+
+- **Read Before Edit:** Always Read a file before Editing it, even if you think
+  you know its contents. This applies especially to `MEMORY.md`, `CLAUDE.md`,
+  `PERSONALIZATION.md`, and any config file.
+
+## Skill Development & Testing — active-dev / canonical isolation
+
+The operator's `claude-damn` repo is **active-dev**; this `~/.claude/` install
+is **canonical**. Active-dev work must NOT reach into canonical for proprietary
+content (rules, hooks, constants, personalization, memory) — crossing the
+boundary risks leaking personal data into PR-bound artifacts.
+
+**Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill on
+`main`. Branch off into the active-dev repo's `.worktrees/<slug>/` and do all
+source-of-truth edits there. That worktree's `skills/<skill-name>/` is the
+source of truth.
+
+**Skill testing: spin off a `/tmp/` worktree and sync.** When the skill needs to
+be exercised end-to-end (live invocation against a fresh skills surface), do not
+test against this canonical install. Instead:
+
+1. Create a disposable test worktree under `/tmp/` (e.g.,
+   `/tmp/<skill>-test-worktree/`).
+2. Sync the source-of-truth skill from the active-dev worktree into the test
+   worktree's local `.claude/skills/<skill-name>/` directory.
+3. Drive the test environment with the test worktree's `.claude/` as the skills
+   surface — never `~/.claude/`.
+
+Facilitate the sync via fixtures in `tests/conftest.py` or
+`tests/<skill-name>/conftest.py`. Other claude-damn skills already use this
+pattern — match it.
+
+**Why:** keeps active-dev artifacts free of canonical proprietary content, keeps
+tests reproducible across machines/clones, and prevents accidental mutation of
+this canonical install during a test run.
+
+## Interruption Semantics
+
+User interruptions are NOT rejections — they often mean "pause, redirect, or
+shift pacing". Do not treat an interrupt as a signal that the prior approach was wrong; ask what the user wants instead.
 
 ## Cost Tracking
 
@@ -152,40 +225,40 @@ Concretely:
 
 - **Disallowed** — active-dev source code, tests, fixtures, or PR-bound
   artifacts must not read from or embed canonical proprietary content:
-  `~/.claude/rules/` (including `PERSONALIZATION.md`),
-  `~/.claude/hooks/` (proprietary hooks), `~/.claude/projects/.../memory/`,
-  or `~/.tesseract/`. These risk leaking personal data into shipped artifacts.
+  `~/.claude/rules/` (including `PERSONALIZATION.md`), `~/.claude/hooks/`
+  (proprietary hooks), `~/.claude/projects/.../memory/`, or `~/.tesseract/`.
+  These risk leaking personal data into shipped artifacts.
 - **Permitted** — agent-runtime infra that lives in canonical by design and is
   already referenced elsewhere in this doc: `~/.claude/extract_cost.py`,
-  `~/.claude/cost-log/` (the `/cost_` workflow above), and similar
-  install-wide tooling that doesn't carry proprietary content.
+  `~/.claude/cost-log/` (the `/cost_` workflow above), and similar install-wide
+  tooling that doesn't carry proprietary content.
 
 When in doubt: would this path's contents be safe to commit verbatim into a
 public PR? If no, it's proprietary — keep active-dev away from it.
 
-**Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill
-on `main`. Branch off into `.worktrees/<slug>/` and do all source-of-truth
-edits there. The worktree's `skills/<skill-name>/` is the source of truth.
+**Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill on
+`main`. Branch off into `.worktrees/<slug>/` and do all source-of-truth edits
+there. The worktree's `skills/<skill-name>/` is the source of truth.
 
-**Skill testing: spin off a `/tmp/` worktree and sync.** When the skill needs
-to be exercised end-to-end (live invocation against a fresh `~/.claude/skills/`
+**Skill testing: spin off a `/tmp/` worktree and sync.** When the skill needs to
+be exercised end-to-end (live invocation against a fresh `~/.claude/skills/`
 surface), do not test against the operator's canonical install. Instead:
 
 1. Create a disposable test worktree under `/tmp/` (e.g.,
    `/tmp/<skill>-test-worktree/`).
 2. Sync the source-of-truth skill from the active-dev worktree into the test
    worktree's local `.claude/skills/<skill-name>/` directory.
-3. Drive the test environment with the test worktree's `.claude/` as the
-   skills surface — never the operator's canonical `~/.claude/`.
+3. Drive the test environment with the test worktree's `.claude/` as the skills
+   surface — never the operator's canonical `~/.claude/`.
 
 Facilitate the sync via fixtures, ideally in `tests/conftest.py` or
 `tests/<skill-name>/conftest.py`. Match the existing worktree-fixture style
 already used in this repo (e.g. `worker_worktree`); a per-skill
 `tmp_skill_worktree` sync fixture lands in a follow-up PR.
 
-**Why:** keeps active-dev artifacts free of canonical proprietary content,
-keeps tests reproducible across machines/clones, and prevents accidental
-mutation of the operator's live skill install during a test run.
+**Why:** keeps active-dev artifacts free of canonical proprietary content, keeps
+tests reproducible across machines/clones, and prevents accidental mutation of
+the operator's live skill install during a test run.
 
 ## ASCII and Unicode Diagram Alignment
 
@@ -226,6 +299,24 @@ to the following strict spatial rendering constraints:
   `UPPER_SNAKE_CASE` (constants). Prefix internal methods with `_`.
 - **Communication:** Deliver complete, working code over snippets. Omit
   pleasantries and apologies.
+
+## Python 3.14 + Ruff: `except` Tuple Parens
+
+- **[PEP 758](https://peps.python.org/pep-0758/)** (Python 3.14+) makes the
+  parentheses around multi-exception `except` / `except*` clauses optional:
+  `except A, B:` and `except (A, B):` both parse as a tuple and catch A or B. In
+  ≤ 3.13, the unparenthesized form is a `SyntaxError`.
+- **`ruff format` ≥ 0.15 strips the redundant parens** when the project targets
+  3.14+ (detected via `requires-python` in `pyproject.toml`). This is correct
+  and permanent — do not "fix" it by re-adding parens; the next `ruff format`
+  run will strip them again.
+- **GitHub Copilot PR-review** flags the stripped form as a Python 2 SyntaxError
+  — this is a **false positive** on 3.14+ projects. Either configure Copilot
+  with a repo-level `.github/copilot-instructions.md` noting the Python floor,
+  or dismiss the comment with a PEP 758 reference.
+- **When editing 3.14+ code manually:** accept whichever form is already in the
+  file. When writing new `except` clauses, follow the formatted style (no parens
+  for simple tuples, parens only when required by syntax).
 
 ## Type Hinting (Strict)
 
