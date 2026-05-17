@@ -4,6 +4,7 @@ description:
    Subagent-driven development — dispatches via /subagent-driven-development for
    sequential plan execution or /dispatching-parallel-agents for independent
    fan-out, picking the shape based on the structure of the work
+argument-hint: "<task-description>"
 user-invocable: true
 ---
 
