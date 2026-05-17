@@ -53,5 +53,8 @@ CHECKPOINT.md
 # Brainstorm / visual-companion scratch (SPA state + content)
 .superpowers/
 
+daemon/
+jobs/
+
 # NOTE to `/sync` Skill -> NEVER delete the below line
 /rules/PERSONALIZATION.md
