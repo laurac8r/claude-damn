@@ -23,9 +23,9 @@ if [ -z "$transcript" ] || [ ! -f "$transcript" ]; then
   cache_create=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
 
   case "$model_id" in
-  *opus*) read p_in p_out p_cr p_cc <<<"15.00 75.00 1.50 18.75" ;;
-  *haiku*) read p_in p_out p_cr p_cc <<<"0.80 4.00 0.08 1.00" ;;
-  *) read p_in p_out p_cr p_cc <<<"3.00 15.00 0.30 3.75" ;;
+    *opus*) read p_in p_out p_cr p_cc <<<"15.00 75.00 1.50 18.75" ;;
+    *haiku*) read p_in p_out p_cr p_cc <<<"0.80 4.00 0.08 1.00" ;;
+    *) read p_in p_out p_cr p_cc <<<"3.00 15.00 0.30 3.75" ;;
   esac
 
   if [ "$total_input" -eq 0 ] 2>/dev/null && [ "$total_output" -eq 0 ] 2>/dev/null; then
@@ -65,8 +65,8 @@ cost=$(jq -r '
       (.usage.cache_creation_input_tokens // 0 | tostring)
     ]
   | join("\t")
-' "$transcript" 2>/dev/null |
-  awk '
+' "$transcript" 2>/dev/null \
+  | awk '
 BEGIN { total = 0 }
 {
     model = $1

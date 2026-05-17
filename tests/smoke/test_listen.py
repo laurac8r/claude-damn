@@ -23,7 +23,7 @@ class TestSingleSkillReference:
         output = result.stdout.lower()
         assert any(
             phrase in output
-            for phrase in [
+                for phrase in [
                 "red",
                 "green",
                 "refactor",
@@ -62,7 +62,7 @@ class TestCompositionalSkillReference:
         output = result.stdout.lower()
         assert any(
             phrase in output
-            for phrase in [
+                for phrase in [
                 "brainstorm",
                 "worktree",
                 "subagent",
