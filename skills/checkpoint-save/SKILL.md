@@ -194,17 +194,8 @@ Behavior under Case D:
 - Invariant #2 (`**Branch:**` line matches current) — applies to the _live_
   file, which we did not modify. The named archive is not bound by this
   invariant.
-- Invariant #3 (no prior content lost) — the live file was untouched, so
-  nothing was lost.
-
-Observed example: session on `main` branch needed to pause work
-on "claude-damn skills roadmap expansion + HTML→PDF SOP" while
-`~/.claude/CHECKPOINT.md` held live unshipped state on the 2026-04-23 statusline
-dynamic-pricing / Opus 4.7 PRICING row work. Case A would have rolled the
-PRICING state to `.prev.md` and replaced CWD's CHECKPOINT.md with the roadmap
-session. Case D saved the roadmap session to
-`.checkpoints/claude-damn-skills-roadmap.md` and left the PRICING checkpoint
-untouched.
+- Invariant #3 (no prior content lost) — the live file was untouched, so nothing
+  was lost.
 
 ### Step 5 — Write new CHECKPOINT.md
 
