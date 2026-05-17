@@ -55,11 +55,11 @@ def _diff_mirror(
     for rel in sorted(src_paths & tgt_paths):
         s_abs = source / rel
         t_abs = target / rel
-        if _same_content(s_abs, t_abs):
+        s_stat = s_abs.stat()
+        t_stat = t_abs.stat()
+        if s_stat.st_size == t_stat.st_size and _sha(s_abs) == _sha(t_abs):
             continue
-        s_m = s_abs.stat().st_mtime
-        t_m = t_abs.stat().st_mtime
-        if s_m >= t_m:
+        if s_stat.st_mtime >= t_stat.st_mtime:
             ops.append(FileOp(rel, "update", "src→tgt", "newer mtime in source"))
         else:
             ops.append(FileOp(rel, "update", "tgt→src", "newer mtime in target"))

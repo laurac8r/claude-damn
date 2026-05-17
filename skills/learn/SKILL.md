@@ -4,7 +4,7 @@ description:
    "Use when you want to review the current session for skills that misfired
    (skipped, invoked-but-ignored, or triggered user corrections) and update them
    — scans the active transcript, classifies findings, and delegates fixes to
-   /writing-skills with per-finding approval"
+   /lets-make-a-skill with per-finding approval"
 user-invocable: true
 ---
 
@@ -12,13 +12,13 @@ user-invocable: true
 
 Invoked at the end of (or partway through) a session. `/learn` reviews the
 active transcript, identifies skills that **misfired**, and delegates fixes to
-`/writing-skills` — with a per-finding approval gate between detection and edit.
+`/lets-make-a-skill` — with a per-finding approval gate between detection and edit.
 
 **First action:** Invoke `/listen` with this argument:
 
-> `/writing-skills update any skill that misfired in the current session, following the analysis playbook below.`
+> `/lets-make-a-skill update any skill that misfired in the current session, following the analysis playbook below.`
 
-`/listen`'s enforcement layer guarantees `/writing-skills` is invoked for each
+`/listen`'s enforcement layer guarantees `/lets-make-a-skill` is invoked for each
 approved finding. The playbook below is the work content `/listen` carries
 forward.
 
@@ -56,12 +56,12 @@ Review the transcript in two passes:
 | **Re-prompt**                                    | User restates or clarifies the same request — skill interpreted it wrongly                                                            |
 
 Also capture the **rationalization verbatim** — the sentence Claude used to
-justify the misfire. `/writing-skills` needs this to add a specific counter.
+justify the misfire. `/lets-make-a-skill` needs this to add a specific counter.
 
 ### 3. Classify each finding
 
 - **Misfire** — the skill's text is wrong, incomplete, or its triggers don't
-  match the scenario. Fixable via `/writing-skills`.
+  match the scenario. Fixable via `/lets-make-a-skill`.
 - **Preference shift** — the skill followed its text faithfully; the user simply
   wants different behavior going forward. Report separately; **do not
   auto-update**.
@@ -81,13 +81,13 @@ For each row ask: **approve**, **skip**, or **reclassify**.
 
 ### 5. Apply approved fixes
 
-For each approved misfire, invoke `/writing-skills` with:
+For each approved misfire, invoke `/lets-make-a-skill` with:
 
 - the skill's file path,
 - the observed rationalization/gap (verbatim),
 - enough context for a pressure scenario.
 
-`/writing-skills` carries its own TDD discipline — do not bypass it.
+`/lets-make-a-skill` carries its own TDD discipline — do not bypass it.
 
 ### 6. Update scope
 
@@ -115,7 +115,7 @@ finding but do not edit.
 - **No skills used** → report "no skill invocations found" and exit.
 - **All skills used correctly** → report "no misfires detected".
 - **All findings are preference shifts** → surface as a design-question list, do
-  not call `/writing-skills`.
+  not call `/lets-make-a-skill`.
 - **Misfire lives in plugin cache** → surface, note it cannot be edited, suggest
   filing upstream.
 - **Transcript unreadable / JSONL corrupt** → report the error; do not proceed
