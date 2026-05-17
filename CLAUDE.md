@@ -7,8 +7,13 @@ these operational directives:
 
 - **Proactive Verification:** Do not wait for user permission to run tests or
   linters. After modifying code, autonomously execute `uv run ruff check`,
-  `uv run ruff format`, and `uv run pytest` to verify your changes before
-  reporting completion.
+  `uv run ruff format`, and `uv run pytest` for Python projects to verify your
+  changes before reporting completion.
+   - Similarly, run
+      - `flutter analyze`, `flutter test`, and `flutter build` for Dart
+        (Flutter) projects.
+      - `prettier` and `npm test` for JavaScript projects [//]: # ( TODO: Add
+        more language-specific format+test+build commands in the future. )
 - **Iron Rule — Recoverable Deletes:** NEVER use `rm`, `rm -rf`, `rm -f`, or any
   `rm` variant for deletion. ALWAYS use `trash` (`/usr/bin/trash` on macOS) so
   deletions land in the system Trash and are recoverable.
@@ -78,10 +83,11 @@ these operational directives:
         more than one statement is needed, use the write-to-`/tmp/` workflow
         above.
    - **This repo's `hooks/block-inline-scripts.py` also enforces (PreToolUse
-     Bash):** max 400 chars per command and max 4 statement separators (`;`,
+     Bash):** max 500 chars per command and max 10 statement separators (`;`,
      `&&`, `||`, `|`, `>`, `<`, `\n`, `>>`, `<<`). Exceeding either triggers a
      deny. Split long/chained commands across separate Bash calls rather than
-     chaining.
+     chaining. Refer to @~/.claude/hooks/constants.py for the most up-to-date
+     limits.
 
 - **Git Commits:**
    - The user prefers to handle all `git commit` (and its variants) operations
@@ -113,6 +119,81 @@ these operational directives:
 - When source + test files are paired changes, commit them together as one
   atomic commit, not separate commits.
 
+## Adaptive Software Development (ASwD)
+
+- **NOTE:** Using slightly different acronym than typically found online to
+  disambiguate from Autism Spectrum Disorder (ASD)
+
+ASwD (Highsmith) frames change as the default state of software work, not an
+exception. The overall loop is **Speculate → Collaborate → Learn**, and the work
+is characterized as **mission-focused, feature-based, iterative, time-boxed,
+risk-driven, and change-tolerant**. Apply these as the meta- framing on top of
+everything else in this doc.
+
+### Speculate (not plan)
+
+- Treat plans as hypotheses, not commitments. State the mission and the smallest
+  next experiment; accept that downstream steps will change as new information
+  arrives.
+- Use `/writing-plans` and `/brainstorming` for the initial speculation pass. Do
+  not over-commit to plan detail beyond the next iteration.
+- Time-box each iteration. If a task runs past its box, **re-speculate** rather
+  than push through on stale assumptions. Two failed fix attempts on the same
+  bug = stop and re-diagnose (mirrors the Debugging Discipline rule in
+  `PERSONALIZATION.md`).
+
+### Collaborate (with the operator and across subagents)
+
+- The operator works in parallel sessions and changes direction as new
+  information arrives. Re-read state (`git status`, files, `MEMORY.md`) before
+  acting on stale snapshots — earlier-session numbers decay silently.
+- Decompose into independently completable units and dispatch via `/cat`
+  compositions where the work is parallelizable. The main Opus agent
+  coordinates; subagents collaborate as peers, not as terminals to be driven.
+- Surface trade-offs back to the operator (`AskUserQuestion` at decision points)
+  rather than silently choosing. Rejection ≠ disagreement — ask what she wants
+  instead.
+
+### Learn (every iteration)
+
+- After each task batch, offer the operator/user that we take a learning pass:
+  `/cost_`, `/learn`, update `MEMORY.md` for non-obvious feedback, and adjust
+  the next speculation based on what just happened.
+- Treat surprises (rejected tool calls, blocked hooks, unexpected test failures)
+  as **data about the model of the system**, not noise. Update the mental model
+  before retrying the same operation.
+- Both successes and failures are learning material — record validated
+  approaches as feedback memories, not just corrections.
+
+### Girl, Boy Scout Rule — bounded
+
+> THE BOY SCOUTS HAVE A RULE: “Always leave the campground cleaner than you
+> found it.” If you find a mess on the ground, you clean it up regardless of who
+> might have made it. You intentionally improve the environment for the next
+> group of campers. (Actually, the original form of that rule, written by Robert
+> Stephenson Smyth Baden-Powell, the father of scouting, was “Try and leave this
+> world a little better than you found it.”)
+
+- Written by Robert C. Martin, excerpt in _97 Things Every Programmer Should
+  Know_ (edited) by Kevlin Henney
+
+Leave touched code marginally better than you found it. This rule lives in
+tension with the system-prompt directive "don't add features, refactor, or
+introduce abstractions beyond what the task requires" — the resolution below
+makes both true.
+
+- **Permissible cleanups, only in code you are already editing for the task:**
+  rename a confusing local variable, remove a now-unused import, fix a typo in a
+  nearby docstring, add a missing assertion to an existing test, tighten a type
+  hint, delete a dead branch.
+- **Rule of thumb:** if the cleanup would make the diff harder to review, make
+  the PR title less accurate, or warrant its own commit message, it's out of
+  scope — open a follow-up issue/PR instead.
+- **Broken-windows prevention is the goal:** small constant maintenance reverses
+  code rot over time. But it MUST stay small, in-path, and reviewable in the
+  same diff. A bug-fix PR that grows a refactor lobe is no longer a bug-fix PR —
+  split it (mirrors the "prefer smaller PRs" rule in `PERSONALIZATION.md`).
+
 ## Scope Discipline
 
 - When user says "explore only", do not propose implementation paths until
@@ -130,10 +211,12 @@ these operational directives:
 
 ## Skill Development & Testing — active-dev / canonical isolation
 
-The operator's `claude-damn` repo is **active-dev**; this `~/.claude/` install
-is **canonical**. Active-dev work must NOT reach into canonical for proprietary
-content (rules, hooks, constants, personalization, memory) — crossing the
-boundary risks leaking personal data into PR-bound artifacts.
+The operator's `claude-damn` repo is **active-dev**; The operator's installed
+Claude config at `~/.claude/` install is **canonical**.
+
+Active-dev work must NOT reach into canonical for proprietary content (rules,
+hooks, constants, personalization, memory) — crossing the boundary risks leaking
+personal data into PR-bound artifacts.
 
 **Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill on
 `main`. Branch off into the active-dev repo's `.worktrees/<slug>/` and do all
@@ -155,26 +238,47 @@ Facilitate the sync via fixtures in `tests/conftest.py` or
 `tests/<skill-name>/conftest.py`. Other claude-damn skills already use this
 pattern — match it.
 
+## Public (Open-source) vs Private (Proprietary)
+
+The isolation boundary applies to **proprietary content**, not to the
+agent-runtime infrastructure that the rest of this CLAUDE.md already references.
+Concretely:
+
+- **Disallowed** — active-dev source code, tests, fixtures, or PR-bound
+  artifacts must not read from or embed canonical proprietary content:
+  `~/.claude/rules/` (including `PERSONALIZATION.md`), `~/.claude/hooks/`
+  (proprietary hooks), `~/.claude/projects/.../memory/`, or `~/.tesseract/`.
+  These risk leaking personal data into shipped artifacts.
+- **Permitted** — agent-runtime infra that lives in canonical by design and is
+  already referenced elsewhere in this doc: `~/.claude/extract_cost.py`,
+  `~/.claude/cost-log/` (the `/cost_` workflow above), and similar install-wide
+  tooling that doesn't carry proprietary content.
+
 **Why:** keeps active-dev artifacts free of canonical proprietary content, keeps
 tests reproducible across machines/clones, and prevents accidental mutation of
 this canonical install during a test run.
 
+When in doubt: would this path's contents be safe to commit verbatim into an
+open-source (public) PR? If no, it's proprietary — keep active-dev away from it.
+
 ## Interruption Semantics
 
-User interruptions are NOT rejections — they often mean "pause, redirect, or
-shift pacing". Do not treat an interrupt as a signal that the prior approach was wrong; ask what the user wants instead.
+User interruptions are NOT (necessarily) rejections — they often mean "pause,
+redirect, or shift pacing". Do not treat an interrupt
+as a signal that the prior approach was wrong: Ask what the user wants instead.
 
 ## Cost Tracking
 
-- After completing a multi-step task, run `/cost_` to extract and log the
-  current session's cost data.
+- After completing a multi-step task, optionally offer to run `/cost_` to
+  extract and log the current session's cost data. -> Skip if the operator has a
+  Claude Max subscription.
    - The `/cost_` Skill runs `~/.claude/extract_cost.py` which parses session
      JSONL files for real token usage from assistant message `usage` fields and
      calculates cost via Anthropic API pricing.
    - Logs are written as JSONL to `~/.claude/cost-log/` with filenames like
      `YYYY-MM-DD_HHmm_{session}.jsonl`.
-- Run `/cost-opt` periodically to compact logs and review optimization
-  suggestions.
+   - Run `/cost-opt` periodically to compact logs and review optimization
+     suggestions.
 
 ## Memory & Context Management
 
@@ -192,7 +296,9 @@ shift pacing". Do not treat an interrupt as a signal that the prior approach was
 - **Long-Term Memory:**
    - For persistent project knowledge that must survive context clears, log key
      decisions and active TODOs briefly in `docs/ARCHITECTURE.md` or
-     `MEMORY.md`.
+     `MEMORY.md`, and update the `README.md` for project-level
+     instructions/context/intro and the `ROADMAP.md` for a timeline on when
+     certain things were added/removed/updated in the project.
 - **Shared-Agent Memory:**
    - Agents share a `shared/` memory directory that they actively update and
      read.
@@ -214,53 +320,7 @@ shift pacing". Do not treat an interrupt as a signal that the prior approach was
 4. **Worktrees:** use `.worktrees/<slug>/` (hidden, gitignored). `CHECKPOINT.md`
    at worktree root is also gitignored — don't `git add` it.
 
-## Skill Development & Testing — active-dev / canonical isolation
-
-This repo (claude-damn) is **active-dev**. The operator's installed Claude
-config at `~/.claude/` is **canonical**.
-
-The isolation boundary applies to **proprietary content**, not to the
-agent-runtime infrastructure that the rest of this CLAUDE.md already references.
-Concretely:
-
-- **Disallowed** — active-dev source code, tests, fixtures, or PR-bound
-  artifacts must not read from or embed canonical proprietary content:
-  `~/.claude/rules/` (including `PERSONALIZATION.md`), `~/.claude/hooks/`
-  (proprietary hooks), `~/.claude/projects/.../memory/`, or `~/.tesseract/`.
-  These risk leaking personal data into shipped artifacts.
-- **Permitted** — agent-runtime infra that lives in canonical by design and is
-  already referenced elsewhere in this doc: `~/.claude/extract_cost.py`,
-  `~/.claude/cost-log/` (the `/cost_` workflow above), and similar install-wide
-  tooling that doesn't carry proprietary content.
-
-When in doubt: would this path's contents be safe to commit verbatim into a
-public PR? If no, it's proprietary — keep active-dev away from it.
-
-**Skill writing/creating/updating: ALWAYS in a worktree.** Never edit a skill on
-`main`. Branch off into `.worktrees/<slug>/` and do all source-of-truth edits
-there. The worktree's `skills/<skill-name>/` is the source of truth.
-
-**Skill testing: spin off a `/tmp/` worktree and sync.** When the skill needs to
-be exercised end-to-end (live invocation against a fresh `~/.claude/skills/`
-surface), do not test against the operator's canonical install. Instead:
-
-1. Create a disposable test worktree under `/tmp/` (e.g.,
-   `/tmp/<skill>-test-worktree/`).
-2. Sync the source-of-truth skill from the active-dev worktree into the test
-   worktree's local `.claude/skills/<skill-name>/` directory.
-3. Drive the test environment with the test worktree's `.claude/` as the skills
-   surface — never the operator's canonical `~/.claude/`.
-
-Facilitate the sync via fixtures, ideally in `tests/conftest.py` or
-`tests/<skill-name>/conftest.py`. Match the existing worktree-fixture style
-already used in this repo (e.g. `worker_worktree`); a per-skill
-`tmp_skill_worktree` sync fixture lands in a follow-up PR.
-
-**Why:** keeps active-dev artifacts free of canonical proprietary content, keeps
-tests reproducible across machines/clones, and prevents accidental mutation of
-the operator's live skill install during a test run.
-
-## ASCII and Unicode Diagram Alignment
+## ASCII, Unicode, and [Optionally] Markdown Diagram Alignment
 
 When asked to generate or modify ASCII or Unicode text diagrams, you MUST adhere
 to the following strict spatial rendering constraints:
@@ -277,6 +337,9 @@ to the following strict spatial rendering constraints:
    (```markdown) to ensure monospace rendering.
 5. **Alternative:** Ask the user if a Mermaid.js or PlantUML diagram is
    preferred before attempting highly complex ASCII rendering.
+
+Note: Markdown can render differently than it appears as code, so try alignment
+first but defer to the user if they call out any Markdown line spacing issues.
 
 ---
 
