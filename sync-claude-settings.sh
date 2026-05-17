@@ -25,15 +25,15 @@ crash-landing() {
 
 # Validate canonical is parseable JSON before we touch local.
 if command -v python3 >/dev/null 2>&1; then
-  python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$CANONICAL" ||
-    crash-landing "canonical is not valid JSON: $CANONICAL"
+  python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$CANONICAL" \
+    || crash-landing "canonical is not valid JSON: $CANONICAL"
 fi
 
 mode="sync"
 case "${1:-}" in
---dry | --diff) mode="dry" ;;
-"") ;;
-*) crash-landing "unknown flag: $1 (use --dry or --diff)" ;;
+  --dry | --diff) mode="dry" ;;
+  "") ;;
+  *) crash-landing "unknown flag: $1 (use --dry or --diff)" ;;
 esac
 
 if [[ ! -f "$LOCAL" ]]; then

@@ -185,8 +185,8 @@ teardown() {
   candidates=()
   for f in "$ARCHIVE"/*.md; do
     case "$f" in
-    *.prev.md) continue ;;
-    *) candidates+=("$f") ;;
+      *.prev.md) continue ;;
+      *) candidates+=("$f") ;;
     esac
   done
 

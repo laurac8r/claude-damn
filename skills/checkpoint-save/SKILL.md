@@ -156,12 +156,12 @@ working on an unrelated concern). Case A would clobber it by rolling it to
 only when one of the following is true:
 
 - The operator explicitly signals it ("don't overwrite the existing
-  CHECKPOINT.md", "save to a named slug", "this is a parallel thread", "keep
-  the live one intact").
+  CHECKPOINT.md", "save to a named slug", "this is a parallel thread", "keep the
+  live one intact").
 - The existing file's **Current State** / **Next Steps** / **Session context**
-  sections describe work clearly unrelated to this session's focus, AND the
-  file is recent enough (mtime < 30 days) to plausibly be live. In ambiguous
-  cases, **ask before deciding** — do not silently downgrade to Case A.
+  sections describe work clearly unrelated to this session's focus, AND the file
+  is recent enough (mtime < 30 days) to plausibly be live. In ambiguous cases,
+  **ask before deciding** — do not silently downgrade to Case A.
 
 Behavior under Case D:
 
@@ -299,19 +299,19 @@ Fallback if it doesn't auto-trigger: `Resume from CHECKPOINT.md`
   to the unrelated effort. `/checkpoint-resume` will not auto-find a Case-D
   archive — calling out the path is the only way the user reaches it.
 
-**Why this fires every save:** the user opens a fresh session days later from
-a terminal that has no scrollback. The resume footer is the only durable
-handoff she sees at session start. Step 7's prose report doesn't survive
-context loss; the footer's literal command block does.
+**Why this fires every save:** the user opens a fresh session days later from a
+terminal that has no scrollback. The resume footer is the only durable handoff
+she sees at session start. Step 7's prose report doesn't survive context loss;
+the footer's literal command block does.
 
 #### Rationalizations to reject (Step 8)
 
-| Excuse                                                                | Reality                                                                                                                                                                                                                                                                              |
-| --------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| "The CHECKPOINT.md path is obvious from earlier in the session"       | The user opens a fresh session days later from a terminal that has no scrollback; the resume footer is the only durable handoff she sees at session start. Always print it.                                                                                                          |
-| "I already mentioned the path in Step 7's report"                     | Step 7's report is prose ("staged" / "intentionally untracked"). Step 8 is a copy-pasteable command block. The two are not interchangeable — the user must be able to copy-paste without re-typing or hunting for the path inside a sentence.                                        |
-| "I'm under Case D, the user knows where her named archive is"         | She does not. Case D archives live under `.checkpoints/<slug>.md` — names she chose under time pressure mid-pause. Days later she will not recall whether it was `claude-damn-skills-roadmap` or `claude-damn-roadmap-skills` or just `roadmap`. Print the literal path.             |
-| "/check-yourself's footer will print this — I don't need to repeat"   | /check-yourself only prints the footer at pause/checkpoint boundaries. /checkpoint-save fires from many entry points (operator-direct, /pause flow, /super-tdd-cat finalization, etc.); not all of those route through /check-yourself afterward. Each skill prints its own footer.  |
+| Excuse                                                              | Reality                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The CHECKPOINT.md path is obvious from earlier in the session"     | The user opens a fresh session days later from a terminal that has no scrollback; the resume footer is the only durable handoff she sees at session start. Always print it.                                                                                                         |
+| "I already mentioned the path in Step 7's report"                   | Step 7's report is prose ("staged" / "intentionally untracked"). Step 8 is a copy-pasteable command block. The two are not interchangeable — the user must be able to copy-paste without re-typing or hunting for the path inside a sentence.                                       |
+| "I'm under Case D, the user knows where her named archive is"       | She does not. Case D archives live under `.checkpoints/<slug>.md` — names she chose under time pressure mid-pause. Days later she will not recall whether it was `claude-damn-skills-roadmap` or `claude-damn-roadmap-skills` or just `roadmap`. Print the literal path.            |
+| "/check-yourself's footer will print this — I don't need to repeat" | /check-yourself only prints the footer at pause/checkpoint boundaries. /checkpoint-save fires from many entry points (operator-direct, /pause flow, /super-tdd-cat finalization, etc.); not all of those route through /check-yourself afterward. Each skill prints its own footer. |
 
 ## Invariants
 

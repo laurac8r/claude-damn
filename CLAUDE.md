@@ -264,8 +264,8 @@ open-source (public) PR? If no, it's proprietary — keep active-dev away from i
 ## Interruption Semantics
 
 User interruptions are NOT (necessarily) rejections — they often mean "pause,
-redirect, or shift pacing". Do not treat an interrupt
-as a signal that the prior approach was wrong: Ask what the user wants instead.
+redirect, or shift pacing". Do not treat an interrupt as a signal that the prior
+approach was wrong: Ask what the user wants instead.
 
 ## Cost Tracking
 

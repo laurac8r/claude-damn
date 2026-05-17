@@ -7,7 +7,8 @@ description:
    circles on X', 'what have I learned about X', 'what did past-me say about X',
    'I keep rediscovering this'."
 user-invocable: true
-argument-hint: '[anchor] [--signal "<morse>"] [--retro] | --visual [--out <path>]'
+argument-hint:
+   '[anchor] [--signal "<morse>"] [--retro] | --visual [--out <path>]'
 ---
 
 # /tesseract — Step Outside Time
@@ -55,22 +56,22 @@ pollute the ledger with meta-entries. See the test contract in
 ### 1 · Resolve the anchor
 
 Parse `$ARGUMENTS` in two passes — first strip the standalone `--retro` flag,
-then split on `--signal`. Treat a quoted `--signal "..."` value as opaque
-signal text while parsing flags: tokens inside that quoted string are not
-scanned for `--retro` or any other flag syntax.
+then split on `--signal`. Treat a quoted `--signal "..."` value as opaque signal
+text while parsing flags: tokens inside that quoted string are not scanned for
+`--retro` or any other flag syntax.
 
-- **`--retro` pass.** If the standalone token `--retro` appears in
-  `$ARGUMENTS` outside any quoted `--signal` value, set `retro=true` and
-  remove that token from the argument string. If no such standalone token
-  appears, `retro=false`. Order-independent among top-level arguments:
-  `--retro` may sit before the anchor, between anchor and `--signal`, or after
-  the signal value; if `--signal` is also present, only a separate standalone
-  `--retro` token outside the quoted signal value counts.
+- **`--retro` pass.** If the standalone token `--retro` appears in `$ARGUMENTS`
+  outside any quoted `--signal` value, set `retro=true` and remove that token
+  from the argument string. If no such standalone token appears, `retro=false`.
+  Order-independent among top-level arguments: `--retro` may sit before the
+  anchor, between anchor and `--signal`, or after the signal value; if
+  `--signal` is also present, only a separate standalone `--retro` token outside
+  the quoted signal value counts.
 - **`--signal` split.** With `--retro` removed, split the remainder on
-  `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right
-  side must begin with a `"..."` quoted string → `signal`. If `--signal`
-  appears but no quoted value follows, print a one-line warning and fall back
-  to the default signal.
+  `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right side
+  must begin with a `"..."` quoted string → `signal`. If `--signal` appears but
+  no quoted value follows, print a one-line warning and fall back to the default
+  signal.
 - **`--retro` + `--signal` combination.** If `retro=true` and `--signal` was
   provided, print a one-line warning (`(retro mode — ignoring --signal)`) and
   discard the signal entirely — do not write, log, or emit it in the rendered
@@ -166,10 +167,10 @@ inside a hallway (storage is a separate concern — see step 6).
 
 **Hallway 1 — git time-strings.** Run a precondition check first:
 `git rev-parse --is-inside-work-tree 2>/dev/null`. If this exits non-zero (cwd
-isn't a git repository), print
-`(not in a git repository — Hallway 1 silent)` and skip the cascade entirely.
-Do **not** synthesize a custom message ("not in a git repo at /path/x") and do
-**not** fall through to the free-text grep — both leak cwd or produce noise.
+isn't a git repository), print `(not in a git repository — Hallway 1 silent)`
+and skip the cascade entirely. Do **not** synthesize a custom message ("not in a
+git repo at /path/x") and do **not** fall through to the free-text grep — both
+leak cwd or produce noise.
 
 Otherwise cascade; stop at first match:
 
@@ -214,8 +215,8 @@ each: `- <d>d ago — "<signal>"`. If none, `(no prior signals — first visit)`
 
 ### 6 · Drop a book (leave gravity signals)
 
-**Retro short-circuit.** If `retro=true`, skip this entire step. In retro
-mode the skill does **not** prepend a shelf block and does **not** append a
+**Retro short-circuit.** If `retro=true`, skip this entire step. In retro mode
+the skill does **not** prepend a shelf block and does **not** append a
 bulk-beings line — no `<ts>`, no `printf`, no Write to either file. Retro is
 observation-only: you are looking at the tesseract from outside; you are not
 adding a book to its shelf. Skip directly to step 7.
@@ -300,9 +301,9 @@ Signal: "<signal>"
 Learning: <one-line-learning>
 ```
 
-**Retro mode (`retro=true`):** the header carries a `[retro …]` marker, and
-the `📉 Dropped a book` block is replaced with an `👁️ Observed only` block
-that affirms the read-only nature of the visit.
+**Retro mode (`retro=true`):** the header carries a `[retro …]` marker, and the
+`📉 Dropped a book` block is replaced with an `👁️ Observed only` block that
+affirms the read-only nature of the visit.
 
 ```text
 # 🧊 Tesseract: <anchor>
@@ -336,8 +337,8 @@ Mode: retro (no shelf prepend, no bulk-beings append)
 
 `<N>` is `N_before` — the count of visits _before_ this invocation's shelf
 write. On a first visit this reads `0 prior visits`, which is correct: the
-current invocation's own book-drop isn't prior to itself. Retro mode performs
-no write, so `N_before` simply equals the current shelf count for that anchor.
+current invocation's own book-drop isn't prior to itself. Retro mode performs no
+write, so `N_before` simply equals the current shelf count for that anchor.
 
 ---
 

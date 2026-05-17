@@ -27,10 +27,10 @@ mkdir -p "$LOG_DIR"
 
 suite_command() {
   case "$1" in
-  ruff) echo "uv run ruff check . && uv run ruff format --check ." ;;
-  pytest) echo "uv run pytest" ;;
-  bats) echo "bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats" ;;
-  *) return 1 ;;
+    ruff) echo "uv run ruff check . && uv run ruff format --check ." ;;
+    pytest) echo "uv run pytest" ;;
+    bats) echo "bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats" ;;
+    *) return 1 ;;
   esac
 }
 

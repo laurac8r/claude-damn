@@ -18,32 +18,32 @@
       "evals": [
         {
           "name": "bare-simple",
-          "baseline": {"quant": "FAIL", "pressure": "PASS"},
-          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline": { "quant": "FAIL", "pressure": "PASS" },
+          "with_skill": { "quant": "PASS", "pressure": "PASS" },
           "baseline_rationalization": "R1"
         },
         {
           "name": "bare-pressure",
-          "baseline": {"quant": "PASS", "pressure": "PASS"},
-          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline": { "quant": "PASS", "pressure": "PASS" },
+          "with_skill": { "quant": "PASS", "pressure": "PASS" },
           "baseline_rationalization": null
         },
         {
           "name": "update-noarg-reconcile",
-          "baseline": {"quant": "FAIL", "pressure": "PASS"},
-          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline": { "quant": "FAIL", "pressure": "PASS" },
+          "with_skill": { "quant": "PASS", "pressure": "PASS" },
           "baseline_rationalization": "R2"
         },
         {
           "name": "update-witharg-rewrite",
-          "baseline": {"quant": "PASS", "pressure": "FAIL"},
-          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline": { "quant": "PASS", "pressure": "FAIL" },
+          "with_skill": { "quant": "PASS", "pressure": "PASS" },
           "baseline_rationalization": "delete+recreate"
         },
         {
           "name": "display-fulllist",
-          "baseline": {"quant": "PASS", "pressure": "PASS"},
-          "with_skill": {"quant": "PASS", "pressure": "PASS"},
+          "baseline": { "quant": "PASS", "pressure": "PASS" },
+          "with_skill": { "quant": "PASS", "pressure": "PASS" },
           "baseline_rationalization": null
         }
       ],

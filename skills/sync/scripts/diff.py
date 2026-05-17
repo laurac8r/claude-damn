@@ -76,7 +76,7 @@ def _flip(ops: tuple[FileOp, ...]) -> tuple[FileOp, ...]:
             .replace("target", "source")
             .replace("__SRC__", "target"),
         )
-        for o in ops
+            for o in ops
     )
 
 

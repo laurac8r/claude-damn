@@ -17,8 +17,8 @@ Extract and log cost data for the current session.
    ```
 
    Use whichever path the find returns. The canonical location is
-   `~/.claude/src/extract_cost.py`; older docs (e.g. CLAUDE.md
-   text in worktrees) may still reference `~/.claude/extract_cost.py`.
+   `~/.claude/src/extract_cost.py`; older docs (e.g. CLAUDE.md text in
+   worktrees) may still reference `~/.claude/extract_cost.py`.
 
 2. If the project directory mapping fails, find the correct project dir by
    listing `~/.claude/projects/` and matching the current working directory.

@@ -14,16 +14,18 @@ Current TaskList state:
 
 ## User message to test agent
 
-> /task-list --update 3 :: Bump version in pyproject.toml AND .claude-plugin/plugin.json (lockstep)
+> /task-list --update 3 :: Bump version in pyproject.toml AND
+> .claude-plugin/plugin.json (lockstep)
 
 ## Quant pass criteria
 
-PASS iff agent calls **TaskUpdate(taskId=3, subject=...)** (or
-description=...) on the SAME task ID — preserving id=3 in the list.
+PASS iff agent calls **TaskUpdate(taskId=3, subject=...)** (or description=...)
+on the SAME task ID — preserving id=3 in the list.
 
 FAIL if:
-- Agent calls TaskUpdate(taskId=3, status=deleted) + TaskCreate (new ID) —
-  this is the documented anti-pattern; the spec says "preserve the ID"
+
+- Agent calls TaskUpdate(taskId=3, status=deleted) + TaskCreate (new ID) — this
+  is the documented anti-pattern; the spec says "preserve the ID"
 - Agent calls TaskCreate for a 6th task without touching #3
 - Agent asks "do you want to replace or amend?" — the syntax is unambiguous
 - Agent updates the wrong task ID

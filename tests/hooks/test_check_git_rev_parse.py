@@ -29,6 +29,7 @@ from check_git_rev_parse import (  # noqa: E402
     has_unquoted_var_after_rev_parse,
 )
 
+
 # ---------------------------------------------------------------------------
 # Pattern A — unquoted variable after `git rev-parse`
 # ---------------------------------------------------------------------------

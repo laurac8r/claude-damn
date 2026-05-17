@@ -12,14 +12,15 @@ user-invocable: true
 
 Invoked at the end of (or partway through) a session. `/learn` reviews the
 active transcript, identifies skills that **misfired**, and delegates fixes to
-`/lets-make-a-skill` — with a per-finding approval gate between detection and edit.
+`/lets-make-a-skill` — with a per-finding approval gate between detection and
+edit.
 
 **First action:** Invoke `/listen` with this argument:
 
 > `/lets-make-a-skill update any skill that misfired in the current session, following the analysis playbook below.`
 
-`/listen`'s enforcement layer guarantees `/lets-make-a-skill` is invoked for each
-approved finding. The playbook below is the work content `/listen` carries
+`/listen`'s enforcement layer guarantees `/lets-make-a-skill` is invoked for
+each approved finding. The playbook below is the work content `/listen` carries
 forward.
 
 ## Analysis Playbook

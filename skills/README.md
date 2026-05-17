@@ -60,9 +60,9 @@ skill:
 
 ### Base: Skill Creation
 
-| Skill                    | Modifiers                                            | Invokes                                                                                                        |
-| ------------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `/lets-make-a-skill`     | skill-creator + super + duper + cat + writing-skills | /skill-creator + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development + /writing-skills |
+| Skill                | Modifiers                                            | Invokes                                                                                                        |
+| -------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `/lets-make-a-skill` | skill-creator + super + duper + cat + writing-skills | /skill-creator + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development + /writing-skills |
 
 ## Other Skills
 
