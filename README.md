@@ -312,6 +312,18 @@ third-party service. Specifically:
 If any future version of `claude-damn` adds data collection or transmission,
 this section will be updated before that version ships.
 
+## Bonus Track: Jetbrains Configs
+
+Prettier `Run for Files` setting:
+
+```
+\*_/_.{js,ts,jsx,tsx,cjs,cts,mjs,mts,json,vue,astro,md,mdx,toml,yaml,yml}
+```
+
+`Compare Files` tool canonical vs. active-dev:
+
+`!.idea/*&!projects/*&!backups/*&!cost-log/*&!cache/*&!file-history/*&!ide/*&!paste-cache/*&!plugins/*&!serena-dashboard-static/*&!session-env/*&!sessions/*&!tasks/*&!shell-snapshots/*&!telemetry/*&!security*warnings*.json*&!history.jsonl*&!settings.json*&!!tests/fixtures/settings.json*&!policy-limits.json*&!.worktrees/*&!worktrees/*&!.checkpoints/*&!.remember*&!CHECKPOINT.md*&!.claude*&!docs/superpowers*&!**pycache**/*&!*.py[cod]*&!.venv/*&!\*.egg-info/!.idea/*&!projects/*&!backups/*&!cost-log/*&!cache/*&!file-history/*&!ide/*&!paste-cache/*&!plugins/*&!serena-dashboard-static/*&!session-env/*&!sessions/*&!tasks/*&!shell-snapshots/*&!telemetry/*&!security*warnings*.json*&!history.jsonl*&!settings.json*&!!tests/fixtures/settings.json*&!policy-limits.json*&!.worktrees/*&!worktrees/*&!.checkpoints/*&!.remember*&!CHECKPOINT.md*&!.claude*&!docs/superpowers*&!**pycache**/*&!*.py[cod]*&!.venv/*&!*.egg-info/*&!brainstorming/*&!usage-data/*`
+
 ## License
 
 [MIT](LICENSE)
