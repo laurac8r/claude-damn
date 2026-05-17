@@ -24,7 +24,7 @@ here, edit it — the file is yours. If you disagree with a rule in
 - One commit per file — or per script/test pair — for atomic, reviewable
   history.
 
-## Model routing [default] [soft]
+## Model routing [policy] [soft]
 
 - Sonnet for config edits, dotfile management, short exploratory sessions
   (<10 turns), git operations, file scaffolding, read-heavy research.
@@ -33,12 +33,27 @@ here, edit it — the file is yours. If you disagree with a rule in
   contextual reasoning across >3 files.
 - Avoid short Opus sessions for trivial tasks — cache-creation cost
   (~$0.15-0.35) dominates.
+- **No Opus subagents.** Every `Task` dispatch MUST use `model=sonnet` or
+  `model=haiku`. `/batch` built-in is the only override — hard-enforced by
+  PreToolUse hook `~/.claude/hooks/block_opus_subagent.py`. Manual override
+  outside `/batch`: env `CLAUDE_BATCH_MODE=1` or `[BATCH_OVERRIDE]` sentinel
+  in the prompt/description.
 
 ## Subagent delegation [default] [soft]
 
 - In sessions exceeding 20 turns, aim to delegate ≥30% of turns to
   Sonnet/Haiku subagents. File reads, glob/grep searches, test execution,
   boilerplate generation, and commit preparation are all subagent-appropriate.
+
+## /cat cadence [default] [soft]
+
+- Prefer `/cat` (and compositions `/super-cat`, `/duper-tdd-cat`,
+  `/super-duper-cat`, etc.) as the default subagent-dispatch mechanism.
+  Claude Max daily token limits apply even on Max plans — subagent-parallel
+  work keeps the main Opus session available for architectural reasoning.
+- Rule of thumb: in >20-turn sessions, ≥30% of turns should be delegated.
+  Aggressive delegation for reads/greps/tests/scaffolding is cheap insurance
+  against mid-session rate limits.
 
 ## Worktrees [policy] [soft]
 
