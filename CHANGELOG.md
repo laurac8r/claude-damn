@@ -6,6 +6,30 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.9.0] — 2026-05-16
+
+MINOR: New skill `/task-list` — renders and reconciles the session
+TaskList in response to `/task-list` (bare invocation → TaskCreate per
+item; `--update` → derive-and-reconcile; `--update <#> :: <new>` →
+in-place rewrite preserving the task ID; `--display` → render the full
+list past default truncation). Built via `/lets-make-a-skill`'s
+baseline-first gate: a RED baseline showed no-skill agents echo the list
+as plain Markdown or defer behind a permission prompt rather than calling
+TaskCreate/TaskUpdate. The skill body counters those rationalizations and
+a GREEN with-skill run passed 5/5 on both the quant and pressure axes.
+iteration-2 de-consolidated the eval grid into separate quant and
+pressure subagents with purpose-built adversarial pressure backstories,
+closing an `/expert-review` methodology finding. Manifests bumped
+1.8.0 → 1.9.0 in lockstep.
+
+### Added (v1.9.0)
+
+- `skills/task-list/SKILL.md` — four-mode skill with an anti-pattern
+  block keyed to the captured baseline rationalizations.
+- `skills/task-list/evals/` — `/lets-make-a-skill` eval workspace:
+  iteration-1 and iteration-2 grids, `benchmark.{json,md}`,
+  `rationalizations.md`, and the persisted `/expert-review` findings.
+
 ## [1.8.0] — 2026-05-15
 
 MINOR: New skill `/legal-visual-aid` — composes
