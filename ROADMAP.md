@@ -103,6 +103,14 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       tests → natural fan-out via `/duper`. Output:
       `tests/skills/` coverage matrix mapping each PERSONALIZATION
       rule to ≥1 pressure test.
+- [ ] **Root-cause `/check-yourself` skip-rate** — `/check-yourself` fires at
+      only a fraction of its enumerated task-boundary triggers (Skill returns,
+      `/proceed` gates, test-runs, durable file-writes). Observed 2026-05-16:
+      one long multi-skill session invoked it once (at `/pause`), skipping
+      ~15+ boundaries. The skill text is already maximal (full trigger
+      enumeration + 11-row rationalization table), so brainstorm whether the
+      gap is invocation-discipline, harness enforcement, or a structural fix
+      (e.g. hook-based boundary detection). Surfaced via `/learn`.
 
 ## Phase 3 — Harness integration
 
