@@ -35,8 +35,36 @@ def render(inp: AtlasInput) -> str:
     sections.append(
         f'<section class="anchor"><h1>Anchor: {inp.anchor.slug}</h1></section>'
     )
+    sections.append(_render_git_section(inp.git_state))
     body = "\n".join(sections)
     return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", "")
+
+
+def _render_git_section(git: GitState | None) -> str:
+    if git is None:
+        return (
+            '<section class="git empty"><h2>Git</h2><p>not in a git repo</p></section>'
+        )
+    parts = [f'<section class="git"><h2>Git — {_html_escape(git.branch)}</h2>']
+    if git.ahead or git.behind:
+        parts.append(f"<p>ahead {git.ahead} / behind {git.behind}</p>")
+    if git.dirty:
+        items = "".join(f"<li>{_html_escape(p)}</li>" for p in git.dirty)
+        parts.append(f'<ul class="dirty">{items}</ul>')
+    if git.recent_commits:
+        items = "".join(f"<li>{_html_escape(s)}</li>" for s in git.recent_commits)
+        parts.append(f'<ul class="commits">{items}</ul>')
+    parts.append("</section>")
+    return "".join(parts)
+
+
+def _html_escape(s: str) -> str:
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
 
 
 _BASELINE = (
