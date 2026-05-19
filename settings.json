@@ -61,7 +61,8 @@
       "Bash(npx vitest:*)",
       "Bash(npm test:*)",
       "Write(.checkpoints/*)",
-      "Write(.remember/*)"
+      "Write(.remember/*)",
+      "Write(**/.superpowers/brainstorm/**)"
     ],
     "ask": [
       "Write(*settings.json*)",
