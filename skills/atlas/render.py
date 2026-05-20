@@ -36,8 +36,24 @@ def render(inp: AtlasInput) -> str:
         f'<section class="anchor"><h1>Anchor: {inp.anchor.slug}</h1></section>'
     )
     sections.append(_render_git_section(inp.git_state))
+    sections.append(_render_shelf_section(inp.shelf_entries))
     body = "\n".join(sections)
     return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", "")
+
+
+def _render_shelf_section(entries: list[ShelfEntry]) -> str:
+    if not entries:
+        return (
+            '<section class="shelf empty"><h2>Shelf</h2>'
+            "<p>no shelf entries — first visit at this anchor</p></section>"
+        )
+    sorted_entries = sorted(entries, key=lambda e: e.date, reverse=True)
+    items = "".join(
+        f'<article class="shelf-entry"><time>{e.date.isoformat()}</time>'
+        f"<pre>{_html_escape(e.body)}</pre></article>"
+        for e in sorted_entries
+    )
+    return f'<section class="shelf"><h2>Shelf</h2>{items}</section>'
 
 
 def _render_git_section(git: GitState | None) -> str:
