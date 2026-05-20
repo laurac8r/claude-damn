@@ -35,11 +35,12 @@ def render(inp: AtlasInput) -> str:
     sections.append(
         f'<section class="anchor"><h1>Anchor: {inp.anchor.slug}</h1></section>'
     )
-    sections.append(_render_git_section(inp.git_state))
     sections.append(_render_shelf_section(inp.shelf_entries))
-    sections.append(_render_checkpoint_section(inp.checkpoint))
-    sections.append(_render_tasks_section(inp.task_list))
-    body = "\n".join(sections)
+    if inp.mode == "single":
+        sections.append(_render_git_section(inp.git_state))
+        sections.append(_render_checkpoint_section(inp.checkpoint))
+        sections.append(_render_tasks_section(inp.task_list))
+    body = "\n".join(s for s in sections if s)
     warnings_html = _render_warnings_section(inp.warnings)
     return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", warnings_html)
 
