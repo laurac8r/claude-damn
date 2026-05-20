@@ -38,8 +38,32 @@ def render(inp: AtlasInput) -> str:
     sections.append(_render_git_section(inp.git_state))
     sections.append(_render_shelf_section(inp.shelf_entries))
     sections.append(_render_checkpoint_section(inp.checkpoint))
+    sections.append(_render_tasks_section(inp.task_list))
     body = "\n".join(sections)
     return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", "")
+
+
+def _render_tasks_section(tasks: list[TaskRecord]) -> str:
+    if not tasks:
+        return (
+            '<section class="tasks empty"><h2>Tasks</h2>'
+            "<p>no active tasks</p></section>"
+        )
+    items = []
+    for t in tasks:
+        blocked = (
+            '<span class="blocked">blocked by '
+            f"{', '.join(_html_escape(b) for b in t.blocked_by)}</span>"
+            if t.blocked_by
+            else ""
+        )
+        items.append(
+            f'<li class="task status-{t.status}">'
+            f'<span class="status">{t.status}</span> '
+            f'<span class="subject">{_html_escape(t.subject)}</span> '
+            f"{blocked}</li>"
+        )
+    return f'<section class="tasks"><h2>Tasks</h2><ul>{"".join(items)}</ul></section>'
 
 
 def _render_checkpoint_section(ckpt: CheckpointDoc | None) -> str:
