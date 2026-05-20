@@ -37,8 +37,41 @@ def render(inp: AtlasInput) -> str:
     )
     sections.append(_render_git_section(inp.git_state))
     sections.append(_render_shelf_section(inp.shelf_entries))
+    sections.append(_render_checkpoint_section(inp.checkpoint))
     body = "\n".join(sections)
     return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", "")
+
+
+def _render_checkpoint_section(ckpt: CheckpointDoc | None) -> str:
+    if ckpt is None:
+        return (
+            '<section class="checkpoint empty"><h2>Checkpoint</h2>'
+            "<p>no checkpoint saved</p></section>"
+        )
+    if not ckpt.branch and not ckpt.next_steps:
+        # parse failed; show raw fallback
+        return (
+            '<section class="checkpoint warning">'
+            "<h2>⚠ Checkpoint (parse failed)</h2>"
+            f"<pre>{_html_escape(ckpt.raw)}</pre></section>"
+        )
+    parts = [
+        f'<section class="checkpoint"><h2>Checkpoint — {_html_escape(ckpt.branch)}</h2>'
+    ]
+    if ckpt.current_state:
+        parts.append(f'<p class="state">{_html_escape(ckpt.current_state)}</p>')
+    parts.append(_render_list("Next Steps", ckpt.next_steps))
+    parts.append(_render_list("Key Decisions", ckpt.key_decisions))
+    parts.append(_render_list("Blockers", ckpt.blockers))
+    parts.append("</section>")
+    return "".join(parts)
+
+
+def _render_list(title: str, items: list[str]) -> str:
+    if not items:
+        return ""
+    lis = "".join(f"<li>{_html_escape(item)}</li>" for item in items)
+    return f"<h3>{title}</h3><ul>{lis}</ul>"
 
 
 def _render_shelf_section(entries: list[ShelfEntry]) -> str:
