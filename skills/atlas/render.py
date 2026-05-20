@@ -40,7 +40,8 @@ def render(inp: AtlasInput) -> str:
     sections.append(_render_checkpoint_section(inp.checkpoint))
     sections.append(_render_tasks_section(inp.task_list))
     body = "\n".join(sections)
-    return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", "")
+    warnings_html = _render_warnings_section(inp.warnings)
+    return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", warnings_html)
 
 
 def _render_tasks_section(tasks: list[TaskRecord]) -> str:
@@ -64,6 +65,13 @@ def _render_tasks_section(tasks: list[TaskRecord]) -> str:
             f"{blocked}</li>"
         )
     return f'<section class="tasks"><h2>Tasks</h2><ul>{"".join(items)}</ul></section>'
+
+
+def _render_warnings_section(warnings: list[str]) -> str:
+    if not warnings:
+        return ""
+    items = "".join(f"<li>{_html_escape(w)}</li>" for w in warnings)
+    return f'<section class="warnings"><h2>⚠ Warnings</h2><ul>{items}</ul></section>'
 
 
 def _render_checkpoint_section(ckpt: CheckpointDoc | None) -> str:
