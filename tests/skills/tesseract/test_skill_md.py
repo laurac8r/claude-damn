@@ -156,6 +156,13 @@ class TestTesseractStructure:
         assert "~/.claude/tesseract/shelf" in skill_md
         assert "~/.claude/tesseract/bulk-beings.md" in skill_md
 
+    def test_skill_md_references_shared_helpers(self, skill_md: str) -> None:
+        """SKILL.md must point at skills/_shared/ as the canonical home for
+        slugify, anchor, parse_shelf so future Python entrypoints reuse the
+        shared modules instead of inlining copies (drift prevention).
+        """
+        assert "skills/_shared" in skill_md
+
 
 class TestTesseractRetroFlag:
     """`--retro` flag: pure observation mode. The flag must turn the skill

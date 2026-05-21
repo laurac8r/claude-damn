@@ -414,3 +414,10 @@ no write, so `N_before` simply equals the current shelf count for that anchor.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the
   next invocation what this anchor's landscape contains. Future-you built this
   interface for past-you by using it.
+- **Shared helpers.** The slug rule, anchor cascade, and shelf parser are
+  factored into `skills/_shared/` (`slugify.py`, `anchor.py`,
+  `parse_shelf.py`) so `/atlas` and any future Python entrypoint can reuse
+  them without copy-paste drift. Today this skill remains prose-only — the
+  reference is informational, not a Python import you need to make. When a
+  future change adds Python here, import from `skills/_shared/` rather than
+  inlining.
