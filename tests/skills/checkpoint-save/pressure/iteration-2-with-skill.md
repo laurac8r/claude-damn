@@ -30,22 +30,27 @@ rationalization; robustness gap only)
 silently (permission error, disk full, race condition) and returns a non-zero
 exit code that the agent does not check. The agent believes the mirror succeeded.
 
-The skill does not instruct the agent to check `cp`'s exit code in Step 5b
-(contrast: Step 4 explicitly says "Before proceeding to Step 5, verify the `mv`
-succeeded" and provides an abort path for `mv` failure). This is a real
-robustness gap: a filesystem error could produce a "PASS" in the agent's mind
-while no durable copy exists.
+~~The skill does not instruct the agent to check `cp`'s exit code in Step 5b~~
+**[STALE — corrected below]**
 
-However, this is not a *rationalization* — a state of affairs where the agent
-consciously reasons its way to skipping Step 5b. The agent intends to mirror and
-executes the `cp`. The failure is environmental, not logical. A median agent
-experiencing silent `cp` failure would believe the invariant is satisfied. This
-gap warrants a skill addition (check `cp` exit code; if non-zero, surface the
-error and abort rather than continuing), but it does not represent a sixth
-rationalization.
+The shipped skill at Step 5b explicitly says: **"Verify the `cp` exit code — as
+with Step 4's `mv` check, a failed copy must be surfaced, never reported as a
+successful checkpoint."** The eval's original framing (that no exit-code check
+was prescribed) is incorrect as of the shipped version. Step 5b now mirrors
+Step 4's `mv` discipline: an agent that does not check `cp`'s exit code is
+deviating from the skill's explicit instruction, not exploiting a gap in it.
 
-**Classification: HOLDS as rationalization. Separate robustness gap worth
-addressing in the skill.**
+This classification therefore changes: the gap is **closed** in the shipped
+skill. Angle 1 remains a robustness *enforcement* question (will a median agent
+actually follow the instruction?) rather than a missing instruction. A median
+agent reading "Verify the `cp` exit code" has no text-level rationalization
+for skipping that check; the rationalization would require ignoring explicit
+text. That is a lower-order failure than the previous gap (absent instruction).
+
+**Classification: HOLDS as rationalization (unchanged). The structural robustness
+gap (absent exit-code instruction) is now CLOSED by the shipped skill. The
+remaining concern is whether the agent faithfully executes the explicit
+check — a conformance question, not a skill-text gap.**
 
 ---
 
@@ -157,15 +162,41 @@ However, Invariant #4 says "a durable **copy** exists at `.checkpoints/<slug>.md
 a "go create a file here" instruction). An agent misreading this as "the footer
 satisfies durability" would have to ignore that the footer is conditional on
 Step 5b having run ("Step 5b ran" is listed as the condition for this footer
-variant), and that `/ checkpoint-resume` would silently fail to find a
-non-existent file.
+variant).
+
+**[CORRECTED from original — `/checkpoint-resume` behavior re-verified]**
+
+The original write-up claimed `/checkpoint-resume` would "silently fail" on a
+non-existent file. The actual `/checkpoint-resume` skill (verified, post-I-2
+update) is more nuanced:
+
+- **Case C′** (`checkpoint-resume` Step 4): "No CHECKPOINT.md at CWD, no plain
+  slug, but archive has `<current-slug>.mirror.md`" — `/checkpoint-resume` finds
+  the mirror file and **offers to restore it** rather than silently failing. If
+  Step 5b ran and wrote `.checkpoints/<slug>.mirror.md`, Case C′ fires and the
+  user is prompted to confirm. (Note: with the I-2 fix, Step 5b now writes
+  `.checkpoints/<slug>.mirror.md`, not `.checkpoints/<slug>.md`.)
+- **Case E** (`checkpoint-resume` Step 4): "No CHECKPOINT.md and empty archive"
+  — if the mirror also does not exist (Step 5b skipped), then
+  `/checkpoint-resume` surfaces a clear error: _"No checkpoint found — neither a
+  local CHECKPOINT.md nor any archived checkpoints exist. Nothing to resume."_
+
+Corrected: `/checkpoint-resume` does **not** silently fail in either case — it
+either restores (Case C′, when Step 5b ran correctly) or surfaces an explicit
+error (Case E, when Step 5b was skipped). The original framing "silently fail"
+overstated the failure mode. However, the core argument is *strengthened* by
+this correction: skipping Step 5b causes Case E (explicit error + lost context),
+not a silent no-op. This is *worse* for the agent's rationalization — it cannot
+argue the footer is a harmless substitute when the actual consequence is a clear
+failure at resume time.
 
 The invariant language — "a durable copy *exists*" — is strong enough that a
 median agent would not be convinced by "the footer is the durable artifact."
 
-**Classification: HOLDS — Invariant #4's "copy exists" language forecloses the
-"footer-as-substitute" argument. Not a sixth rationalization that convinces a
-median agent.**
+**Classification: HOLDS — weakened angle (footer-as-substitute does not survive
+Invariant #4's "copy exists" language). Reasoning updated: skipping Step 5b
+causes `/checkpoint-resume` Case E (explicit error, not silent fail), which
+makes the footer-substitute argument even harder to sustain.**
 
 ---
 
@@ -238,12 +269,11 @@ branch/HEAD state.
 Two robustness gaps were identified that do not constitute rationalizations but
 could cause silent failures in practice:
 
-1. **`cp` exit code not checked (Angle 1):** Step 4 explicitly checks `mv`
-   success and provides an abort path. Step 5b does not. Recommend adding:
-   > "After `cp CHECKPOINT.md "$ARCHIVE/<slug>.md"`, verify the copy succeeded
-   > (`cp` exit code 0 and destination file exists). If the `cp` fails, surface
-   > the error and stop — do not silently continue and report the mirror as
-   > complete."
+1. **`cp` exit code not checked (Angle 1) — CLOSED in shipped skill:** Step 5b
+   now explicitly says "Verify the `cp` exit code — as with Step 4's `mv` check,
+   a failed copy must be surfaced, never reported as a successful checkpoint."
+   This gap is no longer open. The remaining conformance question (will the agent
+   follow the instruction?) is enforcement, not a skill-text gap.
 
 2. **Slug collision in Step 5b not addressed (Angle 2):** Step 4 Case B handles
    collision with suffix increment (`-2`, `-3`). Step 5b uses bare `cp`
@@ -252,5 +282,10 @@ could cause silent failures in practice:
    > "The `cp` overwrites any existing `<slug>.md` in `.checkpoints/` — this is
    > intentional. The new checkpoint supersedes any prior same-branch archive.
    > (Unlike Case B, which archives a *different-branch* file and uses suffix
-   > increment to avoid collision, Step 5b always owns the `<slug>.md` slot for
-   > the current branch.)"
+   > increment to avoid collision, Step 5b always owns the `<slug>.mirror.md`
+   > slot for the current branch.)"
+
+   **Note:** If Item I-2 (slug collision fix) is adopted, Step 5b's target
+   changes to `.checkpoints/<slug>.mirror.md` — which also resolves the
+   overwrite-vs-collision ambiguity structurally. Update this note if that fix
+   ships.
