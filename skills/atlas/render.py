@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Literal
 
 from skills._shared.anchor import Anchor
@@ -42,7 +43,7 @@ def render(inp: AtlasInput) -> str:
         sections.append(_render_tasks_section(inp.task_list))
     body = "\n".join(s for s in sections if s)
     warnings_html = _render_warnings_section(inp.warnings)
-    return _BASELINE.replace("{{BODY}}", body).replace("{{WARNINGS}}", warnings_html)
+    return _baseline().replace("{{BODY}}", body).replace("{{WARNINGS}}", warnings_html)
 
 
 def _render_tasks_section(tasks: list[TaskRecord]) -> str:
@@ -149,10 +150,8 @@ def _html_escape(s: str) -> str:
     )
 
 
-_BASELINE = (
-    "<!doctype html>\n"
-    '<html lang="en">\n'
-    '<head><meta charset="utf-8"><title>atlas</title></head>\n'
-    "<body>{{WARNINGS}}{{BODY}}</body>\n"
-    "</html>\n"
-)
+_BASELINE_PATH = Path(__file__).resolve().parent / "baseline.html"
+
+
+def _baseline() -> str:
+    return _BASELINE_PATH.read_text(encoding="utf-8")
