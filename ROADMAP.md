@@ -103,6 +103,31 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       tests → natural fan-out via `/duper`. Output:
       `tests/skills/` coverage matrix mapping each PERSONALIZATION
       rule to ≥1 pressure test.
+- [ ] **`/atlas` hardening patches surfaced by `/expert-review`** — two
+      non-blocking findings on the initial `/atlas` PR.
+      (a) `skills/atlas/render.py:64-65` — `TaskRecord.status` interpolates
+      unescaped into `class="status-{t.status}"` and the inner `<span>`;
+      `Literal["pending","in_progress","completed"]` is not runtime-
+      enforced. Fix: escape both sites OR add `__post_init__` validation
+      rejecting non-`Literal` values on `TaskRecord`.
+      (b) `skills/_shared/anchor.py:44-45` — `slugify("///")` → `""`;
+      `Anchor(slug="", ...)` constructs without validation; downstream
+      produces `~/.tesseract/shelf/.md`, `~/.visual-aid/atlas-.html`,
+      and a blank `<h1>Anchor:</h1>`. Fix: guard empty slug in
+      `Anchor.__post_init__` or fall-through with warning in
+      `resolve_anchor`. Worth landing before `/atlas` is depended on by
+      other skills.
+- [ ] **`/atlas` smoke/pressure/performance test suites** — helper-level
+      coverage is complete (67 tests in `tests/skills/atlas/helpers/`),
+      but `tests/skills/atlas/{smoke,pressure,performance}/` currently
+      exist as empty `__init__.py` stubs only. Add full-orchestration
+      smoke tests (end-to-end SKILL.md steps 1-7 against a fixture
+      worktree), pressure tests (read-only-invariant assertions,
+      malformed shelf / unparseable CHECKPOINT / non-repo cwd / explicit
+      `--anchor "///"` empty-slug paths), and performance tests
+      (`render()` latency under realistic shelf/git/commit volumes).
+      Tracks the plan's Tasks 19-21 deferred from the initial `/atlas`
+      PR boundary. Cross-reference: ROADMAP `/atlas` entry in Phase 5.
 
 ## Phase 3 — Harness integration
 
