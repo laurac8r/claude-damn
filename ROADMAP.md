@@ -128,6 +128,31 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       (`render()` latency under realistic shelf/git/commit volumes).
       Tracks the plan's Tasks 19-21 deferred from the initial `/atlas`
       PR boundary. Cross-reference: ROADMAP `/atlas` entry in Phase 5.
+- [ ] **Root-cause `/check-yourself` skip-rate** — `/check-yourself` fires at
+      only a fraction of its enumerated task-boundary triggers (Skill returns,
+      `/proceed` gates, test-runs, durable file-writes). Observed 2026-05-16:
+      one long multi-skill session invoked it once (at `/pause`), skipping
+      ~15+ boundaries. The skill text is already maximal (full trigger
+      enumeration + 11-row rationalization table), so brainstorm whether the
+      gap is invocation-discipline, harness enforcement, or a structural fix
+      (e.g. hook-based boundary detection). Surfaced via `/learn`.
+- [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
+      in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
+      The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
+      and subagents can't write across worktrees. Re-visit `/cat` +
+      `/dispatching-parallel-agents` implications.
+- [ ] **`/add-to-roadmap` cross-repo target** — the skill is CWD-bound (walks
+      up to the current repo's ROADMAP) and silently resolves to CWD; it can't
+      target a different repo. Add an explicit target repo/path arg, or detect +
+      warn when the phrasing implies a repo ≠ CWD. Surfaced 2026-05-30 invoking
+      it cross-repo from another project's worktree (needed a manual
+      absolute-path workaround).
+- [ ] **`/visual-aid` focus-preserving verification opt-out** — the default
+      chrome-devtools verification foregrounds a browser window, conflicting
+      with a reduce-motion / no-focus-steal preference; the enumerated opt-outs
+      (not-installed / fast-iteration / profile-lock) don't cover it. Add an
+      accessibility / focus-preserving opt-out, or an isolated/headless path
+      that doesn't foreground a window. Surfaced 2026-05-30.
 
 ## Phase 3 — Harness integration
 
