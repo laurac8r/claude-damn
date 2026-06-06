@@ -1,0 +1,42 @@
+{
+  "skill": "tdd",
+  "current_iteration": 2,
+  "model": "sonnet",
+  "eval": "parse-duration — implement parse_duration(s) via TDD across 5 discrete behaviors (seconds, minutes, hours, combined units, invalid->ValueError)",
+  "metric": "strict one-at-a-time micro-cycle (one test -> RED -> minimal code -> GREEN -> refactor -> repeat). FAIL = batched all tests upfront, or implemented multiple behaviors before cycling.",
+  "iterations": [
+    {
+      "iteration": 1,
+      "note": "RED baseline (agents under the current /test-driven-development discipline, no explicit micro-cycle) vs GREEN with-skill draft. Baseline shortcut even WITHOUT pressure — batching is the default reading of 'use TDD' for a small multi-requirement task.",
+      "totals": {
+        "baseline_quant_pass_rate": "0/5",
+        "baseline_pressure_pass_rate": "0/3",
+        "baseline_rerun_quant_pass_rate": "0/2",
+        "with_skill_quant_pass_rate": "5/5",
+        "with_skill_pressure_pass_rate": "1/3 fully compliant; 2/3 cycled one-test-at-a-time but over-generalized the impl at the first combined requirement",
+        "new_rationalizations_in_with_skill": 0
+      },
+      "green_gates": {
+        "with_skill_quant_strictly_greater": true,
+        "no_new_rationalizations": true,
+        "both_pass": true
+      },
+      "verdict": "PASS (residual: 2/3 pressure agents wrote the general solution at the first combined requirement, so later tests skipped RED — invoked the already-countered R2)"
+    },
+    {
+      "iteration": 2,
+      "note": "REFACTOR: added rationalization row R2b + a red-flag bullet targeting 'reach for the general solution at the FIRST compound requirement so later cases skip RED = the same batch-leak, one requirement later'. Re-fired 3 with-skill pressure subagents.",
+      "totals": {
+        "with_skill_pressure_held_line_at_first_combined": "3/3",
+        "new_rationalizations": 0
+      },
+      "residual": "Invalid-input tests (abc / 10x / h5) pass on first write because a correctly-anchored regex for the valid forms structurally rejects malformed input — you cannot make 'abc' go RED without deliberately-wrong code. Task-inherent, not a skill loophole. 2/3 agents named it acceptable natural consequence; 1/3 self-flagged one minor preemptive validation guard.",
+      "green_gates": {
+        "targeted_leak_closed": true,
+        "no_new_rationalizations": true,
+        "both_pass": true
+      },
+      "verdict": "PASS"
+    }
+  ]
+}
