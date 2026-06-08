@@ -153,6 +153,11 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       (not-installed / fast-iteration / profile-lock) don't cover it. Add an
       accessibility / focus-preserving opt-out, or an isolated/headless path
       that doesn't foreground a window. Surfaced 2026-05-30.
+- [ ] **Simplify Skill testing harness via Workflows** — explore whether the
+      hand-wired worktree-sync test rig (per-skill `tmp_skill_worktree` conftest
+      fixtures) can be replaced with `Workflow`-orchestrated fan-out:
+      deterministic pipeline stages spawning per-skill test agents with
+      structured pass/fail output, cutting bespoke conftest scaffolding.
 
 ## Phase 3 — Harness integration
 
