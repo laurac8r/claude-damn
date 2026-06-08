@@ -6,6 +6,21 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.10.0] — 2026-06-08
+
+MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced
+by `/expert-review` and Copilot on PR #80, completing the ROADMAP Phase 2
+"`/atlas` hardening patches" item. (a) `render.py` now routes
+`TaskRecord.status` through `_html_escape` at both the `class="status-{…}"`
+and inner `<span>` interpolation sites, closing an injection/markup-break
+surface (`Literal[…]` is not runtime-enforced). (b) `resolve_anchor` guards
+an empty-slug override (`--anchor "///"` → `""`): it now falls through to
+`Anchor("void", UNRESOLVED)` with a warning rather than constructing invalid
+downstream paths like `~/.visual-aid/atlas-.html`. +4 tests
+(`test_render_tasks_escapes_status`,
+`test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas
+tests pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
+
 ## [1.9.0] — 2026-05-16
 
 MINOR: New skill `/task-list` — renders and reconciles the session
