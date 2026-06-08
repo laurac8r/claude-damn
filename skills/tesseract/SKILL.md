@@ -50,8 +50,8 @@ not read hallways, and do not drop a book. Instead:
 
 `--visual` is read-only by design: it surveys the whole shelf, which is not a
 visit to any single anchor, so writing a shelf block + bulk-beings line would
-pollute the ledger with meta-entries. See the test contract in
-`tests/test_render_visual.py::test_cli_visual_writes_html_and_does_not_touch_shelf_or_bulk`.
+pollute the ledger with meta-entries. The render step only writes the HTML at
+`--out` and never touches the shelf or bulk-beings ledger.
 
 ### 1 · Resolve the anchor
 
