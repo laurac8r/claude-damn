@@ -131,8 +131,8 @@ This is the ONLY file write /atlas performs.
 
 ## Invariants
 
-- **Read-only** — no writes outside the output HTML file. Enforced by
-  `tests/skills/atlas/pressure/test_read_only_invariant.py`.
+- **Read-only** — no writes outside the output HTML file. (Test enforcement
+  deferred — see ROADMAP Phase 2 `/atlas` smoke/pressure suites.)
 - **Stable output path** — same anchor → same path → overwrite on rerun.
 - **render() never raises** on a well-typed `AtlasInput`. If it does, that is
   a bug; do not wrap in try/except.
