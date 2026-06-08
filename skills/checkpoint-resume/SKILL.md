@@ -52,8 +52,9 @@ Collect candidates:
 - **Active checkpoint:** Check whether `CHECKPOINT.md` exists at CWD. If it
   does, parse its `**Branch:**` line.
 - **Archive:** List `$ARCHIVE/*.md`, excluding any file matching `*.prev.md`
-  (those are rolling same-branch backups, not paused efforts — do not offer them
-  for resume).
+  (rolling same-branch backups, not paused efforts) and any file matching
+  `*.mirror.md` (linked-worktree mirrors — these are auto-found by Case C′
+  below, not listed as independent entries for Case D).
 
 ### Step 4 — Decide Which Checkpoint to Resume
 
@@ -93,11 +94,28 @@ On user confirmation: **move** (not copy) `$ARCHIVE/<current-slug>.md` to
 `CHECKPOINT.md` at CWD, then proceed to Step 5. On user decline: stop and report
 no active checkpoint to resume.
 
-**Case D — No CHECKPOINT.md at CWD, no slug match, archive non-empty**
+**Case C′ — No CHECKPOINT.md at CWD, no plain slug, but archive has
+`<current-slug>.mirror.md`**
 
 `CHECKPOINT.md` does not exist at CWD, `$ARCHIVE/<current-slug>.md` does not
-exist, but the archive contains other `.md` files (excluding `*.prev.md`). →
-List the archive contents and ask the user to pick:
+exist, but `$ARCHIVE/<current-slug>.mirror.md` does exist (a linked-worktree
+mirror written by `/checkpoint-save` Step 5b). → Offer to restore it:
+
+> Found a linked-worktree mirror checkpoint for the current branch
+> (`<current-slug>`). This was saved from a worktree that may have been removed.
+> Restore it to continue work?
+
+On user confirmation: **copy** (not move) `$ARCHIVE/<current-slug>.mirror.md`
+to `CHECKPOINT.md` at CWD, then proceed to Step 5. (Copy, not move — keep the
+mirror in place in case the restore is tentative.) On user decline: stop and
+report no active checkpoint to resume.
+
+**Case D — No CHECKPOINT.md at CWD, no slug match, archive non-empty**
+
+`CHECKPOINT.md` does not exist at CWD, neither `$ARCHIVE/<current-slug>.md` nor
+`$ARCHIVE/<current-slug>.mirror.md` exist, but the archive contains other `.md`
+files (excluding `*.prev.md` and `*.mirror.md`). → List the archive contents and
+ask the user to pick:
 
 > No checkpoint found for the current branch. The following archived checkpoints
 > are available:
@@ -113,7 +131,8 @@ proceed to Step 5. On cancel: stop and report no checkpoint restored.
 **Case E — No CHECKPOINT.md and empty archive**
 
 `CHECKPOINT.md` does not exist at CWD and the archive has no `.md` files
-(excluding `*.prev.md`). → Report:
+(excluding `*.prev.md` and `*.mirror.md`), and no `<current-slug>.mirror.md`
+exists. → Report:
 
 > No checkpoint found — neither a local `CHECKPOINT.md` nor any archived
 > checkpoints exist. Nothing to resume.
@@ -141,8 +160,11 @@ in Step 4):
 After a successful resume:
 
 - `CHECKPOINT.md` is present at CWD and reflects the resumed effort.
-- The archive no longer contains the restored file — it was **moved**, not
-  copied.
+- For Case C and Case D restores: the archive no longer contains the restored
+  file — it was **moved**, not copied.
+- For Case C′ restores (linked-worktree mirror): the archive still contains
+  `<slug>.mirror.md` — it was **copied**, not moved. The mirror is kept as a
+  safety net.
 - The archive may still contain other paused efforts for other branches.
 
 ## Key Principles
