@@ -2,20 +2,41 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+`claude-damn` is maintained as a single, fast-moving rolling release line.
+Only the **latest published version** receives security updates — always update
+to the most recent release before reporting an issue, and assume older versions
+are unsupported.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+**Please do not report security vulnerabilities through public GitHub issues,
+pull requests, or discussions** — that discloses the problem before a fix is
+available.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Instead, report privately through either of these channels:
+
+1. **GitHub Security Advisories** (preferred) — open a private report with the
+   [**Report a vulnerability**](https://github.com/laurac8r/claude-damn/security/advisories/new)
+   button under the repository's **Security** tab. This keeps the report private
+   and lets us collaborate on a fix in one place.
+2. **Email** — write to **conduct@webcatgirl.com** if you can't use GitHub
+   Security Advisories.
+
+Please include:
+
+- a description of the vulnerability and its impact,
+- the affected file(s), skill(s), or hook(s),
+- step-by-step reproduction instructions, and
+- proof-of-concept code, if you have it.
+
+### What to expect
+
+- **Acknowledgement** within roughly **5 business days**.
+- A follow-up assessment and, if the report is accepted, an expected timeline
+  for a fix.
+- If the report is declined, an explanation of why.
+- Credit for the disclosure once a fix ships, if you'd like it.
+
+`claude-damn` is a volunteer-maintained, free and open-source project with no
+dedicated security budget, so response times are best-effort — thank you for
+your patience and for disclosing responsibly.
