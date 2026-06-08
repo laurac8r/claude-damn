@@ -50,3 +50,18 @@ def test_render_tasks_escapes_subject_and_blocked_by() -> None:
     assert "a&amp;b" in out
     assert "<script>" not in out
     assert "<x>" not in out
+
+
+def test_render_tasks_escapes_status() -> None:
+    tasks = [
+        TaskRecord(
+            id="2",
+            subject="normal subject",
+            status='x"><script>alert(1)</script>',  # type: ignore[arg-type]
+            blocked_by=[],
+        )
+    ]
+    out = render(_input_with_tasks(tasks))
+    assert "<script>" not in out
+    assert "&lt;script&gt;" in out
+    assert "&quot;" in out

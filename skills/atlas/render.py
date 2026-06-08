@@ -61,8 +61,8 @@ def _render_tasks_section(tasks: list[TaskRecord]) -> str:
             else ""
         )
         items.append(
-            f'<li class="task status-{t.status}">'
-            f'<span class="status">{t.status}</span> '
+            f'<li class="task status-{_html_escape(t.status)}">'
+            f'<span class="status">{_html_escape(t.status)}</span> '
             f'<span class="subject">{_html_escape(t.subject)}</span> '
             f"{blocked}</li>"
         )
