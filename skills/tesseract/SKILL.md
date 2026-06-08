@@ -50,8 +50,8 @@ not read hallways, and do not drop a book. Instead:
 
 `--visual` is read-only by design: it surveys the whole shelf, which is not a
 visit to any single anchor, so writing a shelf block + bulk-beings line would
-pollute the ledger with meta-entries. See the test contract in
-`tests/test_render_visual.py::test_cli_visual_writes_html_and_does_not_touch_shelf_or_bulk`.
+pollute the ledger with meta-entries. The render step only writes the HTML at
+`--out` and never touches the shelf or bulk-beings ledger.
 
 ### 1 · Resolve the anchor
 
@@ -414,3 +414,10 @@ no write, so `N_before` simply equals the current shelf count for that anchor.
 - The bootstrap paradox: the content of `bulk-beings.md` is what teaches the
   next invocation what this anchor's landscape contains. Future-you built this
   interface for past-you by using it.
+- **Shared helpers.** The slug rule, anchor cascade, and shelf parser are
+  factored into `skills/_shared/` (`slugify.py`, `anchor.py`,
+  `parse_shelf.py`) so `/atlas` and any future Python entrypoint can reuse
+  them without copy-paste drift. Today this skill remains prose-only — the
+  reference is informational, not a Python import you need to make. When a
+  future change adds Python here, import from `skills/_shared/` rather than
+  inlining.
