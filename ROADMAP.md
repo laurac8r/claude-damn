@@ -111,6 +111,28 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       enumeration + 11-row rationalization table), so brainstorm whether the
       gap is invocation-discipline, harness enforcement, or a structural fix
       (e.g. hook-based boundary detection). Surfaced via `/learn`.
+- [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
+      in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
+      The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
+      and subagents can't write across worktrees. Re-visit `/cat` +
+      `/dispatching-parallel-agents` implications.
+- [ ] **`/add-to-roadmap` cross-repo target** — the skill is CWD-bound (walks
+      up to the current repo's ROADMAP) and silently resolves to CWD; it can't
+      target a different repo. Add an explicit target repo/path arg, or detect +
+      warn when the phrasing implies a repo ≠ CWD. Surfaced 2026-05-30 invoking
+      it cross-repo from another project's worktree (needed a manual
+      absolute-path workaround).
+- [ ] **`/visual-aid` focus-preserving verification opt-out** — the default
+      chrome-devtools verification foregrounds a browser window, conflicting
+      with a reduce-motion / no-focus-steal preference; the enumerated opt-outs
+      (not-installed / fast-iteration / profile-lock) don't cover it. Add an
+      accessibility / focus-preserving opt-out, or an isolated/headless path
+      that doesn't foreground a window. Surfaced 2026-05-30.
+- [ ] **Simplify Skill testing harness via Workflows** — explore whether the
+      hand-wired worktree-sync test rig (per-skill `tmp_skill_worktree` conftest
+      fixtures) can be replaced with `Workflow`-orchestrated fan-out:
+      deterministic pipeline stages spawning per-skill test agents with
+      structured pass/fail output, cutting bespoke conftest scaffolding.
 
 ## Phase 3 — Harness integration
 

@@ -16,6 +16,10 @@ body should NOT over-correct — modern Sonnet already handles those instincts.
 
 ## Captured rationalizations
 
+> **Cross-reference:** condensed copies of these R1–R3 excerpts also live in
+> `rationalizations.md` (§Verbatim baseline excerpts). This file is the
+> source-of-record for the raw transcripts.
+
 ### R1 — "Skill not available → echo + ask"
 *From bare-simple baseline.*
 
