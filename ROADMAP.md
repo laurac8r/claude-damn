@@ -158,6 +158,12 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       fixtures) can be replaced with `Workflow`-orchestrated fan-out:
       deterministic pipeline stages spawning per-skill test agents with
       structured pass/fail output, cutting bespoke conftest scaffolding.
+- [ ] **`/visual-aid` HTTP shutdown endpoint** — add a programmatic shutdown
+      route to `/visual-aid`'s local preview/verification server so it can be
+      stopped cleanly (e.g. on verification teardown) instead of relying on a
+      signal-kill or a lingering process. Deferred second half of the
+      `roadmap-visual-atlas-shutdown-endpoint` worktree; follow-up PR after
+      `/atlas` PR #80 merges.
 
 ## Phase 3 — Harness integration
 
