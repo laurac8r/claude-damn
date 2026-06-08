@@ -5,7 +5,10 @@ Three rules enforced via a rule registry:
 2. Command character length limit
 3. Statement separator count limit
 
-All rules run on every command; all violations are reported together.
+Rule 1 runs on every command. Rules 2 & 3 are exempted only for commands that
+append (`>>`) into a ~/.claude/tesseract/ path (see TESSERACT_REDIRECT_PATTERN)
+— long/chained "bulk-beings" appends to that directory are legitimate. All
+applicable violations are reported together.
 """
 
 import json
@@ -62,6 +65,25 @@ def check_inline_script(command: str) -> str | None:
 
 
 # ---------------------------------------------------------------------------
+# Tesseract path bypass — exempt rules 2 & 3 only (rule 1 still fires)
+# ---------------------------------------------------------------------------
+
+# Matches ONLY a `>>` redirect whose target is under ~/.claude/tesseract/.
+# Scoped to the redirect target (not a free substring) so that merely mentioning
+# the path in a comment or unused argument cannot disarm rules 2 & 3 — only a
+# genuine append to a tesseract file is exempted.
+TESSERACT_REDIRECT_PATTERN = re.compile(
+    r">>\s+(?:~|\$HOME|/(?:Users|home)/[^/\s]+)/\.claude/tesseract/"
+)
+
+
+# Rule 1 (inline-script) still fires regardless; only rules 2 & 3 are exempted,
+# and only for legitimate `>> ~/.claude/tesseract/…` appends.
+def _is_tesseract_redirect(command: str) -> bool:
+    return bool(TESSERACT_REDIRECT_PATTERN.search(command))
+
+
+# ---------------------------------------------------------------------------
 # Rule 2: Character length limit
 # ---------------------------------------------------------------------------
 
@@ -73,6 +95,8 @@ CHAR_LIMIT_MESSAGE = (
 
 
 def check_char_limit(command: str) -> str | None:
+    if _is_tesseract_redirect(command):
+        return None
     actual = len(command)
     if actual > MAX_COMMAND_LENGTH:
         return CHAR_LIMIT_MESSAGE.format(actual=actual, limit=MAX_COMMAND_LENGTH)
@@ -93,6 +117,10 @@ STATEMENT_LIMIT_MESSAGE = (
 
 
 def check_statement_limit(command: str) -> str | None:
+    # Rule-3 exemption is deliberate: bulk-beings appends chain `>>` redirects
+    # into tesseract files, which legitimately exceed the separator limit.
+    if _is_tesseract_redirect(command):
+        return None
     count = len(SEPARATOR_PATTERN.findall(command))
     if count > MAX_STATEMENT_COUNT:
         return STATEMENT_LIMIT_MESSAGE.format(count=count, limit=MAX_STATEMENT_COUNT)
@@ -154,4 +182,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    sys.exit(0)

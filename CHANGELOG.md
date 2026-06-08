@@ -6,6 +6,86 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.11.0] — 2026-06-08
+
+MINOR: `hooks/block-inline-scripts.py` — Tesseract **redirect-target** bypass.
+Commands that append (`>>`) into a `~/.claude/tesseract/` path are now exempt
+from rule 2 (command-length) and rule 3 (statement-separator count) so long,
+chained "bulk-beings" appends to that directory aren't blocked; rule 1 (inline
+non-Bash scripts) still fires. The match is scoped to the redirect **target**
+rather than a free substring: a `/expert-review` 3-tier panel (haiku + sonnet +
+opus, unanimous `NARROW`) confirmed the original substring form let any
+over-limit or heavily-chained command (e.g. a `cat … | curl …` exfil pipeline)
+disarm rules 2 & 3 by merely carrying the path in a trailing
+`# ~/.claude/tesseract/` comment — and "rule 1 still fires" is **not** a
+sufficient backstop, since rule 1 matches only `python/ruby/node/perl/php`, not
+pure-Bash pipelines. Also fixed the accompanying tests: `> 300` length
+preconditions sat below the real `MAX_COMMAND_LENGTH = 400` (3 deny-tests
+shipped red, 3 bypass-tests passed vacuously), a contradictory
+`returncode == 1`/`== 0` pair in `test_non_string_command_is_allowed`, and a
+`sys.path`-seeding gap that let the statement-limit bypass test pass only via
+test-ordering pollution (`_load_hook_module` promoted to module scope). +2
+regression tests pin the comment-form denial. 64/64 hook tests pass. Manifests
+bumped 1.10.0 → 1.11.0 in lockstep.
+
+## [1.10.0] — 2026-06-08
+
+MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced
+by `/expert-review` and Copilot on PR #80, completing the ROADMAP Phase 2
+"`/atlas` hardening patches" item. (a) `render.py` now routes
+`TaskRecord.status` through `_html_escape` at both the `class="status-{…}"`
+and inner `<span>` interpolation sites, closing an injection/markup-break
+surface (`Literal[…]` is not runtime-enforced). (b) `resolve_anchor` guards
+an empty-slug override (`--anchor "///"` → `""`): it now falls through to
+`Anchor("void", UNRESOLVED)` with a warning rather than constructing invalid
+downstream paths like `~/.visual-aid/atlas-.html`. +4 tests
+(`test_render_tasks_escapes_status`,
+`test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas
+tests pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
+
+## [1.9.0] — 2026-05-16
+
+MINOR: New skill `/task-list` — renders and reconciles the session
+TaskList in response to `/task-list` (bare invocation → TaskCreate per
+item; `--update` → derive-and-reconcile; `--update <#> :: <new>` →
+in-place rewrite preserving the task ID; `--display` → render the full
+list past default truncation). Built via `/lets-make-a-skill`'s
+baseline-first gate: a RED baseline showed no-skill agents echo the list
+as plain Markdown or defer behind a permission prompt rather than calling
+TaskCreate/TaskUpdate. The skill body counters those rationalizations and
+a GREEN with-skill run passed 5/5 on both the quant and pressure axes.
+iteration-2 de-consolidated the eval grid into separate quant and
+pressure subagents with purpose-built adversarial pressure backstories,
+closing an `/expert-review` methodology finding. Manifests bumped
+1.8.0 → 1.9.0 in lockstep.
+
+### Added (v1.9.0)
+
+- `skills/task-list/SKILL.md` — four-mode skill with an anti-pattern
+  block keyed to the captured baseline rationalizations.
+- `skills/task-list/evals/` — `/lets-make-a-skill` eval workspace:
+  iteration-1 and iteration-2 grids, `benchmark.{json,md}`,
+  `rationalizations.md`, and the persisted `/expert-review` findings.
+
+## [1.8.0] — 2026-05-15
+
+MINOR: New skill `/legal-visual-aid` — composes
+`/legalzoom:review-contract` (contract review, by reference to the
+legalzoom plugin) with `/visual-aid` (single-page HTML explainer):
+review a contract, then render the risk-scored findings as an
+accessible visual aid. Built via `/lets-make-a-skill`'s baseline-first
+gate — a RED baseline showed no-skill agents drop the `/visual-aid`
+accessibility guards under "quick / rough" contract-review pressure;
+the skill body counters that rationalization and a GREEN with-skill
+run held all six a11y guards. Manifests bumped 1.7.2 → 1.8.0 in
+lockstep.
+
+### Added (v1.8.0)
+
+- `skills/legal-visual-aid/SKILL.md` — composition skill with an
+  accessibility-floor discipline section and a 5-row rationalization
+  table.
+
 ## [1.7.2] — 2026-05-05
 
 PATCH: `/tesseract` SKILL.md — Hallway 1 no-git-repo precondition + smoke

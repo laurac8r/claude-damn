@@ -5,24 +5,24 @@ from pathlib import Path
 import pytest
 import yaml
 
-SKILL_ROOT = (
-    Path(__file__).resolve().parent.parent.parent.parent / "skills" / "tesseract"
-)
+from tests._skill_helpers import SKILLS_ROOT
+
+SKILL_ROOT = SKILLS_ROOT / "tesseract"
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def skill_root() -> Path:
     return SKILL_ROOT
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def skill_md(skill_root: Path) -> str:
     path = skill_root / "SKILL.md"
     assert path.exists(), f"SKILL.md not found at {path}"
     return path.read_text()
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def frontmatter(skill_md: str) -> dict:
     if not skill_md.startswith("---"):
         raise ValueError("No YAML frontmatter found (file must start with ---)")
