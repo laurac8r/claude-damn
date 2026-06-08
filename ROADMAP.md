@@ -103,20 +103,20 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       tests → natural fan-out via `/duper`. Output:
       `tests/skills/` coverage matrix mapping each PERSONALIZATION
       rule to ≥1 pressure test.
-- [ ] **`/atlas` hardening patches surfaced by `/expert-review`** — two
-      non-blocking findings on the initial `/atlas` PR.
-      (a) `skills/atlas/render.py:64-65` — `TaskRecord.status` interpolates
+- [x] **`/atlas` hardening patches surfaced by `/expert-review`** — two
+      non-blocking findings on the initial `/atlas` PR. **Resolved inline on
+      PR #80** (both Copilot review comments addressed; +4 tests):
+      (a) `skills/atlas/render.py:64-65` — `TaskRecord.status` interpolated
       unescaped into `class="status-{t.status}"` and the inner `<span>`;
       `Literal["pending","in_progress","completed"]` is not runtime-
-      enforced. Fix: escape both sites OR add `__post_init__` validation
-      rejecting non-`Literal` values on `TaskRecord`.
+      enforced. **Fixed:** both sites now route through `_html_escape`
+      (`test_render_tasks_escapes_status`).
       (b) `skills/_shared/anchor.py:44-45` — `slugify("///")` → `""`;
-      `Anchor(slug="", ...)` constructs without validation; downstream
-      produces `~/.tesseract/shelf/.md`, `~/.visual-aid/atlas-.html`,
-      and a blank `<h1>Anchor:</h1>`. Fix: guard empty slug in
-      `Anchor.__post_init__` or fall-through with warning in
-      `resolve_anchor`. Worth landing before `/atlas` is depended on by
-      other skills.
+      `Anchor(slug="", ...)` constructed without validation; downstream
+      produced `~/.tesseract/shelf/.md`, `~/.visual-aid/atlas-.html`,
+      and a blank `<h1>Anchor:</h1>`. **Fixed:** empty slug falls through to
+      `Anchor("void", UNRESOLVED)` with a warning in `resolve_anchor`
+      (`test_resolve_anchor_empty_override_is_unresolved`).
 - [ ] **`/atlas` smoke/pressure/performance test suites** — helper-level
       coverage is complete (67 tests in `tests/skills/atlas/helpers/`),
       but `tests/skills/atlas/{smoke,pressure,performance}/` currently
