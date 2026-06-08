@@ -42,7 +42,13 @@ def resolve_anchor(
     5. UNRESOLVED — synthesizes ``Anchor("void", UNRESOLVED)`` with a warning.
     """
     if override is not None:
-        return Anchor(slug=slugify(override), source=AnchorSource.MODIFIED_FILE), []
+        slug = slugify(override)
+        if not slug:
+            return (
+                Anchor(slug="void", source=AnchorSource.UNRESOLVED),
+                [f"override {override!r} slugified to empty — treated as unresolved"],
+            )
+        return Anchor(slug=slug, source=AnchorSource.MODIFIED_FILE), []
 
     modified = _first_modified_file(cwd)
     if modified is not None:

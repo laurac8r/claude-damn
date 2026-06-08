@@ -116,3 +116,18 @@ def test_resolve_anchor_modified_file_uses_basename_only(git_sandbox: Path) -> N
     assert anchor.slug == "button-tsx"
     assert anchor.source == AnchorSource.MODIFIED_FILE
     assert warnings == []
+
+
+@pytest.mark.parametrize(
+    "bad_override",
+    ["///", "", "   "],
+    ids=["slashes", "empty", "spaces"],
+)
+def test_resolve_anchor_empty_override_is_unresolved(
+    git_sandbox: Path, bad_override: str
+) -> None:
+    anchor, warnings = resolve_anchor(git_sandbox, override=bad_override)
+    assert anchor.slug == "void"
+    assert anchor.source == AnchorSource.UNRESOLVED
+    assert len(warnings) > 0
+    assert any("unresolved" in w.lower() or "empty" in w.lower() for w in warnings)
