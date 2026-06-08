@@ -5,7 +5,7 @@ description:
   when the user asks to save a checkpoint. Creates a CHECKPOINT.md that
   captures full resumption context.
 user-invocable: true
-allowed-tools: Bash(git branch --show-current), Bash(git rev-parse --show-toplevel), Bash(git rev-parse --path-format=absolute --git-common-dir), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add CHECKPOINT.md), Bash(basename:*), Bash(dirname:*), Bash(mkdir:*), Bash(cp CHECKPOINT.md .checkpoints/*.md), Bash(mv CHECKPOINT.md .checkpoints/*.md), Bash(stat:*), Bash(date:*), Read, Write, Edit
+allowed-tools: Bash(git branch --show-current), Bash(git rev-parse --show-toplevel), Bash(git rev-parse --path-format=absolute --git-common-dir), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add CHECKPOINT.md), Bash(basename:*), Bash(dirname:*), Bash(mkdir:*), Bash(cp CHECKPOINT.md .checkpoints/*.mirror.md), Bash(mv CHECKPOINT.md .checkpoints/*.md), Bash(stat:*), Bash(date:*), Read, Write(CHECKPOINT.md), Write(.checkpoints/*.md), Edit(CHECKPOINT.md), Edit(.checkpoints/*.md)
 ---
 
 # Checkpoint Save
