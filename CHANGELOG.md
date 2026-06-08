@@ -6,6 +6,28 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.11.0] — 2026-06-08
+
+MINOR: `hooks/block-inline-scripts.py` — Tesseract **redirect-target** bypass.
+Commands that append (`>>`) into a `~/.claude/tesseract/` path are now exempt
+from rule 2 (command-length) and rule 3 (statement-separator count) so long,
+chained "bulk-beings" appends to that directory aren't blocked; rule 1 (inline
+non-Bash scripts) still fires. The match is scoped to the redirect **target**
+rather than a free substring: a `/expert-review` 3-tier panel (haiku + sonnet +
+opus, unanimous `NARROW`) confirmed the original substring form let any
+over-limit or heavily-chained command (e.g. a `cat … | curl …` exfil pipeline)
+disarm rules 2 & 3 by merely carrying the path in a trailing
+`# ~/.claude/tesseract/` comment — and "rule 1 still fires" is **not** a
+sufficient backstop, since rule 1 matches only `python/ruby/node/perl/php`, not
+pure-Bash pipelines. Also fixed the accompanying tests: `> 300` length
+preconditions sat below the real `MAX_COMMAND_LENGTH = 400` (3 deny-tests
+shipped red, 3 bypass-tests passed vacuously), a contradictory
+`returncode == 1`/`== 0` pair in `test_non_string_command_is_allowed`, and a
+`sys.path`-seeding gap that let the statement-limit bypass test pass only via
+test-ordering pollution (`_load_hook_module` promoted to module scope). +2
+regression tests pin the comment-form denial. 64/64 hook tests pass. Manifests
+bumped 1.10.0 → 1.11.0 in lockstep.
+
 ## [1.10.0] — 2026-06-08
 
 MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced
