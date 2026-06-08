@@ -96,5 +96,8 @@ def _ahead_behind(cwd: Path, warnings: list[str]) -> tuple[int, int]:
     parts = counts.strip().split()
     if len(parts) != 2:
         return 0, 0
-    behind, ahead = int(parts[0]), int(parts[1])
+    try:
+        behind, ahead = int(parts[0]), int(parts[1])
+    except ValueError:
+        return 0, 0
     return ahead, behind
