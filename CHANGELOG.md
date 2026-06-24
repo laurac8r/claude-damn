@@ -6,6 +6,19 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.11.1] — 2026-06-24
+
+PATCH: `/tdd` promoted from a one-line shim into an explicit one-at-a-time TDD
+micro-cycle skill — one test → RED → minimal code → GREEN → refactor → repeat,
+run once per behavior. Still delegates to `/test-driven-development` for the
+RED→GREEN core via a bare invocation on its own line (canonical skill untouched;
+active-dev/canonical isolation). Adds the all-tests-upfront anti-pattern, an
+8-row rationalization table, and red flags. Validated via `/lets-make-a-skill`
+eval grid (Sonnet, parse-duration): baseline 0/5 quant → with-skill 5/5;
+iteration-2 refactor closed the general-solution-at-first-combined leak (3/3
+pressure held). Eval reports in `skills/tdd/evals/`. First of three sequential
+PRs (1.11.1 → 1.11.2 → 2.0.0). Manifests bumped 1.11.0 → 1.11.1 in lockstep.
+
 ## [1.11.0] — 2026-06-08
 
 MINOR: `hooks/block-inline-scripts.py` — Tesseract **redirect-target** bypass.
@@ -42,18 +55,6 @@ downstream paths like `~/.visual-aid/atlas-.html`. +4 tests
 (`test_render_tasks_escapes_status`,
 `test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas
 tests pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
-
-## [1.9.1] — 2026-06-06
-
-PATCH: `/tdd` promoted from a one-line shim into an explicit one-at-a-time TDD
-micro-cycle skill — one test → RED → minimal code → GREEN → refactor → repeat,
-run once per behavior. Still delegates to `/test-driven-development` for the
-RED→GREEN core (canonical skill untouched; active-dev/canonical isolation). Adds
-the all-tests-upfront anti-pattern, an 8-row rationalization table, and red
-flags. Validated via `/lets-make-a-skill` eval grid (Sonnet, parse-duration):
-baseline 0/5 quant → with-skill 5/5; iteration-2 refactor closed the
-general-solution-at-first-combined leak (3/3 pressure held). Eval reports in
-`skills/tdd/evals/`. First of three sequential PRs (1.9.1 → 1.9.2 → 2.0.0).
 
 ## [1.9.0] — 2026-05-16
 
