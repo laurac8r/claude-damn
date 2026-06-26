@@ -29,5 +29,11 @@ class TestSkillMdComposedSkillReferences:
     def test_references_fast_pr_final_self_review(self, skill_md: str) -> None:
         assert "/fast-pr-final-self-review" in skill_md
 
-    def test_references_expert_review(self, skill_md: str) -> None:
-        assert "/expert-review" in skill_md
+    def test_references_expert_review_all(self, skill_md: str) -> None:
+        assert "/expert-review all" in skill_md
+
+    def test_composition_order(self, skill_md: str) -> None:
+        # /fast-pr-final-self-review must run before /expert-review all
+        assert skill_md.index("/fast-pr-final-self-review") < skill_md.index(
+            "/expert-review all"
+        )
