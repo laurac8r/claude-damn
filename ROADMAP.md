@@ -196,6 +196,10 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       awaiting Anthropic review
 - [ ] Versioned releases with CHANGELOG entries per skill
 - [ ] Per-skill quickstart docs and usage examples
+- [ ] **Break down the `docs/index.html` mono-file** — expand `docs/`
+      into per-section components, potentially via Flutter (web) instead of
+      a single monolithic page. Surfaced 2026-06-26 when the two-tab
+      `index.html` (claude-damn overview + rtk evaluation) grew large.
 
 ## Phase 5 — Skill catalog expansion (post-v1.0.0)
 
