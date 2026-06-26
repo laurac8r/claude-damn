@@ -6,6 +6,31 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.12.0] — 2026-06-26
+
+MINOR: New skill `/expert-final-review` — a final pre-merge gate that composes
+the existing review skills in sequence: `/fast-pr-final-self-review` (confirm
+all PR peer feedback on the current branch is addressed) then `/expert-review
+all` (full multi-phase sweep — bugs, security, simplification, error handling,
+type design), aggregated into one go / no-go merge summary. Joins the
+`expert-*-review` composition family alongside `expert-cat-review` /
+`expert-tdd-review`, matching their minimalist single-body style. Built in a
+worktree off `main`. Note: `/lets-make-a-skill`'s baseline-first pressure grid
+was intentionally **skipped** — a pure A-then-B composition has no
+rationalization surface for a no-skill baseline to shortcut on, so the Iron Law
+(ship only after observing a baseline rationalize) does not bind; no sibling
+composition skill was built through the grid either. A structural smoke test was
+added in its place. Manifests bumped 1.11.1 → 1.12.0 in lockstep.
+
+### Added (v1.12.0)
+
+- `skills/expert-final-review/SKILL.md` — composition body sequencing
+  `/fast-pr-final-self-review` → `/expert-review all`.
+- `tests/skills/expert_final_review/` — structural smoke test (`conftest.py`,
+  `test_skill_md.py`, `__init__.py`) validating frontmatter + both
+  composed-skill references.
+- `.claude-plugin/plugin.json` keyword `expert-final-review`.
+
 ## [1.11.1] — 2026-06-24
 
 PATCH: `/tdd` promoted from a one-line shim into an explicit one-at-a-time TDD
