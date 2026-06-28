@@ -146,15 +146,18 @@ class TestTesseractStructure:
         )
 
     def test_paths_use_consistent_tesseract_spelling(self, skill_md: str) -> None:
-        """All `~/.claude/...` paths must use the 'tesseract' spelling
-        (not 'tessaract'). Earlier PR commits already corrected this.
+        """The shelf/ledger live under `~/.tesseract/` (directly under $HOME,
+        not `~/.claude/`), spelled 'tesseract' (not 'tessaract'). The legacy
+        `~/.claude/tesseract/` base must not reappear.
         """
-        assert "~/.claude/tessaract" not in skill_md, (
-            "Found pre-fix '~/.claude/tessaract' (misspelled) — should be "
-            "'~/.claude/tesseract'."
+        assert "tessaract" not in skill_md, (
+            "Found misspelled 'tessaract' — should be 'tesseract'."
         )
-        assert "~/.claude/tesseract/shelf" in skill_md
-        assert "~/.claude/tesseract/bulk-beings.md" in skill_md
+        assert "~/.tesseract/shelf" in skill_md
+        assert "~/.tesseract/bulk-beings.md" in skill_md
+        assert "~/.claude/tesseract/" not in skill_md, (
+            "Tesseract paths must be ~/.tesseract/, not ~/.claude/tesseract/."
+        )
 
     def test_skill_md_references_shared_helpers(self, skill_md: str) -> None:
         """SKILL.md must point at skills/_shared/ as the canonical home for
