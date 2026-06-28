@@ -516,6 +516,15 @@
           }
       }
   </style>
+  <noscript>
+    <style>
+      /* No-JS fallback: reveal every tab panel and hide the now-inert tab UI,
+         so the page reads as one continuous document. JS-on browsers ignore
+         <noscript>, so the scripted path (and its no-flash init) is untouched. */
+      [role="tabpanel"][hidden] { display: block !important; }
+      .tablist { display: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
 <!-- Header/footer are siblings of <main> so banner/contentinfo landmark roles survive. -->
