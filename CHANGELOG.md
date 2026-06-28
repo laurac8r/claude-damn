@@ -19,7 +19,7 @@ hook. Surfaced by a 5-agent doc-drift audit workflow.
 
 - **`README.md`** — status block now reflects the live v1.12.0 marketplace
   publish (was frozen at "v1.0.0 live / v1.7.0 pending review"); test count
-  `422` → `707` (765 total); the non-existent `/super-debug-and-fix` family
+  `422` → `716` (774 total); the non-existent `/super-debug-and-fix` family
   corrected to the real `fixer` family; Expert Review `10` → `14` combinatoric
   variants plus `/expert-final-review`; utility-skill list refreshed (`/atlas`,
   `/learn`, `/pause`, `/review`, `/sme-test`, `/task-list`, `/tesseract`,
