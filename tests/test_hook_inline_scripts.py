@@ -263,27 +263,25 @@ class TestTesseractPathBypass:
     """Tesseract path bypass: rules 2 & 3 are exempt; rule 1 still fires."""
 
     def test_tilde_path_char_limit_bypassed(self) -> None:
-        """A long append to ~/.claude/tesseract/ must NOT be blocked by rule 2."""
+        """A long append to ~/.tesseract/ must NOT be blocked by rule 2."""
         long_content = "x" * (MAX_COMMAND_LENGTH + 1)
-        command = f"echo '{long_content}' >> ~/.claude/tesseract/bulk-beings.md"
+        command = f"echo '{long_content}' >> ~/.tesseract/bulk-beings.md"
         assert len(command) > MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
         assert output == {}, f"Should allow (tesseract bypass): {command!r}"
 
     def test_absolute_path_char_limit_bypassed(self) -> None:
-        """Absolute /Users/<user>/.claude/tesseract/ path also bypasses rule 2."""
+        """Absolute /Users/<user>/.tesseract/ path also bypasses rule 2."""
         long_content = "x" * (MAX_COMMAND_LENGTH + 1)
-        command = (
-            f"echo '{long_content}' >> /Users/laura/.claude/tesseract/bulk-beings.md"
-        )
+        command = f"echo '{long_content}' >> /Users/laura/.tesseract/bulk-beings.md"
         assert len(command) > MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
         assert output == {}, f"Should allow (tesseract bypass): {command!r}"
 
     def test_home_env_var_path_char_limit_bypassed(self) -> None:
-        """$HOME/.claude/tesseract/ path bypasses rule 2."""
+        """$HOME/.tesseract/ path bypasses rule 2."""
         long_content = "x" * (MAX_COMMAND_LENGTH + 1)
-        command = f"echo '{long_content}' >> $HOME/.claude/tesseract/bulk-beings.md"
+        command = f"echo '{long_content}' >> $HOME/.tesseract/bulk-beings.md"
         assert len(command) > MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
         assert output == {}, f"Should allow (tesseract bypass): {command!r}"
@@ -293,8 +291,7 @@ class TestTesseractPathBypass:
         mod = _load_hook_module()
         # 5 separators: &&, ;, |, ;, >>
         command = (
-            "echo a && echo b; echo c | grep d;"
-            " echo e >> ~/.claude/tesseract/bulk-beings.md"
+            "echo a && echo b; echo c | grep d; echo e >> ~/.tesseract/bulk-beings.md"
         )
         sep_count = len(mod.SEPARATOR_PATTERN.findall(command))
         assert sep_count > mod.MAX_STATEMENT_COUNT, (
@@ -306,7 +303,7 @@ class TestTesseractPathBypass:
 
     def test_inline_script_still_blocked_on_tesseract_path(self) -> None:
         """Rule 1 (inline-script) MUST still fire even for tesseract paths."""
-        command = "python3 -c 'import os; os.system(\"ls\")' >> ~/.claude/tesseract/foo"
+        command = "python3 -c 'import os; os.system(\"ls\")' >> ~/.tesseract/foo"
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny", (
@@ -327,14 +324,28 @@ class TestTesseractPathBypass:
         )
 
     def test_tesseract_backup_path_char_limit_fires(self) -> None:
-        """~/.claude/tesseract-backup/ is not exempt — bypass scoped to tesseract/."""
+        """~/.tesseract-backup/ is not exempt — bypass scoped to tesseract/."""
         long_content = "x" * (MAX_COMMAND_LENGTH + 1)
-        command = f"echo '{long_content}' >> ~/.claude/tesseract-backup/file.md"
+        command = f"echo '{long_content}' >> ~/.tesseract-backup/file.md"
         assert len(command) > MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny", (
             "Char-limit must fire for tesseract-backup path"
+        )
+
+    def test_old_claude_tesseract_path_no_longer_bypassed(self) -> None:
+        """Regression for the v1.12.1 path fix: the legacy `~/.claude/tesseract/`
+        base is NO LONGER exempt — only the real runtime path `~/.tesseract/`
+        bypasses rules 2 & 3. A long append to the legacy path must fire rule 2.
+        """
+        long_content = "x" * (MAX_COMMAND_LENGTH + 1)
+        command = f"echo '{long_content}' >> ~/.claude/tesseract/bulk-beings.md"
+        assert len(command) > MAX_COMMAND_LENGTH
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Legacy ~/.claude/tesseract/ path must no longer bypass the char-limit"
         )
 
     def test_memory_path_char_limit_fires(self) -> None:
@@ -355,7 +366,7 @@ class TestTesseractPathBypass:
         command with the tesseract path only in a trailing comment (not a `>>`
         target) must NOT bypass rule 2."""
         long_content = "x" * (MAX_COMMAND_LENGTH + 1)
-        command = f"echo '{long_content}' # ~/.claude/tesseract/bulk-beings.md"
+        command = f"echo '{long_content}' # ~/.tesseract/bulk-beings.md"
         assert len(command) > MAX_COMMAND_LENGTH
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
@@ -367,7 +378,7 @@ class TestTesseractPathBypass:
         """A chained command with the tesseract path only in a comment (not a
         `>>` target) must still trip rule 3."""
         chained = "; ".join(f"echo {i}" for i in range(MAX_STATEMENT_COUNT + 2))
-        command = f"{chained} # ~/.claude/tesseract/bulk-beings.md"
+        command = f"{chained} # ~/.tesseract/bulk-beings.md"
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny", (
