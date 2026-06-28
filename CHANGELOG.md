@@ -6,6 +6,45 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.12.1] — 2026-06-27
+
+PATCH: Documentation-drift sync plus a tesseract path-consistency fix.
+Reconciles `README.md`, `ROADMAP.md`, and `skills/README.md` against the current
+repo (catalog grew to 61 skills; marketplace at v1.12.0, working tree v1.12.1),
+and corrects the tesseract shelf/ledger base path from `~/.claude/tesseract/` to
+the real runtime `~/.tesseract/` across the skill doc AND the inline-scripts
+hook. Surfaced by a 5-agent doc-drift audit workflow.
+
+### Changed (v1.12.1)
+
+- **`README.md`** — status block now reflects the live v1.12.0 marketplace
+  publish (was frozen at "v1.0.0 live / v1.7.0 pending review"); test count
+  `422` → `707` (765 total); the non-existent `/super-debug-and-fix` family
+  corrected to the real `fixer` family; Expert Review `10` → `14` combinatoric
+  variants plus `/expert-final-review`; utility-skill list refreshed (`/atlas`,
+  `/learn`, `/pause`, `/review`, `/sme-test`, `/task-list`, `/tesseract`,
+  `/visual-aid`, …); project-tree variant count corrected; Privacy section
+  tesseract paths corrected to `~/.tesseract/`.
+- **`ROADMAP.md`** — skill count `38` → `61`; expert-review `10` → `14`
+  variants; Phase 1/4 marketplace status updated from "awaiting review" to
+  published; `/atlas` checked off (shipped PR #80).
+- **`skills/README.md`** — replaced the four broken `/super-debug-and-fix*`
+  rows (skills that never existed) with the real `fixer` family; added the four
+  missing `expert-super-tdd*` review rows, an `/expert-final-review` row, a
+  `fixer` modifier row, and 17 standalone skills to the Other Skills table.
+### Fixed (v1.12.1)
+
+- **Tesseract base path `~/.claude/tesseract/` → `~/.tesseract/`.** The skill's
+  Metaphor table and resume-anchor cascade, and the `block-inline-scripts.py`
+  `TESSERACT_REDIRECT_PATTERN`, all keyed on `~/.claude/tesseract/` — but the
+  skill's operative steps (and the real runtime) read/write `~/.tesseract/`
+  directly under `$HOME`. As shipped, the v1.11.0 rules-2&3 redirect-bypass
+  therefore never matched a genuine bulk-beings append. Repointed the regex and
+  the SKILL.md references to `~/.tesseract/` (redirect-target scoping preserved;
+  comment-only mentions still don't disarm the guards), with the structural +
+  hook tests updated and a regression asserting the legacy path is no longer
+  exempt.
+
 ## [1.12.0] — 2026-06-26
 
 MINOR: New skill `/expert-final-review` — a final pre-merge gate that composes
