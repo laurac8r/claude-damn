@@ -6,6 +6,45 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
+## [1.12.1] — 2026-06-29
+
+PATCH: `/cat` reworked from "ask for auto-accept, then the agent self-selects the
+dispatch shape" into the **explicit combination** of both superpowers skills it
+composes — `/subagent-driven-development` (sequential, review-gated) and
+`/dispatching-parallel-agents` (independent fan-out) — fronted by **one combined
+pre-dispatch `AskUserQuestion`** over two orthogonal axes: execution mode (3
+presets — Full parallel / Hybrid / Strict sequential) and edit approval
+(Auto-accept vs Manual-approve). The "No Shortcut for Trivial Edits" guard is
+preserved and extended with an explicit manual-approve closure (foreground /
+manual-approve changes who _approves_ an edit, not who _makes_ it). Built in a
+worktree off `main`.
+
+Note: `/lets-make-a-skill`'s baseline-first pressure grid did **not** bind — a
+RED baseline (4 agents under manual-approve pressure against the current `/cat`)
+produced 0 shortcuts: the existing rationalization-counter table already
+generalized to the new framing, so the Iron Law (ship only after a baseline
+rationalizes) is satisfied without a new behavioral guard, exactly as for
+`/expert-final-review` (1.12.0). A structural test suite was added in its place;
+the manual-approve closure ships as explicitness (removing a derivation step),
+not as a proven-necessary guard. Also corrected an outdated assumption while
+drafting: backgrounded subagents **do** surface permission prompts (Claude Code
+v2.1.186+), so the edit-approval axis turns on auto-accepted-vs-approve-each, not
+background-vs-foreground.
+
+### Added (v1.12.1)
+
+- `tests/skills/cat/` — structural test suite (`conftest.py`, `test_skill_md.py`,
+  `__init__.py`): 16 assertions covering frontmatter, both composed-skill bare
+  invocations, the combined pre-dispatch question (3 presets + 2 approval modes),
+  and the No-Shortcut manual-approve closure + ordering.
+
+### Changed (v1.12.1)
+
+- `skills/cat/SKILL.md` — combined pre-dispatch `AskUserQuestion`; explicit
+  dual-skill composition with bare invocations; manual-approve × execution-mode
+  reconciliation matrix; manual-approve closure in the No-Shortcut section.
+- `.claude-plugin/plugin.json` / `pyproject.toml` / `uv.lock` — 1.12.0 → 1.12.1.
+
 ## [1.12.0] — 2026-06-26
 
 MINOR: New skill `/expert-final-review` — a final pre-merge gate that composes
