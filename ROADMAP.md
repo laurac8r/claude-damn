@@ -366,6 +366,13 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       markdown deliverable; the rationalization counter table in `/listen`
       doesn't yet cover the analysis→transformation chain pattern.
 
+- [ ] **Goodwill-rule enforcement hooks** — a versioning-bump warn hook
+      (ROADMAP mark-off without a manifest bump), and extend
+      `block-inline-scripts` to detect inline interpreters (`python3 <<`,
+      `node -e $'…\n'`). Each via TDD. Surfaced by rules-followability discovery
+      (D13 / D12). (`rm` and `git commit` are already enforced via
+      `settings*.json` deny rules — not hooks, so dropped from this item.)
+
 ### `/atlas` — session-survey skill
 
 - [ ] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
