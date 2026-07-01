@@ -6,7 +6,7 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the
 PERSONALIZATION versioning rule.
 
-## [1.12.1] — 2026-06-29
+## [1.12.2] — 2026-06-29
 
 PATCH: `/cat` reworked from "ask for auto-accept, then the agent self-selects the
 dispatch shape" into the **explicit combination** of both superpowers skills it
@@ -31,19 +31,19 @@ drafting: backgrounded subagents **do** surface permission prompts (Claude Code
 v2.1.186+), so the edit-approval axis turns on auto-accepted-vs-approve-each, not
 background-vs-foreground.
 
-### Added (v1.12.1)
+### Added (v1.12.2)
 
 - `tests/skills/cat/` — structural test suite (`conftest.py`, `test_skill_md.py`,
   `__init__.py`): 16 assertions covering frontmatter, both composed-skill bare
   invocations, the combined pre-dispatch question (3 presets + 2 approval modes),
   and the No-Shortcut manual-approve closure + ordering.
 
-### Changed (v1.12.1)
+### Changed (v1.12.2)
 
 - `skills/cat/SKILL.md` — combined pre-dispatch `AskUserQuestion`; explicit
   dual-skill composition with bare invocations; manual-approve × execution-mode
   reconciliation matrix; manual-approve closure in the No-Shortcut section.
-- `.claude-plugin/plugin.json` / `pyproject.toml` / `uv.lock` — 1.12.0 → 1.12.1.
+- `.claude-plugin/plugin.json` / `pyproject.toml` / `uv.lock` — 1.12.1 → 1.12.2.
 
 
 ## [1.12.1] — 2026-06-27
@@ -72,6 +72,7 @@ hook. Surfaced by a 5-agent doc-drift audit workflow.
   rows (skills that never existed) with the real `fixer` family; added the four
   missing `expert-super-tdd*` review rows, an `/expert-final-review` row, a
   `fixer` modifier row, and 17 standalone skills to the Other Skills table.
+
 ### Fixed (v1.12.1)
 
 - **Tesseract base path `~/.claude/tesseract/` → `~/.tesseract/`.** The skill's

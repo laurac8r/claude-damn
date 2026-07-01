@@ -12,7 +12,7 @@ plugin.
 > **✅ Status:** `claude-damn` is **live** in the
 > [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
 > marketplace. The published marketplace version is **v1.12.0**; the working
-> tree is at **v1.12.1**, pending the next batch sync. See `CHANGELOG.md` for
+> tree is at **v1.12.2**, pending the next batch sync. See `CHANGELOG.md` for
 > what's in each version.
 
 Install:
