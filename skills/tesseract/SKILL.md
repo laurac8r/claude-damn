@@ -29,9 +29,9 @@ cannot visit the tesseract silently.
 | ------------------------ | --------------------------------------------------------------- |
 | Murph point of reference | **Anchor** — the file/branch/topic everything is framed around  |
 | Gravity                  | **File I/O** — the only cross-session channel                   |
-| Books on the shelf       | **Shelf entries** at `~/.claude/tesseract/shelf/<slug>.md`      |
+| Books on the shelf       | **Shelf entries** at `~/.tesseract/shelf/<slug>.md`             |
 | Morse via the watch      | **`--signal "<morse>"`** — optional short payload               |
-| Bulk-beings transmission | **`~/.claude/tesseract/bulk-beings.md`** — append-only self-log |
+| Bulk-beings transmission | **`~/.tesseract/bulk-beings.md`** — append-only self-log         |
 | Four hallways            | git · memory · shelf · bulk — the four evidence streams         |
 
 ---
@@ -88,7 +88,7 @@ scanned for `--retro` or any other flag syntax.
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its
       `name:` frontmatter field; if none, the basename without `.md`.
-   4. `ls -t ~/.claude/tesseract/shelf/*.md 2>/dev/null | head -1` → filename
+   4. `ls -t ~/.tesseract/shelf/*.md 2>/dev/null | head -1` → filename
       stem. Past-you's last anchor, recovered from the shelf itself.
    5. `basename "$PWD"`. Where you are when history is empty.
 
