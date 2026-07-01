@@ -21,7 +21,7 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 - [x] `policy-limits.json` — remote control restrictions
 - [x] `com.claude.sync-theme.plist` — macOS launchd theme sync
 
-## Phase 1 — Plugin packaging (v1.0.0 submitted 2026-04-23; published to the community marketplace v1.12.0; repo at v1.12.1)
+## Phase 1 — Plugin packaging (v1.0.0 submitted 2026-04-23; published to the community marketplace v1.12.0; repo at v1.12.2)
 
 - [x] Introduce `pyproject.toml` + `uv.lock` (uv-managed `.venv`, Python ≥ 3.14)
 - [x] Stand up `tests/` tree with `pytest` + `ruff`
