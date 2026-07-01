@@ -1,6 +1,6 @@
 # Roadmap — `claude-damn`
 
-Transition the flat `~/.claude` dotfile collection (commands, 38 skills, hooks,
+Transition the flat `~/.claude` dotfile collection (commands, 61 skills, hooks,
 cost tooling) into a first-class Claude Code plugin that installs alongside
 `superpowers` from the official marketplace.
 
@@ -8,10 +8,10 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 
 - [x] Slash commands: `/review`, `/expert-review`, `/address-pr-feedback`,
       `/cost`, `/cost-opt`
-- [x] Full combinatoric skill catalog (38 skills): `tdd` / `super` / `duper` /
+- [x] Full combinatoric skill catalog: `tdd` / `super` / `duper` /
       `cat` families
 - [x] `expert-review` family with multi-language + cloud + security
-      specialization (10 variants)
+      specialization (14 variants)
 - [x] `checkpoint-save` / `checkpoint-resume` / `check-yourself` lifecycle
       skills
 - [x] `extract_cost.py` — session JSONL → token usage + cost via Anthropic
@@ -21,7 +21,7 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 - [x] `policy-limits.json` — remote control restrictions
 - [x] `com.claude.sync-theme.plist` — macOS launchd theme sync
 
-## Phase 1 — Plugin packaging (v1.0.0 submitted 2026-04-23; awaiting Anthropic review)
+## Phase 1 — Plugin packaging (v1.0.0 submitted 2026-04-23; published to the community marketplace v1.12.0; repo at v1.12.1)
 
 - [x] Introduce `pyproject.toml` + `uv.lock` (uv-managed `.venv`, Python ≥ 3.14)
 - [x] Stand up `tests/` tree with `pytest` + `ruff`
@@ -58,7 +58,7 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 
 ## Phase 2 — Skill hardening
 
-- [ ] Normalize `SKILL.md` frontmatter across all 38 skills (name, description,
+- [ ] Normalize `SKILL.md` frontmatter across all 61 skills (name, description,
       user-invocable, argument-hint)
 - [ ] Port hand-wired shared-memory conventions into a reusable skill helper
 - [ ] Add integration coverage for the `super` / `duper` / `cat` modifier
@@ -192,8 +192,8 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       `cp -r skills/* ~/.claude/skills/`
 - [x] **Submitted** to the official Claude Code marketplace 2026-04-23 via
       `clau.de/plugin-directory-submission`
-- [ ] **Approved** and listed in `claude-plugins-official/external_plugins/` —
-      awaiting Anthropic review
+- [x] **Approved** and listed in the community marketplace
+      (`anthropics/claude-plugins-community`) — live at v1.12.0
 - [ ] Versioned releases with CHANGELOG entries per skill
 - [ ] Per-skill quickstart docs and usage examples
 - [ ] **Break down the `docs/index.html` mono-file** — expand `docs/`
@@ -375,7 +375,7 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
 
 ### `/atlas` — session-survey skill
 
-- [ ] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
+- [x] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
       into a single "where am I, what have I done, what's next" survey page.
       Single-anchor by default (auto-detected from `cwd`/branch); `--anchor
       <name>` for explicit scope; `--all` for multi-anchor survey across every
@@ -383,7 +383,7 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       Read-only by design (no shelf or bulk-beings writes), like
       `/tesseract --visual`. Concept card already rendered at
       `~/.visual-aid/visual-aid-atlas.html` (2026-04-26) — that page is the
-      spec.
+      spec. Shipped via PR #80 (2026-06).
 
 - [ ] **Future exploration — per-project sections in `/atlas --all` mode.**
       v1 `--all` drops the project-scoped sections (git state, CHECKPOINT,
