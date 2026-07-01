@@ -43,13 +43,15 @@ class TestComposedSkillReferences:
         assert "/dispatching-parallel-agents" in skill_md
 
     def test_sdd_has_bare_invocation_in_body(self, skill_body: str) -> None:
-        # Must appear at least once in the body NOT wrapped as inline code,
-        # else per skill-invocation-literalness it never actually loads
-        # (the /tdd 1.11.1 backtick-everything regression).
-        assert re.search(r"(?<!`)/subagent-driven-development\b", skill_body)
+        # Must appear as a standalone invocation line (<=3 spaces indent, no
+        # backticks) — per skill-invocation-literalness a bare /skill on its own
+        # line is what actually loads (the /tdd 1.11.1 backtick-everything
+        # regression). The line-start match also excludes 4+ space indented code
+        # blocks and mid-prose mentions, which never load.
+        assert re.search(r"(?m)^ {0,3}/subagent-driven-development\s*$", skill_body)
 
     def test_parallel_has_bare_invocation_in_body(self, skill_body: str) -> None:
-        assert re.search(r"(?<!`)/dispatching-parallel-agents\b", skill_body)
+        assert re.search(r"(?m)^ {0,3}/dispatching-parallel-agents\s*$", skill_body)
 
 
 class TestCombinedPreDispatchQuestion:
