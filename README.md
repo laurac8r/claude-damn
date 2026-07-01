@@ -162,7 +162,7 @@ If you're hacking on `claude-damn` itself, install from a local clone:
 git clone https://github.com/laurac8r/claude-damn
 cd claude-damn
 uv sync        # dev/test dependencies
-uv run pytest  # 716 tests green (774 total; smoke + performance deselected by default)
+uv run pytest  # 719 tests green (777 total; smoke + performance deselected by default)
 ```
 
 Then point Claude Code at the local checkout so skills, commands, and the
