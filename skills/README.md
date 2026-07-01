@@ -40,14 +40,14 @@ skill:
 The `fixer` skills run `/expert-review debug` first, then fix using the matching
 `/super*` skill (bare `/fixer` is an alias for `/systematic-debugging`).
 
-| Skill                          | Modifiers                       | Invokes                                                                                              |
-| ------------------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `/fixer`                       | fix                             | /systematic-debugging                                                                               |
-| `/super-fixer`                 | super + fix                     | /expert-review (debug) + /brainstorming + /tdd                                                       |
-| `/super-fixer-cat`             | super + fix + cat               | /expert-review (debug) + /brainstorming + /tdd + /subagent-driven-development                        |
-| `/super-duper-fixer`           | super + duper + fix             | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees                                |
-| `/super-duper-fixer-cat`       | super + duper + fix + cat       | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
-| `/super-duper-fixer-tdd-cat`   | super + duper + tdd + fix + cat | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
+| Skill                        | Modifiers                         | Invokes                                                                                              |
+| ---------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `/fixer`                     | fixer                             | /systematic-debugging                                                                                |
+| `/super-fixer`               | super + fixer                     | /expert-review (debug) + /brainstorming + /tdd                                                       |
+| `/super-fixer-cat`           | super + fixer + cat               | /expert-review (debug) + /brainstorming + /tdd + /subagent-driven-development                        |
+| `/super-duper-fixer`         | super + duper + fixer             | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees                                |
+| `/super-duper-fixer-cat`     | super + duper + fixer + cat       | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
+| `/super-duper-fixer-tdd-cat` | super + duper + tdd + fixer + cat | /expert-review (debug) + /brainstorming + /tdd + /using-git-worktrees + /subagent-driven-development |
 
 ### Base: Expert Review
 
