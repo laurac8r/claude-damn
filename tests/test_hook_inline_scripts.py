@@ -286,6 +286,15 @@ class TestTesseractPathBypass:
         output = run_hook("Bash", command)
         assert output == {}, f"Should allow (tesseract bypass): {command!r}"
 
+    def test_home_absolute_path_char_limit_bypassed(self) -> None:
+        """The Linux absolute /home/<user>/.tesseract/bulk-beings.md prefix
+        branch also bypasses rule 2 (cross-platform coverage)."""
+        long_content = "x" * (MAX_COMMAND_LENGTH + 1)
+        command = f"echo '{long_content}' >> /home/laura/.tesseract/bulk-beings.md"
+        assert len(command) > MAX_COMMAND_LENGTH
+        output = run_hook("Bash", command)
+        assert output == {}, f"Should allow (tesseract bypass): {command!r}"
+
     def test_tesseract_path_statement_limit_bypassed(self) -> None:
         """Chained separators ending in a `>>` tesseract redirect bypass rule 3."""
         mod = _load_hook_module()
@@ -302,8 +311,14 @@ class TestTesseractPathBypass:
         assert output == {}, f"Should allow (tesseract bypass): {command!r}"
 
     def test_inline_script_still_blocked_on_tesseract_path(self) -> None:
-        """Rule 1 (inline-script) MUST still fire even for tesseract paths."""
-        command = "python3 -c 'import os; os.system(\"ls\")' >> ~/.tesseract/foo"
+        """Rule 1 (inline-script) MUST still fire even while the bulk-beings
+        bypass is genuinely engaged — the target is the exempt bulk-beings.md,
+        so rules 2 & 3 are short-circuited but rule 1 must NOT be."""
+        # The os.system payload is an intentional inline-script FIXTURE the guard
+        # must detect — it is a string fed to the hook, never executed here.
+        command = (
+            "python3 -c 'import os; os.system(\"ls\")' >> ~/.tesseract/bulk-beings.md"
+        )
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny", (
@@ -346,6 +361,31 @@ class TestTesseractPathBypass:
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny", (
             "Legacy ~/.claude/tesseract/ path must no longer bypass the char-limit"
+        )
+
+    def test_non_bulk_beings_tesseract_path_char_limit_fires(self) -> None:
+        """The bypass is narrowed to `bulk-beings.md` — a long append to any
+        OTHER file under ~/.tesseract/ is NOT exempt and trips rule 2 (reduces
+        the bypass surface; the shelf is written via the Write tool, not Bash)."""
+        long_content = "x" * (MAX_COMMAND_LENGTH + 1)
+        command = f"echo '{long_content}' >> ~/.tesseract/scratch.md"
+        assert len(command) > MAX_COMMAND_LENGTH
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "Only ~/.tesseract/bulk-beings.md should bypass; other files must fire"
+        )
+
+    def test_bulk_beings_suffix_smuggle_char_limit_fires(self) -> None:
+        """The `(?:\\s|$)` anchor pins the exact filename: a near-miss like
+        bulk-beings.md.bak must NOT bypass (guards the narrowing boundary)."""
+        long_content = "x" * (MAX_COMMAND_LENGTH + 1)
+        command = f"echo '{long_content}' >> ~/.tesseract/bulk-beings.md.bak"
+        assert len(command) > MAX_COMMAND_LENGTH
+        output = run_hook("Bash", command)
+        hook_out = output.get("hookSpecificOutput", {})
+        assert hook_out.get("permissionDecision") == "deny", (
+            "bulk-beings.md.bak must not bypass — exact filename only"
         )
 
     def test_memory_path_char_limit_fires(self) -> None:
