@@ -56,5 +56,12 @@ CHECKPOINT.md
 daemon/
 jobs/
 
-# NOTE to `/sync` Skill -> NEVER delete the below line
-/rules/PERSONALIZATION.md
+mcp-needs-auth-cache.json
+daemon-auth-cooldown
+daemon-auth-status.json
+.last-update-result.json
+.last-cleanup
+security/
+
+# NOTE to `/sync` Skill -> NEVER delete the below line(s)
+rules/PERSONALIZATION.md

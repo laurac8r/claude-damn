@@ -1,22 +1,64 @@
 # Rules
 
+> **Severity tags** follow the scheme in
+> `PERSONALIZATION.md › How to edit these rules`: `[nudge]` < `[policy]` <
+> `[hard]`. Safety rules below are marked `[hard]` inline; a rule that must also
+> bind subagents is marked `[binds:subagents]` and appears in the Subagent
+> Preamble.
+
+## Subagent Preamble — paste verbatim into EVERY Task/Workflow dispatch
+
+Fresh Agent-tool subagents and backgrounded Workflow agents do NOT reliably
+inherit this file. Rule delivery to subagents is inconsistent across contexts
+(Task vs Workflow vs headless/cron) and unfocused when it does fire — the only
+reliable channels are a **PreToolUse hook** or **verbatim text in the dispatch
+prompt**. So before dispatching ANY subagent, paste the block below into its
+prompt:
+
+> **Subagent must-follow rules (you do NOT inherit the operator's config):**
+>
+> - **Deletes:** never `rm` / `rm -rf` / `rm -f` / globs — use `trash` only; if
+>   unavailable, stop and ask. (Enforced by `settings.local.json` deny rules —
+>   don't route around it; rationale: recoverability.)
+> - **Git:** never run `git commit` (or `--amend` / `-m` / any variant); stage +
+>   prepare a message only. (Enforced by the `Bash(*git commit*)` deny rule.)
+> - **Inline scripts:** no multi-line non-bash code in Bash; write a single-run
+>   throwaway script to `/tmp/`, run it once, `trash` it. Hard caps: ≤500 chars,
+>   ≤10 statement separators per command.
+> - **Isolation (active-dev):** never read or embed canonical proprietary
+>   content — `~/.claude/rules/`, proprietary `~/.claude/hooks/`,
+>   `~/.claude/projects/.../memory/`, `~/.tesseract/`.
+> - **shared/ memory:** update ONLY your own file; never modify `COMBINED.md`.
+> - **cwd:** the shell anchor is the session's launch dir; `cd` above it resets.
+>   Prefer absolute paths / `git -C <path>`; bundle `cd <abs>; <tool>` when a
+>   tool needs a `/tmp` worktree cwd.
+
+The rules tagged `[binds:subagents]` (here and in `PERSONALIZATION.md`) are
+exactly the ones that must appear in this block — keep them in sync when you add
+or change one.
+
 ## Claude Code CLI & Agent Behavior
 
 When operating as an autonomous coding agent via the Claude Code CLI, adhere to
 these operational directives:
 
-- **Proactive Verification:** Do not wait for user permission to run tests or
-  linters. After modifying code, autonomously execute `uv run ruff check`,
-  `uv run ruff format`, and `uv run pytest` for Python projects to verify your
-  changes before reporting completion.
+- **Proactive Verification [policy]:** Do not wait for user permission to run
+  tests or linters. After modifying code, autonomously execute
+  `uv run ruff check`, `uv run ruff format`, and `uv run pytest` for Python
+  projects to verify your changes before reporting completion.
+   - **Even under deploy / time pressure, run the verification BEFORE claiming
+     done — do NOT defer with "want me to run it?" and do NOT report an
+     unverified diff as complete.** (RED-eval failure mode: this is the exact
+     step agents drop under urgency.)
    - Similarly, run
       - `flutter analyze`, `flutter test`, and `flutter build` for Dart
         (Flutter) projects.
       - `prettier` and `npm test` for JavaScript projects [//]: # ( TODO: Add
         more language-specific format+test+build commands in the future. )
-- **Iron Rule — Recoverable Deletes:** NEVER use `rm`, `rm -rf`, `rm -f`, or any
-  `rm` variant for deletion. ALWAYS use `trash` (`/usr/bin/trash` on macOS) so
-  deletions land in the system Trash and are recoverable.
+- **Iron Rule — Recoverable Deletes [hard] [binds:subagents]:** NEVER use `rm`,
+  `rm -rf`, `rm -f`, or any `rm` variant for deletion. ALWAYS use `trash`
+  (`/usr/bin/trash` on macOS) so deletions land in the system Trash and are
+  recoverable.
    - Applies to files, directories, and globs — no exceptions for "empty" or
      "obviously safe" targets.
    - Applies to the main agent AND all subagents.
@@ -24,17 +66,32 @@ these operational directives:
      `trash-cli`), stop and ask the user rather than falling back to `rm`.
    - Rationale: `rm` is unrecoverable; `trash` gives a one-click restore if the
      wrong thing gets targeted.
+   - **Enforced** by deny rules in `settings.local.json` (`Bash(rm *)` /
+     `Bash(* rm *)` / `Bash(*/rm *)`) — NOT goodwill. Don't route around the
+     block (wrapper script, renamed binary, `find -delete`); the rationale is
+     recoverability: `trash` restores, `rm` doesn't.
 - **Cost Optimization & Model Routing:**
    - Offload routine work (boilerplate, repetitive CRUD, test stubs, file
      exploration) to Sonnet/Haiku subagents.
    - Reserve Opus for architectural decisions, complex debugging, and business
      logic.
-   - **Hard rule — No Opus subagents:** Never spawn a subagent with `model=opus`
-     via the Task tool. Use `model=sonnet` or `model=haiku` exclusively. The
-     ONLY override is `/batch` (built-in parallel-dispatch command). Enforced by
-     PreToolUse hook `~/.claude/hooks/block_opus_subagent.py`. To override
-     manually (outside `/batch`): set env `CLAUDE_BATCH_MODE=1`, or include the
-     sentinel `[BATCH_OVERRIDE]` in the Task prompt/description.
+   - **Hard rule — No Opus subagents [hard]:** Never spawn a subagent with
+     `model=opus` via the Task tool; use `model=sonnet` or `model=haiku`.
+     Enforced by PreToolUse hook `~/.claude/hooks/block_opus_subagent.py`.
+     Standing overrides are a **CLOSED list** (set env `CLAUDE_BATCH_MODE=1` or
+     put `[BATCH_OVERRIDE]` in the Task prompt/description for these):
+      1. `/batch` (built-in parallel-dispatch command).
+      2. **Multi-phase reviewer dispatch** — `/expert-review`,
+         `/pr-review-toolkit:review-pr`, `/expert-super-duper-cat-review`,
+         `/super-duper-fixer-cat`, and similar deep-review compositions, whose
+         review-phase subagents get more value from Opus reasoning than cheap
+         dispatch.
+      3. **3-tier fanout** — for a genuinely hard / contentious task, dispatch
+         identical-prompted Haiku + Sonnet + Opus subagents in parallel
+         (convergence ⇒ high confidence; divergence ⇒ re-trace + consult the
+         operator). "This feels complex" is NOT a qualifying trigger — only the
+         named cases above. This rule is the single source of truth;
+         `PERSONALIZATION.md › Model routing` points here.
    - Be aware of when to recommend a manual switch of models:
       - **Suggest `/model opus`** when the task requires sustained deep
         reasoning throughout execution, not just planning — e.g., debugging a
@@ -52,10 +109,13 @@ these operational directives:
       - **Use Opus for:** multi-file refactors with cross-cutting concerns,
         debugging subtle runtime bugs, designing new APIs or data models, and
         tasks requiring deep contextual reasoning across >3 files.
-   - **Subagent delegation target:** In sessions exceeding 20 turns, aim to
-     delegate ≥30% of turns to Sonnet/Haiku subagents. Actively look for
-     opportunities: file reads, glob/grep searches, test execution, boilerplate
-     generation, and commit preparation are all Sonnet-appropriate.
+   - **Subagent delegation target [policy]:** Trigger + check, NOT an aspiration
+     — in any session past 20 assistant turns, BEFORE you do a read / grep /
+     test-run / boilerplate task yourself, dispatch it to a Sonnet/Haiku
+     subagent, unless dispatch overhead clearly exceeds the work or a memory
+     records that subagents are blocked here for that tool. ("Aim to ≥30%" is a
+     _consequence_ of this trigger, not a quota to perform.) Full rule:
+     `PERSONALIZATION.md › Subagent delegation & /cat cadence`.
    - **Prefer `/cat` for subagent dispatch — Claude Max has daily token
      limits.** Even on Max plans, daily usage caps apply. Dispatch subagents via
      `/cat` (or compositions like `/super-cat`, `/duper-tdd-cat`) for any
@@ -65,7 +125,7 @@ these operational directives:
    - **Avoid short Opus sessions for trivial tasks:** Starting a new Opus
      session costs ~$0.15-0.35 in cache creation alone. If the task is a quick
      lookup, config tweak, or single-file edit, prefer Sonnet.
-- **No Inline Non-Bash Scripts in Bash:**
+- **No Inline Non-Bash Scripts in Bash [policy] [binds:subagents]:**
    - Never execute multiline code in another programming language (Python, Ruby,
      Node, Perl, etc.) directly inside the Bash tool via heredocs (`<<EOF`,
      `<<'EOF'`), `-c` strings, or piped stdin.
@@ -76,7 +136,14 @@ these operational directives:
       3. Only then execute the script via Bash (e.g.,
          `python3 /tmp/script_<descriptive_name>.py`).
 
-   - This applies to **both the main agent and all subagents**.
+   - This applies to **both the main agent and all subagents**. The
+     review-and-approve step (2) is for INTERACTIVE main-agent sessions; an
+     autonomous or subagent context has no human to wait on — there, skip the
+     approval gate and instead write a single-run throwaway script to `/tmp/`,
+     run it once, and `trash` it. The `block-inline-scripts.py` hook enforces
+     ONLY the length/separator caps below; the "no inline interpreter" core is
+     goodwill (a hook extension to catch `python3 <<`, `node -e $'…\n'` is
+     roadmapped).
       - True single-statement invocations (e.g., `python3 -c "print(1)"`) are
         acceptable, but must not contain `;`, `\n`, or any other statement/line
         separators that smuggle multiple statements into a single-line form. If
@@ -89,16 +156,16 @@ these operational directives:
      chaining. Refer to @~/.claude/hooks/constants.py for the most up-to-date
      limits.
 
-- **Git Commits:**
-   - The user prefers to handle all `git commit` (and its variants) operations
-     herself.
-   - Avoid running `git commit` (or any variant including `git commit --amend`,
-     `git commit -m`, etc.).
-   - You may stage files with `git add` and prepare commit messages, but stop
-     before committing, ideally.
-   - Prepared commit messages may only be for each single file, or each single
-     script-test pair.
-      - Multiple, atomic commits are the standard the user abides by.
+- **Git Commits [hard] [binds:subagents]:**
+   - The operator handles all `git commit` operations herself.
+   - **NEVER run `git commit` or any variant** (`git commit --amend`,
+     `git commit -m`, …). No hedge: stage with `git add` and prepare the
+     message, then STOP. Enforced by the `Bash(*git commit*)` deny rule in
+     `settings.json` — don't route around it; the operator owns commit timing,
+     granularity, and message.
+   - Delegation may prepare a commit **message** — never the commit itself.
+   - Prepared messages are per single file, or per single script-test pair;
+     multiple atomic commits are the standard.
 - **Batch Operations:**
    - Group related work into a single session.
    - Read all necessary context upfront before executing writes to minimize
@@ -157,8 +224,8 @@ everything else in this doc.
 ### Learn (every iteration)
 
 - After each task batch, offer the operator/user that we take a learning pass:
-  `/cost_`, `/learn`, update `MEMORY.md` for non-obvious feedback, and adjust
-  the next speculation based on what just happened.
+  `/cost_` (skip on Claude Max), `/learn`, update `MEMORY.md` for non-obvious
+  feedback, and adjust the next speculation based on what just happened.
 - Treat surprises (rejected tool calls, blocked hooks, unexpected test failures)
   as **data about the model of the system**, not noise. Update the mental model
   before retrying the same operation.
@@ -192,7 +259,7 @@ makes both true.
 - **Broken-windows prevention is the goal:** small constant maintenance reverses
   code rot over time. But it MUST stay small, in-path, and reviewable in the
   same diff. A bug-fix PR that grows a refactor lobe is no longer a bug-fix PR —
-  split it (mirrors the "prefer smaller PRs" rule in `PERSONALIZATION.md`).
+  split it — prefer smaller, single-purpose PRs.
 
 ## Scope Discipline
 
@@ -299,7 +366,7 @@ approach was wrong: Ask what the user wants instead.
      `MEMORY.md`, and update the `README.md` for project-level
      instructions/context/intro and the `ROADMAP.md` for a timeline on when
      certain things were added/removed/updated in the project.
-- **Shared-Agent Memory:**
+- **Shared-Agent Memory [policy] [binds:subagents]:**
    - Agents share a `shared/` memory directory that they actively update and
      read.
    - Cleanup is managed by the main agent: After a sub-agent finishes, the main

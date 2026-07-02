@@ -1,11 +1,18 @@
 ---
 name: checkpoint-save
 description:
-  Use when pausing work that will be resumed later, when switching contexts, or
-  when the user asks to save a checkpoint. Creates a CHECKPOINT.md that
-  captures full resumption context.
+   Use when pausing work that will be resumed later, when switching contexts, or
+   when the user asks to save a checkpoint. Creates a CHECKPOINT.md that
+   captures full resumption context.
 user-invocable: true
-allowed-tools: Bash(git branch --show-current), Bash(git rev-parse --show-toplevel), Bash(git rev-parse --path-format=absolute --git-common-dir), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add CHECKPOINT.md), Bash(basename:*), Bash(dirname:*), Bash(mkdir:*), Bash(cp CHECKPOINT.md .checkpoints/*.mirror.md), Bash(mv CHECKPOINT.md .checkpoints/*.md), Bash(stat:*), Bash(date:*), Read, Write(CHECKPOINT.md), Write(.checkpoints/*.md), Edit(CHECKPOINT.md), Edit(.checkpoints/*.md)
+allowed-tools:
+   Bash(git branch --show-current), Bash(git rev-parse --show-toplevel),
+   Bash(git rev-parse --path-format=absolute --git-common-dir), Bash(git
+   status:*), Bash(git diff:*), Bash(git log:*), Bash(git add CHECKPOINT.md),
+   Bash(basename:*), Bash(dirname:*), Bash(mkdir:*), Bash(cp CHECKPOINT.md
+   .checkpoints/*.mirror.md), Bash(mv CHECKPOINT.md .checkpoints/*.md),
+   Bash(stat:*), Bash(date:*), Read, Write(CHECKPOINT.md),
+   Write(.checkpoints/*.md), Edit(CHECKPOINT.md), Edit(.checkpoints/*.md)
 ---
 
 # Checkpoint Save
@@ -154,8 +161,8 @@ working on an unrelated concern). Case A would clobber it by rolling it to
 `<slug>.prev.md`; Case D routes around that.
 
 **Case D requires explicit confirmation before proceeding** — same-branch
-defaults to Case A. Case D may be **proposed** (but never silently applied)
-when one of the following is true:
+defaults to Case A. Case D may be **proposed** (but never silently applied) when
+one of the following is true:
 
 - The operator explicitly signals it ("don't overwrite the existing
   CHECKPOINT.md", "save to a named slug", "this is a parallel thread", "keep the
@@ -164,11 +171,11 @@ when one of the following is true:
   sections describe work clearly unrelated to this session's focus, AND the file
   is recent enough (mtime < 30 days) to plausibly be live.
 
-In all cases — whether triggered by operator signal or content/recency heuristics
-— **ask before deciding**: _"Existing CHECKPOINT.md appears to be a separate live
-effort. Treat as Case D (save to a named slug, leave live file untouched) or
-treat as Case A (overwrite)?"_ Never silently downgrade to Case A without
-asking.
+In all cases — whether triggered by operator signal or content/recency
+heuristics — **ask before deciding**: _"Existing CHECKPOINT.md appears to be a
+separate live effort. Treat as Case D (save to a named slug, leave live file
+untouched) or treat as Case A (overwrite)?"_ Never silently downgrade to Case A
+without asking.
 
 Behavior under Case D:
 
@@ -222,9 +229,9 @@ context to reference.
 
 ### Step 5b — Mirror to the shared archive when CWD is a linked worktree
 
-Cases A/B/C write `CHECKPOINT.md` at CWD. When CWD is a **linked git
-worktree**, that file is destroyed with the worktree on `git worktree remove` —
-so the checkpoint must also exist somewhere durable.
+Cases A/B/C write `CHECKPOINT.md` at CWD. When CWD is a **linked git worktree**,
+that file is destroyed with the worktree on `git worktree remove` — so the
+checkpoint must also exist somewhere durable.
 
 Detect a linked worktree by comparing the worktree root to the main checkout
 root (`COMMON_DIR` is from Step 2):
@@ -243,24 +250,24 @@ mkdir -p "$ARCHIVE"
 cp CHECKPOINT.md "$ARCHIVE/<slug>.mirror.md"
 ```
 
-The `mkdir -p "$ARCHIVE"` here is a defensive re-run: Step 2 ran it earlier,
-but if that `mkdir -p` failed silently (permissions, read-only filesystem,
-missing parent) the failure would have surfaced here as a misleading `cp`
-error. Re-running it immediately before the `cp` keeps the error local and
-actionable. **If this `mkdir -p` exits non-zero, abort immediately:** _"Could
-not create `.checkpoints/` archive directory at `$ARCHIVE`. Resolve the
-permission or filesystem issue and retry — the mirror has not been written."_
+The `mkdir -p "$ARCHIVE"` here is a defensive re-run: Step 2 ran it earlier, but
+if that `mkdir -p` failed silently (permissions, read-only filesystem, missing
+parent) the failure would have surfaced here as a misleading `cp` error.
+Re-running it immediately before the `cp` keeps the error local and actionable.
+**If this `mkdir -p` exits non-zero, abort immediately:** _"Could not create
+`.checkpoints/` archive directory at `$ARCHIVE`. Resolve the permission or
+filesystem issue and retry — the mirror has not been written."_
 
 `$ARCHIVE` (Step 2) lives under the **main checkout**, so this mirror survives
 the worktree's teardown. **Verify the `cp` exit code** — as with Step 4's `mv`
 check, a failed copy must be surfaced, never reported as a successful
 checkpoint. If `cp` exits non-zero, abort: _"Failed to mirror checkpoint to
-`.checkpoints/<slug>.mirror.md`. Resolve the filesystem error before
-continuing — the mirror does not exist."_
+`.checkpoints/<slug>.mirror.md`. Resolve the filesystem error before continuing
+— the mirror does not exist."_
 
-A pre-existing `.checkpoints/<slug>.mirror.md` is intentionally overwritten:
-it is this same effort's prior mirror (unlike Step 4 Case B's `-2`/`-3`
-collision-suffixing, which is for *different* efforts). Report:
+A pre-existing `.checkpoints/<slug>.mirror.md` is intentionally overwritten: it
+is this same effort's prior mirror (unlike Step 4 Case B's `-2`/`-3`
+collision-suffixing, which is for _different_ efforts). Report:
 
 > "CWD is a linked worktree — mirrored the checkpoint to
 > `.checkpoints/<slug>.mirror.md` so it survives `git worktree remove`."
@@ -268,26 +275,26 @@ collision-suffixing, which is for *different* efforts). Report:
 **Namespace convention:** The `.mirror.md` suffix reserves a distinct
 sub-namespace for branch-slug mirrors within `.checkpoints/`. Case D's archives
 use plain `<descriptive-slug>.md` (no `.mirror` suffix). These namespaces are
-disjoint: a branch slug `feature-x` writes `.checkpoints/feature-x.mirror.md`;
-a Case D descriptive slug `feature-x` writes `.checkpoints/feature-x.md`.
+disjoint: a branch slug `feature-x` writes `.checkpoints/feature-x.mirror.md`; a
+Case D descriptive slug `feature-x` writes `.checkpoints/feature-x.md`.
 Collisions between Case D archives and Step 5b mirrors are not possible.
 
 Skip this step **only** when `TOPLEVEL` == `MAIN_ROOT` and both commands
 resolved cleanly — that is the main checkout, where `CHECKPOINT.md` at CWD is
 already durable. If either command fails or returns empty, the detection is
-**unresolved** — do NOT skip. Mirror anyway (`cp CHECKPOINT.md
-"$ARCHIVE/<slug>.mirror.md"`): a redundant file in `.checkpoints/` costs
-nothing, whereas a skipped mirror loses the checkpoint permanently on teardown.
-Case D never reaches this step: it already writes to
+**unresolved** — do NOT skip. Mirror anyway
+(`cp CHECKPOINT.md "$ARCHIVE/<slug>.mirror.md"`): a redundant file in
+`.checkpoints/` costs nothing, whereas a skipped mirror loses the checkpoint
+permanently on teardown. Case D never reaches this step: it already writes to
 `.checkpoints/<descriptive-slug>.md` and skips Step 5.
 
 #### Rationalizations to reject (Step 5b)
 
 | Excuse                                                                                                              | Reality                                                                                                                                                                                                                     |
-|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "Step 5 says write CHECKPOINT.md at CWD — I followed the skill exactly"                                             | Step 5 was authored assuming CWD persists. In a linked worktree it does not. Step 5b is the other half of the same instruction, not an optional add-on.                                                                     |
-| "Step 4's archive only fires for a PRE-EXISTING checkpoint; there isn't one, so nothing belongs in `.checkpoints/`" | Step 4 archives the *old* file; Step 5b archives the *new* one. Absence of a prior checkpoint does not make the new one safe from teardown.                                                                                 |
-| "CHECKPOINT.md is a per-worktree file; its home is the worktree root"                                               | Its *meaning* is per-worktree; its *survival* needs a location that outlives the worktree. Both are required — the live file stays at CWD AND the mirror lands in `.checkpoints/`.                                          |
+| "Step 4's archive only fires for a PRE-EXISTING checkpoint; there isn't one, so nothing belongs in `.checkpoints/`" | Step 4 archives the _old_ file; Step 5b archives the _new_ one. Absence of a prior checkpoint does not make the new one safe from teardown.                                                                                 |
+| "CHECKPOINT.md is a per-worktree file; its home is the worktree root"                                               | Its _meaning_ is per-worktree; its _survival_ needs a location that outlives the worktree. Both are required — the live file stays at CWD AND the mirror lands in `.checkpoints/`.                                          |
 | "/checkpoint-resume reads CWD's CHECKPOINT.md, so CWD is the only place that matters"                               | After `git worktree remove` there is no CWD. The mirror at `.checkpoints/<slug>.md` is what a later session resumes from — see Step 8.                                                                                      |
 | "The `--show-toplevel` detection failed, so I couldn't tell if CWD is a worktree — I left it CWD-only to be safe"   | Unresolved detection is a reason to mirror, not to skip. The conservative default is to mirror — a redundant `.checkpoints/` file is harmless; skipping on ambiguity is exactly the failure mode that loses the checkpoint. |
 
@@ -333,7 +340,7 @@ surface the error to the user and stop; do not silently skip.
 ### Rationalizations to reject (Step 6)
 
 | Excuse                                 | Reality                                                                                                                                                                                                 |
-|----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "Not in `.gitignore`, so stage it"     | Gitignore is not the only convention signal. `git log --all -- CHECKPOINT.md` empty means the path has **never been tracked** — that's a stronger convention than gitignore. Check both before staging. |
 | "Staging doesn't commit, no harm"      | Staging a file that's historically been untracked creates a round-trip (user has to unstage) and risks accidental commit if they `git commit -am` without reviewing staged state.                       |
 | "The skill said `git add`, just do it" | The skill says stage _if the project wants it tracked_. A never-committed path is a clear signal the project does not. Check before obeying.                                                            |
@@ -400,7 +407,7 @@ the footer's literal command block does.
 #### Rationalizations to reject (Step 8)
 
 | Excuse                                                              | Reality                                                                                                                                                                                                                                                                             |
-|---------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "The CHECKPOINT.md path is obvious from earlier in the session"     | The user opens a fresh session days later from a terminal that has no scrollback; the resume footer is the only durable handoff she sees at session start. Always print it.                                                                                                         |
 | "I already mentioned the path in Step 7's report"                   | Step 7's report is prose ("staged" / "intentionally untracked"). Step 8 is a copy-pasteable command block. The two are not interchangeable — the user must be able to copy-paste without re-typing or hunting for the path inside a sentence.                                       |
 | "I'm under Case D, the user knows where her named archive is"       | She does not. Case D archives live under `.checkpoints/<slug>.md` — names she chose under time pressure mid-pause. Days later she will not recall whether it was `claude-damn-skills-roadmap` or `claude-damn-roadmap-skills` or just `roadmap`. Print the literal path.            |
@@ -417,8 +424,8 @@ After every successful save, all four of the following must hold:
    `CHECKPOINT.md` was archived to `.checkpoints/` before overwrite (Case A →
    `.prev.md`; Case B → `<old-slug>.md`; Case C → `unparsed-<timestamp>.md`).
 4. **If CWD is a linked worktree, a durable copy exists at
-   `.checkpoints/<slug>.mirror.md`** — written by Step 5b, surviving `git
-   worktree remove`. Not applicable in the main checkout (CHECKPOINT.md is
+   `.checkpoints/<slug>.mirror.md`** — written by Step 5b, surviving
+   `git worktree remove`. Not applicable in the main checkout (CHECKPOINT.md is
    already durable) or under Case D (which writes to `.checkpoints/` directly
    without the `.mirror` suffix).
 

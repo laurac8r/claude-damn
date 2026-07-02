@@ -1,100 +1,94 @@
-"""Apply a SyncPlan by shelling out to rsync.
+"""Mode-specific conversion of (src_paths, tgt_paths) pairs into FileOps."""
 
-Always uses explicit `list[str]` argv (never shell=True). The file list is
-written to a tempfile and passed via `--files-from`. Rsync failures are
-wrapped in RsyncFailedError with stderr attached. Target-not-writable
-errors are detected up front and raised as TargetNotWritableError.
-"""
-
-import os
-import subprocess
-import tempfile
-from dataclasses import dataclass
+import hashlib
 from pathlib import Path
 
-from .exceptions import RsyncFailedError, TargetNotWritableError
-from .types import FileOp, SyncPlan
+from .exceptions import InvalidModeError
+from .types import FileOp, Mode
 
 
-@dataclass(frozen=True)
-class ApplyOptions:
-    dry_run: bool = False
-    delete: bool = False
+def diff_ops(
+    source: Path,
+    target: Path,
+    mode: Mode,
+    src_paths: set[Path],
+    tgt_paths: set[Path],
+) -> tuple[FileOp, ...]:
+    """Return the ordered tuple of operations implied by the two path sets."""
+    if mode in ("push", "interactive", "plan"):
+        return _diff_push(source, target, src_paths, tgt_paths)
+    if mode == "pull":
+        return _flip(_diff_push(target, source, tgt_paths, src_paths))
+    if mode == "mirror":
+        return _diff_mirror(source, target, src_paths, tgt_paths)
+    raise InvalidModeError(f"unsupported mode: {mode}")
 
 
-def run_apply(plan: SyncPlan, opts: ApplyOptions) -> None:
-    if not plan.ops:
-        return
-
-    src_to_tgt = tuple(op for op in plan.ops if op.direction == "src→tgt")
-    tgt_to_src = tuple(op for op in plan.ops if op.direction == "tgt→src")
-
-    # Preflight: check every destination we will actually write into.
-    if src_to_tgt:
-        _check_target_writable(plan.target)
-    if tgt_to_src:
-        _check_target_writable(plan.source)
-
-    if src_to_tgt:
-        _rsync(plan.source, plan.target, src_to_tgt, opts)
-    if tgt_to_src:
-        _rsync(plan.target, plan.source, tgt_to_src, opts)
-
-    if opts.delete and not opts.dry_run:
-        _delete_orphans(plan.source, plan.target, src_to_tgt)
-
-
-def _check_target_writable(target: Path) -> None:
-    if not target.exists():
-        try:
-            target.mkdir(parents=True, exist_ok=True)
-        except OSError as exc:
-            raise TargetNotWritableError(
-                f"cannot create target {target}: {exc}"
-            ) from exc
-    if not os.access(target, os.W_OK):
-        raise TargetNotWritableError(f"target {target} is not writable")
-
-
-def _delete_orphans(src: Path, dst: Path, ops: tuple[FileOp, ...]) -> None:
-    """Remove files in dst that don't exist in src's synced set.
-
-    Only considers files that were part of the synced path set; ``.git/``
-    internals and other excluded paths are never touched.
-    """
-    synced = {op.path for op in ops}
-    for child in sorted(dst.rglob("*")):
-        if not child.is_file():
+def _diff_push(
+    source: Path,
+    target: Path,
+    src_paths: set[Path],
+    tgt_paths: set[Path],
+) -> tuple[FileOp, ...]:
+    ops: list[FileOp] = []
+    for rel in sorted(src_paths):
+        if rel not in tgt_paths:
+            ops.append(FileOp(rel, "add", "src→tgt", "only in source"))
             continue
-        rel = child.relative_to(dst)
-        if rel.parts and rel.parts[0] == ".git":
+        if _same_content(source / rel, target / rel):
             continue
-        if rel not in synced and not (src / rel).exists():
-            child.unlink()
+        ops.append(FileOp(rel, "update", "src→tgt", "content differs"))
+    return tuple(ops)
 
 
-def _rsync(src: Path, dst: Path, ops: tuple[FileOp, ...], opts: ApplyOptions) -> None:
-    with tempfile.NamedTemporaryFile(
-        "w", delete=False, prefix="sync-files-", suffix=".lst"
-    ) as fh:
-        for op in ops:
-            fh.write(f"{op.path}\n")
-        files_from = fh.name
+def _diff_mirror(
+    source: Path,
+    target: Path,
+    src_paths: set[Path],
+    tgt_paths: set[Path],
+) -> tuple[FileOp, ...]:
+    ops: list[FileOp] = []
+    for rel in sorted(src_paths - tgt_paths):
+        ops.append(FileOp(rel, "add", "src→tgt", "only in source"))
+    for rel in sorted(tgt_paths - src_paths):
+        ops.append(FileOp(rel, "add", "tgt→src", "only in target"))
+    for rel in sorted(src_paths & tgt_paths):
+        s_abs = source / rel
+        t_abs = target / rel
+        s_stat = s_abs.stat()
+        t_stat = t_abs.stat()
+        if s_stat.st_size == t_stat.st_size and _sha(s_abs) == _sha(t_abs):
+            continue
+        if s_stat.st_mtime >= t_stat.st_mtime:
+            ops.append(FileOp(rel, "update", "src→tgt", "newer mtime in source"))
+        else:
+            ops.append(FileOp(rel, "update", "tgt→src", "newer mtime in target"))
+    return tuple(ops)
 
-    argv: list[str] = [
-        "rsync",
-        "-a",
-        "--files-from",
-        files_from,
-        f"{src}/",
-        f"{dst}/",
-    ]
-    if opts.dry_run:
-        argv.insert(2, "--dry-run")
 
-    try:
-        subprocess.run(argv, capture_output=True, text=True, check=True)
-    except subprocess.CalledProcessError as exc:
-        raise RsyncFailedError(f"rsync failed: {exc}", stderr=exc.stderr or "") from exc
-    finally:
-        Path(files_from).unlink(missing_ok=True)
+def _flip(ops: tuple[FileOp, ...]) -> tuple[FileOp, ...]:
+    return tuple(
+        FileOp(
+            path=o.path,
+            action=o.action,
+            direction="tgt→src" if o.direction == "src→tgt" else "src→tgt",
+            reason=o.reason.replace("source", "__SRC__")
+            .replace("target", "source")
+            .replace("__SRC__", "target"),
+        )
+            for o in ops
+    )
+
+
+def _same_content(a: Path, b: Path) -> bool:
+    if a.stat().st_size != b.stat().st_size:
+        return False
+    return _sha(a) == _sha(b)
+
+
+def _sha(p: Path) -> str:
+    h = hashlib.sha256()
+    with p.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
