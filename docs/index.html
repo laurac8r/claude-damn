@@ -1,10 +1,13 @@
 <!doctype html>
-<!-- Anchors: identity · skill-composition · repo-map · harness-systems · test-ladder -->
+<!-- Generated from: "claude-damn docs splash + independent rtk evaluation, as a two-tab page" -->
+<!-- Anchors (tab 1): identity · skill-composition · repo-map · harness-systems · test-ladder -->
+<!-- Anchors (tab 2): verdict · token-ROI · rtk+claude-damn API cost · competitive position · security notes · checklist -->
 <html lang="en" dir="auto">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>claude-damn — visual aid</title>
+  <link rel="icon" href="data:,">
+  <title>claude-damn — docs &amp; rtk evaluation</title>
   <style>
       :root {
           --bg: #0f1115;
@@ -17,12 +20,15 @@
           --border: #2a3040;
           --code-bg: #0a0c11;
           --pill-bg: #2a3040;
+          --sev-high: #ff6b6b;
+          --sev-med: #ffb454;
+          --sev-low: #ffd866;
+          --sev-info: #7ee0b8;
           --radius: 14px;
           --pad: clamp(16px, 3vw, 28px);
       }
 
       @media (prefers-color-scheme: light) {
-          /* Re-pick per scheme: dark-mode blues/golds fail 4.5:1 / 3:1 on white. */
           :root {
               --bg: #fafaf7;
               --fg: #141821;
@@ -34,6 +40,10 @@
               --border: #e2e5ec;
               --code-bg: #f4f5f1;
               --pill-bg: #e2e5ec;
+              --sev-high: #b3261e;
+              --sev-med: #9a5b00;
+              --sev-low: #6b5e00;
+              --sev-info: #14794a;
           }
       }
 
@@ -48,14 +58,8 @@
           font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       }
 
-      header.site, footer.site {
-          max-width: 76ch;
-          margin: 0 auto;
-          padding: var(--pad);
-      }
-
-      main {
-          max-width: 76ch;
+      header.site, footer.site, main {
+          max-width: 80ch;
           margin: 0 auto;
           padding: var(--pad);
       }
@@ -69,13 +73,18 @@
 
       h2 {
           font-size: clamp(1.2rem, 2.2vw, 1.45rem);
-          margin: 2em 0 .5em;
+          margin: 1.9em 0 .5em;
           letter-spacing: -0.005em;
       }
 
       h3 {
           font-size: 1.02rem;
-          margin: 0 0 .35em;
+          margin: 1.1em 0 .35em;
+      }
+
+      h4 {
+          font-size: 0.96rem;
+          margin: 0 0 .3em;
       }
 
       p {
@@ -88,7 +97,7 @@
 
       .lede {
           font-size: 1.08rem;
-          max-width: 62ch;
+          max-width: 64ch;
       }
 
       .facts {
@@ -126,13 +135,14 @@
           padding: 1rem 1.1rem;
           border-radius: var(--radius);
           border: 1px solid var(--border);
+          min-width: 0;
       }
 
       .card p:last-child {
           margin-bottom: 0;
       }
 
-      .card .tag {
+      .card .tagline {
           display: inline-block;
           font-size: .72rem;
           text-transform: uppercase;
@@ -141,68 +151,169 @@
           margin-bottom: .3rem;
       }
 
-      table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 1rem 0;
-          font-size: .95rem;
+      .verdict {
           background: var(--card);
           border: 1px solid var(--border);
+          border-left: 6px solid var(--accent);
           border-radius: var(--radius);
-          overflow: hidden;
+          padding: 1.1rem 1.2rem;
+          margin: 1rem 0;
+      }
+
+      .verdict h3 {
+          border: 0;
+          margin: 0 0 .3em;
+          padding: 0;
+          font-size: 1.15rem;
+      }
+
+      .tag {
+          display: inline-block;
+          font-weight: 700;
+          font-size: .82rem;
+          letter-spacing: .02em;
+          border: 1px solid currentColor;
+          border-radius: 999px;
+          padding: 2px 9px;
+          white-space: nowrap;
+      }
+
+      .tag.adopt {
+          color: var(--sev-med);
+      }
+
+      .pill {
+          display: inline-block;
+          font-weight: 700;
+          font-size: .78rem;
+          letter-spacing: .03em;
+          border: 1px solid currentColor;
+          border-radius: 999px;
+          padding: 1px 8px;
+          white-space: nowrap;
+      }
+
+      .s-high {
+          color: var(--sev-high);
+      }
+
+      .s-med {
+          color: var(--sev-med);
+      }
+
+      .s-low {
+          color: var(--sev-low);
+      }
+
+      .s-info {
+          color: var(--sev-info);
+      }
+
+      .scroll {
+          overflow-x: auto;
+          margin: 1rem 0;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+      }
+
+      .scroll:focus-visible {
+          outline: 3px solid var(--ring);
+          outline-offset: 2px;
+      }
+
+      table {
+          border-collapse: collapse;
+          width: 100%;
+          background: var(--card);
+          font-size: .92rem;
+      }
+
+      .scroll.wide table {
+          min-width: 34rem;
       }
 
       caption {
           text-align: left;
-          caption-side: top;
           color: var(--muted);
-          font-size: .9rem;
-          padding: 0 0 .4rem;
+          font-size: .88rem;
+          padding: .5rem .7rem;
       }
 
       th, td {
           text-align: left;
-          padding: .55rem .75rem;
+          padding: .55rem .7rem;
           border-bottom: 1px solid var(--border);
           vertical-align: top;
       }
 
       thead th {
           background: var(--card-soft);
+          position: sticky;
+          top: 0;
           font-weight: 600;
-          font-size: .88rem;
-          letter-spacing: .02em;
       }
 
       tbody tr:last-child td {
           border-bottom: 0;
       }
 
-      code, pre, kbd {
-          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      .num {
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
       }
 
-      code {
-          background: var(--code-bg);
-          padding: .08em .35em;
-          border-radius: 4px;
-          font-size: .92em;
+      .flow {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: stretch;
+          gap: .5rem;
+          margin: .4rem 0;
       }
 
-      pre {
-          background: var(--code-bg);
+      .flow-step {
+          flex: 1 1 130px;
+          min-width: 0;
+          background: var(--card-soft);
           border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 1rem 1.1rem;
-          overflow-x: auto;
-          font-size: .88rem;
-          line-height: 1.5;
-          margin: 1rem 0;
+          border-radius: 10px;
+          padding: .6rem .7rem;
+          font-size: .9rem;
       }
 
-      pre code {
-          background: transparent;
+      .flow-step b {
+          display: block;
+          font-size: .95rem;
+      }
+
+      .arrow {
+          align-self: center;
+          color: var(--muted);
+          font-weight: 700;
+      }
+
+      ul.checks {
+          list-style: none;
           padding: 0;
+          margin: .6rem 0;
+      }
+
+      ul.checks li {
+          position: relative;
+          padding: .5rem 0 .5rem 1.9rem;
+          border-bottom: 1px solid var(--border);
+      }
+
+      ul.checks li:last-child {
+          border-bottom: 0;
+      }
+
+      ul.checks li::before {
+          content: "▸";
+          position: absolute;
+          left: .35rem;
+          top: .5rem;
+          color: var(--accent);
+          font-weight: 700;
       }
 
       ul.plain {
@@ -223,6 +334,35 @@
           left: 0;
           color: var(--accent);
           font-weight: 600;
+      }
+
+      code, pre, kbd, samp {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      }
+
+      code {
+          background: var(--code-bg);
+          padding: .08em .35em;
+          border-radius: 4px;
+          font-size: .92em;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+      }
+
+      pre {
+          background: var(--code-bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 1rem 1.1rem;
+          overflow-x: auto;
+          font-size: .88rem;
+          line-height: 1.5;
+          margin: 1rem 0;
+      }
+
+      pre code {
+          background: transparent;
+          padding: 0;
       }
 
       a {
@@ -260,6 +400,55 @@
           color: var(--accent);
       }
 
+      .stat-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: .5rem 1.4rem;
+          margin: .6rem 0 .2rem;
+          color: var(--muted);
+          font-size: .9rem;
+      }
+
+      .stat-row b {
+          color: var(--fg);
+      }
+
+      /* Tabs */
+      .tablist {
+          display: flex;
+          flex-wrap: wrap;
+          gap: .25rem;
+          border-bottom: 2px solid var(--border);
+          margin-top: 1.1rem;
+      }
+
+      .tablist [role="tab"] {
+          appearance: none;
+          background: transparent;
+          border: 0;
+          border-bottom: 3px solid transparent;
+          margin-bottom: -2px;
+          padding: .6rem .95rem;
+          min-height: 44px;
+          font: inherit;
+          font-weight: 600;
+          color: var(--muted);
+          cursor: pointer;
+      }
+
+      .tablist [role="tab"]:hover {
+          color: var(--fg);
+      }
+
+      .tablist [role="tab"][aria-selected="true"] {
+          color: var(--fg);
+          border-bottom-color: var(--accent);
+      }
+
+      [role="tabpanel"] {
+          margin-top: .5rem;
+      }
+
       @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
               animation-duration: 0.01ms !important;
@@ -281,10 +470,34 @@
               --ring: #7a3f04;
               --code-bg: #f5f5f5;
               --pill-bg: #f0f0f0;
+              --sev-high: #9a1c16;
+              --sev-med: #6f4200;
+              --sev-low: #4f4500;
+              --sev-info: #0c5733;
           }
 
           .grid {
               grid-template-columns: 1fr !important;
+          }
+
+          .scroll {
+              overflow-x: visible !important;
+          }
+
+          .scroll.wide table {
+              min-width: 0 !important;
+          }
+
+          thead th {
+              position: static !important;
+          }
+
+          .tablist {
+              display: none !important;
+          }
+
+          [role="tabpanel"][hidden] {
+              display: block !important;
           }
 
           main, header.site, footer.site {
@@ -303,6 +516,15 @@
           }
       }
   </style>
+  <noscript>
+    <style>
+      /* No-JS fallback: reveal every tab panel and hide the now-inert tab UI,
+         so the page reads as one continuous document. JS-on browsers ignore
+         <noscript>, so the scripted path (and its no-flash init) is untouched. */
+      [role="tabpanel"][hidden] { display: block !important; }
+      .tablist { display: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
 <!-- Header/footer are siblings of <main> so banner/contentinfo landmark roles survive. -->
@@ -311,251 +533,722 @@
   <p class="lede muted">
     A composable skill library and opinionated harness for
     <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>,
-    layered on top of the <code>superpowers</code> plugin. Ships slash commands, hooks,
-    permission guards, cost tracking, and session-state plumbing.
+    layered on the <code>superpowers</code> plugin. This page has two tabs: an
+    overview of the harness, and an independent evaluation of
+    <a href="https://github.com/rtk-ai/rtk">rtk</a> (a token-saving tool that pairs
+    well with it).
   </p>
-  <ul class="facts" aria-label="fast facts">
-    <li><b>60+</b> skills</li>
-    <li><b>12</b> plugins</li>
-    <li><b>7</b> test fidelity layers</li>
-    <li>Python: <b>uv</b>-managed</li>
-    <li>License: <b>MIT</b></li>
-  </ul>
+  <div class="tablist" role="tablist" aria-label="Sections">
+    <button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview
+    </button>
+    <button type="button" role="tab" id="tab-rtk" aria-controls="panel-rtk" aria-selected="false" tabindex="-1">rtk
+      evaluation
+    </button>
+  </div>
 </header>
 
 <main>
-
-  <section aria-labelledby="identity">
-    <h2 id="identity">1 · Identity — what the repo IS</h2>
-    <div class="grid">
-      <div class="card">
-        <span class="tag">Shape</span>
-        <h3>Harness, not app</h3>
-        <p>It reshapes how Claude Code behaves in <em>your</em> sessions — slash commands, permission
-          rules, pre-tool hooks, cost logging. No service to deploy.</p>
-      </div>
-      <div class="card">
-        <span class="tag">Foundation</span>
-        <h3>Built on superpowers</h3>
-        <p>The official <code>superpowers</code> plugin is the skill engine.
-          claude-damn adds opinionated modifiers, review ladders, and harness guards on top.</p>
-      </div>
-      <div class="card">
-        <span class="tag">A11y</span>
-        <h3>Accessibility is load-bearing</h3>
-        <p>Treated as a first-class design concern, not a post-hoc checklist. Skills prefer
-          structured prompts over disruptive modals, avoid involuntary focus or tab shifts, and
-          keep rejection semantics honest — a denied step is a question, not a conclusion.</p>
-      </div>
-      <div class="card">
-        <span class="tag">Discipline</span>
-        <h3>Disciplined git + isolation</h3>
-        <p>Commits are deliberate and reviewable. <code>.worktrees/</code>, <code>.checkpoints/</code>,
-          and <code>.remember/</code> keep per-branch work and session state out of the main tree.
-          Operator-specific commit style lives in <code>rules/PERSONALIZATION.md</code>.</p>
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="skills">
-    <h2 id="skills">2 · Skill composition — four modifiers stack</h2>
-    <p>Every workflow name is a combination of four building blocks. Read the name left-to-right
-      and each modifier adds one behavior to the pipeline.</p>
-    <table>
-      <caption>Modifier vocabulary</caption>
-      <thead>
-      <tr>
-        <th scope="col">Modifier</th>
-        <th scope="col">What it adds</th>
-        <th scope="col">Flag it flips</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><code>super</code></td>
-        <td>Brainstorm requirements before implementing</td>
-        <td>Planning phase ON</td>
-      </tr>
-      <tr>
-        <td><code>duper</code></td>
-        <td>Run inside an isolated git worktree</td>
-        <td>Workspace isolation ON</td>
-      </tr>
-      <tr>
-        <td><code>cat</code></td>
-        <td>Fan out to parallel subagents</td>
-        <td>Subagent execution ON</td>
-      </tr>
-      <tr>
-        <td><code>tdd</code></td>
-        <td>Red–green–refactor discipline</td>
-        <td>Test-first ON</td>
-      </tr>
-      </tbody>
-    </table>
-
-    <p class="muted">Four families emerge from the combinations:</p>
-    <ul class="plain">
-      <li><strong>TDD</strong> — <code>/tdd</code>, <code>/tdd-cat</code>, <code>/duper-tdd</code>,
-        <code>/duper-tdd-cat</code></li>
-      <li><strong>Brainstorm + TDD</strong> — <code>/super</code>, <code>/super-cat</code>, <code>/super-duper</code>,
-        <code>/super-duper-cat</code></li>
-      <li><strong>Debug + Brainstorm + TDD</strong> — <code>/super-fixer</code>, <code>/super-fixer-cat</code>, <code>/super-duper-fixer</code>,
-        <code>/super-duper-fixer-cat</code>, <code>/super-duper-fixer-tdd-cat</code></li>
-      <li><strong>Expert Review</strong> — <code>/expert-review</code> through
-        <code>/expert-super-duper-tdd-cat-review</code> (10 variants)
-      </li>
+  <!-- ===================== TAB 1: claude-damn overview ===================== -->
+  <section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+    <ul class="facts" aria-label="fast facts">
+      <li><b>60+</b> skills</li>
+      <li><b>12</b> plugins</li>
+      <li><b>7</b> test fidelity layers</li>
+      <li>Python: <b>uv</b>-managed</li>
+      <li>License: <b>MIT</b></li>
     </ul>
 
-    <div class="sig" role="note" aria-label="example">
-      <b>Reading a name:</b> <code>/expert-super-duper-tdd-cat-review</code> =
-      expert review &rarr; brainstorm &rarr; worktree &rarr; TDD &rarr; parallel subagents.
-      Top of the ladder; reserve for work that actually needs every modifier.
-    </div>
+    <section aria-labelledby="identity">
+      <h2 id="identity">1 · Identity — what the repo IS</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="tagline">Shape</span>
+          <h3>Harness, not app</h3>
+          <p>It reshapes how Claude Code behaves in <em>your</em> sessions — slash commands, permission
+            rules, pre-tool hooks, cost logging. No service to deploy.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">Foundation</span>
+          <h3>Built on superpowers</h3>
+          <p>The official <code>superpowers</code> plugin is the skill engine.
+            claude-damn adds opinionated modifiers, review ladders, and harness guards on top.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">A11y</span>
+          <h3>Accessibility is load-bearing</h3>
+          <p>Treated as a first-class design concern, not a post-hoc checklist. Skills prefer
+            structured prompts over disruptive modals, avoid involuntary focus or tab shifts, and
+            keep rejection semantics honest — a denied step is a question, not a conclusion.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">Discipline</span>
+          <h3>Disciplined git + isolation</h3>
+          <p>Commits are deliberate and reviewable. <code>.worktrees/</code>, <code>.checkpoints/</code>,
+            and <code>.remember/</code> keep per-branch work and session state out of the main tree.</p>
+        </div>
+      </div>
+    </section>
 
-    <p class="muted">Beyond the combinators there are utility skills:
-      <code>/checkpoint-save</code>, <code>/checkpoint-resume</code>, <code>/check-yourself</code>,
-      <code>/cost_</code>, <code>/cost-opt</code>, <code>/listen</code>, <code>/proceed</code>,
-      <code>/sync</code>, <code>/tesseract</code>, <code>/jcvd</code>, plus PR-feedback and fast-review skills.</p>
-  </section>
+    <section aria-labelledby="skills">
+      <h2 id="skills">2 · Skill composition — four modifiers stack</h2>
+      <p>Every workflow name is a combination of four building blocks. Read the name left-to-right
+        and each modifier adds one behavior to the pipeline.</p>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Modifier vocabulary, scrollable table">
+        <table>
+          <caption>Modifier vocabulary</caption>
+          <thead>
+          <tr>
+            <th scope="col">Modifier</th>
+            <th scope="col">What it adds</th>
+            <th scope="col">Flag it flips</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><code>super</code></td>
+            <td>Brainstorm requirements before implementing</td>
+            <td>Planning phase ON</td>
+          </tr>
+          <tr>
+            <td><code>duper</code></td>
+            <td>Run inside an isolated git worktree</td>
+            <td>Workspace isolation ON</td>
+          </tr>
+          <tr>
+            <td><code>cat</code></td>
+            <td>Fan out to parallel subagents</td>
+            <td>Subagent execution ON</td>
+          </tr>
+          <tr>
+            <td><code>tdd</code></td>
+            <td>Red–green–refactor discipline</td>
+            <td>Test-first ON</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <section aria-labelledby="map">
-    <h2 id="map">3 · Repo map — where things live</h2>
-    <pre aria-label="directory tree"><code>claude-damn/
+      <p class="muted">Four families emerge from the combinations:</p>
+      <ul class="plain">
+        <li><strong>TDD</strong> — <code>/tdd</code>, <code>/tdd-cat</code>, <code>/duper-tdd</code>, <code>/duper-tdd-cat</code>
+        </li>
+        <li><strong>Brainstorm + TDD</strong> — <code>/super</code>, <code>/super-cat</code>, <code>/super-duper</code>,
+          <code>/super-duper-cat</code></li>
+        <li><strong>Debug + Brainstorm + TDD</strong> — <code>/super-fixer</code> …
+          <code>/super-duper-fixer-tdd-cat</code></li>
+        <li><strong>Expert Review</strong> — <code>/expert-review</code> through <code>/expert-super-duper-tdd-cat-review</code>
+          (10 variants)
+        </li>
+      </ul>
+
+      <div class="sig" role="note" aria-label="example">
+        <b>Reading a name:</b> <code>/expert-super-duper-tdd-cat-review</code> =
+        expert review &rarr; brainstorm &rarr; worktree &rarr; TDD &rarr; parallel subagents.
+        Top of the ladder; reserve for work that actually needs every modifier.
+      </div>
+
+      <p class="muted">Beyond the combinators there are utility skills:
+        <code>/checkpoint-save</code>, <code>/checkpoint-resume</code>, <code>/check-yourself</code>,
+        <code>/cost_</code>, <code>/cost-opt</code>, <code>/listen</code>, <code>/proceed</code>,
+        <code>/sync</code>, <code>/tesseract</code>, plus PR-feedback and fast-review skills.</p>
+    </section>
+
+    <section aria-labelledby="map">
+      <h2 id="map">3 · Repo map — where things live</h2>
+      <pre aria-label="directory tree"><code>claude-damn/
 ├── CLAUDE.md              opinionated project rules (model routing, style, testing)
 ├── README.md              setup + skill family overview
 ├── ROADMAP.md             transition plan → proper plugin package
-├── CHANGELOG.md           what's landed on feat/transition-to-plugin
-├── CHECKPOINT.md          current in-progress checkpoint (gitignored in worktrees)
 ├── settings.json          permissions, hooks, enabled plugins, model routing
-├── policy-limits.json     policy budgets
 ├── pyproject.toml         uv-managed Python project
-├── ruff.toml · ty.toml · .prettierrc     formatter configs
 │
 ├── skills/                ~60 slash commands (the combinatoric library)
 ├── hooks/                 PreToolUse guards — block-inline-scripts.py is the big one
 ├── plugins/               marketplaces + cache for the 12 plugins used
 ├── src/                   extract_cost.py · statusline · sync-theme
-├── scripts/               test-isolated.sh
 ├── tests/                 7 fidelity layers (structural → performance)
-├── docs/superpowers/      design specs + implementation plans
+├── docs/                  design specs, this page
 │
 ├── cost-log/              per-session JSONL cost ledger
-├── .remember/             session handoff notes (buffer/today/recent/archive)
+├── .remember/             session handoff notes
 ├── .checkpoints/          save/resume work across sessions
-├── .worktrees/            hidden, gitignored isolation branches
-└── .serena/  .idea/  .github/  .venv/     tooling</code></pre>
-    <p class="muted">Design specs and implementation plans: <code>docs/superpowers/{specs,plans}/</code>.
-      Full combinatoric skill table: <code>skills/README.md</code>.</p>
+└── .worktrees/            hidden, gitignored isolation branches</code></pre>
+    </section>
+
+    <section aria-labelledby="harness">
+      <h2 id="harness">4 · Harness systems — runtime behavior</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="tagline">settings.json</span>
+          <h3>Permission guards</h3>
+          <p>Granular allow / ask / deny lists: blocks destructive <code>gh</code> ops,
+            gates <code>git commit</code>, protects settings files. Deny-by-default on anything scary.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">hooks/block-inline-scripts.py</span>
+          <h3>Inline-script hook</h3>
+          <p>PreToolUse Bash guard. Denies over-long commands or too many chained statement
+            separators, forcing multi-step work into separate calls or <code>/tmp/</code> scripts.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">src/extract_cost.py · /cost_</span>
+          <h3>Cost tracking</h3>
+          <p>Parses session JSONL for real <code>usage</code> fields and computes spend via
+            Anthropic pricing. <code>/cost-opt</code> compacts logs and surfaces routing suggestions.</p>
+        </div>
+        <div class="card">
+          <span class="tagline">.checkpoints/ · /checkpoint-{save,resume}</span>
+          <h3>Checkpoint system</h3>
+          <p>Save resumable context per branch, with automatic archive rotation. Paired with
+            <code>.remember/</code> for session-to-session continuity.</p>
+        </div>
+      </div>
+      <div class="sig" role="note" aria-label="model routing rule">
+        <b>Model routing:</b> Sonnet for reads, config edits, short Q&amp;A. Opus for multi-file
+        refactors, subtle runtime bugs, new API/data-model design. This routing is exactly the
+        cost lever quantified in the rtk-evaluation tab.
+      </div>
+    </section>
+
+    <section aria-labelledby="tests">
+      <h2 id="tests">5 · Test fidelity ladder — cheapest to priciest</h2>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Test fidelity ladder, scrollable table">
+        <table>
+          <caption>Default <code>uv run pytest</code> runs everything except <code>smoke</code> and
+            <code>performance</code>.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Tier</th>
+            <th scope="col">Location</th>
+            <th scope="col">Checks</th>
+            <th scope="col">Cost signal</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Structural</td>
+            <td><code>tests/structural/</code></td>
+            <td>Files, dirs, frontmatter</td>
+            <td>Cheap — existence only</td>
+          </tr>
+          <tr>
+            <td>Behavioral</td>
+            <td><code>tests/behavioral/</code></td>
+            <td>Skill body content, protocol rules</td>
+            <td>Cheap</td>
+          </tr>
+          <tr>
+            <td>Integration</td>
+            <td><code>tests/integration/</code></td>
+            <td>Cross-file references &amp; consistency</td>
+            <td>Cheap</td>
+          </tr>
+          <tr>
+            <td>Harness</td>
+            <td><code>tests/test_*.py</code></td>
+            <td>settings.json, permissions, hooks, cost extraction</td>
+            <td>Cheap</td>
+          </tr>
+          <tr>
+            <td>Bats</td>
+            <td><code>tests/*.bats</code></td>
+            <td>Shell scripts (checkpoint-archive, sync-theme)</td>
+            <td>Moderate — needs <code>bats</code></td>
+          </tr>
+          <tr>
+            <td>Smoke</td>
+            <td><code>tests/smoke/</code></td>
+            <td>Live skill invocation</td>
+            <td>Tokens · non-deterministic</td>
+          </tr>
+          <tr>
+            <td>Performance</td>
+            <td><code>tests/performance/</code></td>
+            <td>18-combo stress matrix</td>
+            <td>Expensive · non-deterministic</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Parallelize <code>smoke</code>/<code>performance</code> with
+        <code>uv run pytest -n auto</code>. Skip <code>-n</code> on the default suite — it runs in
+        ~0.5s and worker startup costs more than it saves.</p>
+    </section>
   </section>
 
-  <section aria-labelledby="harness">
-    <h2 id="harness">4 · Harness systems — runtime behavior</h2>
-    <div class="grid">
-      <div class="card">
-        <span class="tag">settings.json</span>
-        <h3>Permission guards</h3>
-        <p>Granular allow / ask / deny lists: blocks destructive <code>gh</code> ops,
-          gates <code>git commit</code>, protects settings files. Deny-by-default on anything scary.</p>
-      </div>
-      <div class="card">
-        <span class="tag">hooks/block-inline-scripts.py</span>
-        <h3>Inline-script hook</h3>
-        <p>PreToolUse Bash guard. Denies commands over <strong>300 chars</strong> or with
-          more than <strong>3 statement separators</strong> (<code>;</code> <code>&amp;&amp;</code>
-          <code>||</code> <code>|</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;&gt;</code>
-          <code>&lt;&lt;</code> newline). Forces multi-step work into separate calls or
-          <code>/tmp/</code> scripts.</p>
-      </div>
-      <div class="card">
-        <span class="tag">src/extract_cost.py · /cost_</span>
-        <h3>Cost tracking</h3>
-        <p>Parses session JSONL for real <code>usage</code> fields and computes spend via
-          Anthropic pricing. Logs go to <code>cost-log/YYYY-MM-DD_HHmm_{session}.jsonl</code>.
-          <code>/cost-opt</code> compacts logs and surfaces routing suggestions.</p>
-      </div>
-      <div class="card">
-        <span class="tag">.checkpoints/ · /checkpoint-{save,resume}</span>
-        <h3>Checkpoint system</h3>
-        <p>Save resumable context per branch, with automatic archive rotation.
-          Paired with <code>.remember/</code> (buffer/today/recent/archive/core) for
-          session-to-session continuity.</p>
+  <!-- ===================== TAB 2: rtk evaluation ===================== -->
+  <section id="panel-rtk" role="tabpanel" aria-labelledby="tab-rtk" tabindex="0" hidden>
+    <h2>rtk — Rust Token Killer: an independent evaluation</h2>
+    <p class="lede muted">
+      Security, competitive position, and the real token / cost ROI of
+      <a href="https://github.com/rtk-ai/rtk">rtk</a> — including how it stacks with
+      claude-damn on pay-as-you-go API pricing. Synthesized from parallel sub-audits of the
+      public repo.
+    </p>
+    <div class="stat-row" aria-label="Repository facts">
+      <span><b>Rust</b> · single binary · ~78k LOC</span>
+      <span><b>Apache-2.0</b> · v0.42.x</span>
+      <span><b>65.7k★</b> · weekly releases</span>
+      <span>14 agent integrations · 100+ commands</span>
+    </div>
+
+    <div class="verdict">
+      <h3>The verdict &nbsp;<span class="tag adopt">ADOPT — WITH CAVEATS</span></h3>
+      <p>
+        Install rtk for the one job it does well: compressing <strong>noisy build / test / git
+        output</strong> that flows through the Bash tool. Don't expect the headline 60–90% —
+        realized savings are workflow-dependent. The bigger lever for a pay-as-you-go user isn't
+        rtk at all; it's <strong>model routing</strong> (claude-damn's territory). Used together
+        they <strong>multiply</strong>.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h4><span class="pill s-info">SECURITY</span></h4>
+          <p>Execution core is <strong>sound</strong> (argv, no <code>sh -c</code>). The secret-exposure items are in
+            the output layer — and <strong>most are already tracked</strong> by the maintainers, with a fix PR in
+            flight.</p>
+        </div>
+        <div class="card">
+          <h4><span class="pill s-info">POSITION</span></h4>
+          <p>Clear category leader for live-output compression. One rival (<code>squeez</code>) covers the
+            Read/Grep/Glob path that rtk's Bash-only hook structurally can't.</p>
+        </div>
+        <div class="card">
+          <h4><span class="pill s-info">ROI</span></h4>
+          <p>rtk alone ≈ <strong>10–22%</strong> fewer tokens. With claude-damn routing, combined API-cost savings ≈
+            <strong>20 / 37 / 54%</strong> (conservative / expected / optimistic).</p>
+        </div>
       </div>
     </div>
-    <div class="sig" role="note" aria-label="model routing rule">
-      <b>Model routing:</b> Sonnet for reads, config edits, <code>~/.claude</code> work, short
-      Q&amp;A. Opus for multi-file refactors, subtle runtime bugs, new API/data-model design.
-      Sustained Opus sessions get a <code>/model opus</code> suggestion; trivial tasks get a nudge back to Sonnet.
-    </div>
-  </section>
 
-  <section aria-labelledby="tests">
-    <h2 id="tests">5 · Test fidelity ladder — cheapest to priciest</h2>
-    <table>
-      <caption>Default <code>uv run pytest</code> runs everything except <code>smoke</code> and <code>performance</code>.
-      </caption>
-      <thead>
-      <tr>
-        <th scope="col">Tier</th>
-        <th scope="col">Location</th>
-        <th scope="col">Checks</th>
-        <th scope="col">Cost signal</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>Structural</td>
-        <td><code>tests/structural/</code></td>
-        <td>Files, dirs, frontmatter</td>
-        <td>Cheap — existence only</td>
-      </tr>
-      <tr>
-        <td>Behavioral</td>
-        <td><code>tests/behavioral/</code></td>
-        <td>Skill body content, protocol rules</td>
-        <td>Cheap</td>
-      </tr>
-      <tr>
-        <td>Integration</td>
-        <td><code>tests/integration/</code></td>
-        <td>Cross-file references &amp; consistency</td>
-        <td>Cheap</td>
-      </tr>
-      <tr>
-        <td>Harness</td>
-        <td><code>tests/test_*.py</code></td>
-        <td>settings.json, permissions, hooks, cost extraction</td>
-        <td>Cheap</td>
-      </tr>
-      <tr>
-        <td>Bats</td>
-        <td><code>tests/*.bats</code></td>
-        <td>Shell scripts (checkpoint-archive, sync-theme)</td>
-        <td>Moderate — needs <code>bats</code></td>
-      </tr>
-      <tr>
-        <td>Smoke</td>
-        <td><code>tests/smoke/</code></td>
-        <td>Live skill invocation</td>
-        <td>Tokens · non-deterministic</td>
-      </tr>
-      <tr>
-        <td>Performance</td>
-        <td><code>tests/performance/</code></td>
-        <td>18-combo stress matrix</td>
-        <td>Expensive · non-deterministic</td>
-      </tr>
-      </tbody>
-    </table>
-    <p class="muted">Parallelize with <code>pytest-xdist</code> for <code>smoke</code>/<code>performance</code>:
-      <code>uv run pytest -n auto</code>. Skip <code>-n</code> on the default suite — it runs in ~0.5s and
-      worker startup adds more overhead than it saves.</p>
-  </section>
+    <section aria-labelledby="how-h">
+      <h3 id="how-h">What it is &amp; how it works</h3>
+      <p>
+        <strong>rtk</strong> installs as a Claude Code <strong>PreToolUse hook</strong>. It rewrites
+        a shell command, runs the real tool itself, then returns filtered / compressed output to the
+        model. Four strategies: filtering, grouping, truncation, deduplication.
+      </p>
+      <figure>
+        <div class="flow" role="img"
+             aria-label="Flow: the agent issues a Bash command; rtk's hook rewrites and intercepts it; the real tool runs and produces full output; rtk filters it about 80% smaller; the agent receives the compact result.">
+          <div class="flow-step"><b>Agent</b>issues <code>git status</code></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-step"><b>rtk hook</b>rewrites &amp; intercepts</div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-step"><b>Real tool</b>runs, full output</div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-step"><b>rtk filter</b>~80% smaller</div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-step"><b>Agent</b>gets compact result</div>
+        </div>
+        <figcaption>
+          <strong>The catch that defines its ROI:</strong> the hook fires <em>only on Bash tool
+          calls.</em> Claude Code's native <code>Read</code>, <code>Grep</code>, and
+          <code>Glob</code> tools bypass it — so if your file reads &amp; searches already go
+          through those, rtk never sees them.
+        </figcaption>
+      </figure>
+    </section>
 
+    <section aria-labelledby="roi-h">
+      <h3 id="roi-h">Token ROI — how much you actually save</h3>
+      <p>
+        rtk's vendor benchmark (−80% on a 30-min session) assumes you route <code>cat</code> /
+        <code>grep</code> / <code>find</code> through Bash. Many Claude Code workflows don't — they
+        use native Read/Grep/Glob, which already produce compact output <em>and</em> bypass rtk's
+        hook. That removes ~34% of rtk's headline number before you start.
+      </p>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="rtk token-savings scenarios, scrollable table">
+        <table>
+          <caption>rtk-alone whole-session token reduction. Arithmetic: bash-output share × reduction-on-that-share.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Scenario</th>
+            <th scope="col">Bash output share</th>
+            <th scope="col">rtk reduction on that share</th>
+            <th scope="col">Net whole-session</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">Conservative</th>
+            <td class="num">15%</td>
+            <td class="num">65%</td>
+            <td class="num"><strong>~10%</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">Expected</th>
+            <td class="num">22%</td>
+            <td class="num">68%</td>
+            <td class="num"><strong>~15%</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">Optimistic</th>
+            <td class="num">30%</td>
+            <td class="num">72%</td>
+            <td class="num"><strong>~22%</strong></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h4>Flat-rate plans (Pro / Max)</h4>
+          <p>Dollar savings ≈ <strong>$0</strong> — you've already paid. The value is
+            <strong>daily-cap capacity</strong>: ~10–22% fewer tokens ≈ ~11–28% more work before the
+            cap, and fewer mid-session rate stalls.</p>
+        </div>
+        <div class="card">
+          <h4>Pay-as-you-go (API)</h4>
+          <p>Savings are real dollars — but rtk only cuts the <em>output-token</em> slice, so the
+            whole-session figure (10–22%) is far below the per-command claim. The next section adds
+            the bigger lever.</p>
+        </div>
+      </div>
+      <p class="muted">Where rtk earns its keep either way: <code>git status/diff/log</code>,
+        <code>pytest</code>, <code>ruff</code>, <code>cargo</code>, <code>npm test</code> — exit-path
+        dumps the auto-rewrite hook cleans up with <strong>zero habit change.</strong></p>
+    </section>
+
+    <section aria-labelledby="combo-h">
+      <h3 id="combo-h">rtk + claude-damn together (API pricing)</h3>
+      <p><strong>claude-damn</strong>'s cost levers are <em>orthogonal</em> to rtk's, which is why
+        they stack:</p>
+      <div class="grid">
+        <div class="card">
+          <h4>rtk — cuts token <em>volume</em></h4>
+          <p>Compresses command <strong>output</strong> (mostly the output side). Bash-only.</p>
+        </div>
+        <div class="card">
+          <h4>claude-damn — cuts <em>price per token</em> + carried context</h4>
+          <p>Routes routine work to <strong>Sonnet/Haiku</strong>, reserves Opus for hard reasoning;
+            isolates exploration into subagents so the main thread never carries it; trims context with
+            targeted reads. Model-side, not output compression.</p>
+        </div>
+      </div>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Anthropic API pricing, scrollable table">
+        <table>
+          <caption>Anthropic standard API pricing, per million tokens — verified 2026-06-26. Routing ratios are constant
+            across input and output.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col">Input $/MTok</th>
+            <th scope="col">Output $/MTok</th>
+            <th scope="col">vs Opus</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">Opus 4.x</th>
+            <td class="num">$5</td>
+            <td class="num">$25</td>
+            <td class="num">1×</td>
+          </tr>
+          <tr>
+            <th scope="row">Sonnet 4.x</th>
+            <td class="num">$3</td>
+            <td class="num">$15</td>
+            <td class="num">0.6×</td>
+          </tr>
+          <tr>
+            <th scope="row">Haiku 4.5</th>
+            <td class="num">$1</td>
+            <td class="num">$5</td>
+            <td class="num">0.2×</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Combined savings scenarios, scrollable table">
+        <table>
+          <caption>Combined API $-savings ≈ 1 − (rtk token-factor × routing price-factor × isolation token-factor). All
+            three factors are modeled estimates.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Scenario</th>
+            <th scope="col">rtk (tokens)</th>
+            <th scope="col">routing (price)</th>
+            <th scope="col">isolation (tokens)</th>
+            <th scope="col">Net API $ saved</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">Conservative</th>
+            <td class="num">−10%</td>
+            <td class="num">Sonnet, light</td>
+            <td class="num">−3%</td>
+            <td class="num"><strong>~20%</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">Expected</th>
+            <td class="num">−15%</td>
+            <td class="num">Sonnet 50/50</td>
+            <td class="num">−8%</td>
+            <td class="num"><strong>~37%</strong></td>
+          </tr>
+          <tr>
+            <th scope="row">Optimistic</th>
+            <td class="num">−22%</td>
+            <td class="num">Sonnet-heavy +Haiku</td>
+            <td class="num">−15%</td>
+            <td class="num"><strong>~54%</strong></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Worked dollar example, scrollable table">
+        <table>
+          <caption>Worked example — a hypothetical $300/mo all-Opus API user. Dollar figures scale linearly with any
+            baseline.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Configuration</th>
+            <th scope="col">Modeled $/month</th>
+            <th scope="col">Saved</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">Baseline (all-Opus)</th>
+            <td class="num">$300</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <th scope="row">rtk only</th>
+            <td class="num">$234 – $270</td>
+            <td class="num">$30 – $66</td>
+          </tr>
+          <tr>
+            <th scope="row">claude-damn only</th>
+            <td class="num">~$221 ($179–268)</td>
+            <td class="num">$32 – $121</td>
+          </tr>
+          <tr>
+            <th scope="row"><strong>Both</strong></th>
+            <td class="num"><strong>~$188 ($139–241)</strong></td>
+            <td class="num"><strong>$59 – $161</strong></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted"><strong>Honest caveats.</strong> Routing only pays off when the routed work
+        is genuinely routine — a cheaper model that fails and loops costs you twice. rtk only helps
+        bash-output-heavy sessions. Isolation savings depend on workflow. Prompt caching (cache reads
+        are 0.1× input) and the Opus 4.7+ tokenizer (~35% more tokens) interact with all of this and
+        aren't folded into the percentages. Every figure here is a transparent model, not a guarantee;
+        only the pricing table is hard.</p>
+    </section>
+
+    <section aria-labelledby="cmp-h">
+      <h3 id="cmp-h">How it stacks up</h3>
+      <p>rtk wins live-CLI-output compression. The honest competition is often "do nothing + native tools."</p>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Competitive comparison, scrollable table">
+        <table>
+          <caption>Selected alternatives. "Helps Read/Grep/Glob?" is the axis that matters most for native-tool-leaning
+            workflows.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Tool / approach</th>
+            <th scope="col">Niche</th>
+            <th scope="col">Helps Read/Grep/Glob?</th>
+            <th scope="col">Maturity</th>
+            <th scope="col">Best when…</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">rtk</th>
+            <td>Live CLI output (100+ cmds)</td>
+            <td><span class="pill s-high">NO</span> Bash-only hook</td>
+            <td>65.7k★, weekly</td>
+            <td>Noisy build/test/git output, many agents</td>
+          </tr>
+          <tr>
+            <th scope="row">Native Read/Grep/Glob + quiet flags</th>
+            <td>Built-in compact tools</td>
+            <td><span class="pill s-info">N/A</span> it <em>is</em> them</td>
+            <td>Ships with CC</td>
+            <td>File reads &amp; search — free, lossless</td>
+          </tr>
+          <tr>
+            <th scope="row">squeez</th>
+            <td>Live output + dedup</td>
+            <td><span class="pill s-med">PARTIAL</span> Pre+PostToolUse</td>
+            <td>156★, single dev</td>
+            <td>You want the Read/Grep path compressed too</td>
+          </tr>
+          <tr>
+            <th scope="row">token-optimizer-mcp</th>
+            <td>MCP-side file cache</td>
+            <td><span class="pill s-info">YES</span> replaces them</td>
+            <td>415★</td>
+            <td>Repeated re-reads; tolerate ~4–6k manifest cost</td>
+          </tr>
+          <tr>
+            <th scope="row">repomix / gitingest</th>
+            <td>Whole-repo packing</td>
+            <td><span class="pill s-low">N/A</span> different job</td>
+            <td>26.5k★</td>
+            <td>Upfront context loading — pair, don't replace</td>
+          </tr>
+          <tr>
+            <th scope="row">Prompt caching · /compact · subagents</th>
+            <td>Context cost, model-side</td>
+            <td><span class="pill s-info">ORTHOGONAL</span></td>
+            <td>Native CC</td>
+            <td>claude-damn leans on these already</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="sec-h">
+      <h3 id="sec-h">Security posture</h3>
+      <p><strong>Verdict:</strong> reasonable hygiene for its class. The part that matters most for a
+        hook — that it won't silently run something different — is solid. The exposure is
+        <strong>secrets, in the output layer</strong>, and the maintainers are already on most of it.</p>
+
+      <h4>Operational notes — and their tracking status</h4>
+      <div class="scroll wide" tabindex="0" role="region" aria-label="Security operational notes, scrollable table">
+        <table>
+          <caption>Findings from an independent source review, with rtk's own issue-tracker status. "Harden" = a gap;
+            "By design" = expected behavior worth knowing.
+          </caption>
+          <thead>
+          <tr>
+            <th scope="col">Kind</th>
+            <th scope="col">Note</th>
+            <th scope="col">rtk status</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><span class="pill s-med">HARDEN</span></td>
+            <td>tee files &amp; <code>tracking.db</code> are world-readable (0644); the DB stores full commands +
+              project path
+            </td>
+            <td><span class="pill s-info">Tracked</span> #1790, #1160 · fix in <strong>PR #656</strong></td>
+          </tr>
+          <tr>
+            <td><span class="pill s-med">HARDEN</span></td>
+            <td><code>rtk env</code> masks on a variable-<em>name</em> denylist; values aren't inspected, so <code>DATABASE_URL=…pw</code>
+              can print in full
+            </td>
+            <td><span class="pill s-info">Tracked</span> #2271 / #1875</td>
+          </tr>
+          <tr>
+            <td><span class="pill s-low">BY DESIGN</span></td>
+            <td><code>aws secretsmanager get-secret-value</code> prints the secret (that's the command's job)</td>
+            <td><span class="pill s-info">Tracked</span> #1875</td>
+          </tr>
+          <tr>
+            <td><span class="pill s-low">BY DESIGN</span></td>
+            <td><code>rtk curl</code> / <code>wget</code> pass response bodies through unredacted (fidelity over
+              redaction) — tokens in a JSON body reach the model
+            </td>
+            <td><span class="pill s-med">Novel</span> (low-sev)</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h4><span class="pill s-info">GENUINE STRENGTHS</span></h4>
+          <p>Argv execution, never <code>sh -c</code> · conservative passthrough on shell constructs it can't safely
+            decompose · least-privilege permissions (default = <em>ask</em>) · checksum-verified, path-traversal-guarded
+            installer · telemetry default-OFF, anonymized, env-overridable · salt file already <code>0600</code> ·
+            <code>unsafe_code = "deny"</code> · parameterized SQL · active security-issue triage.</p>
+        </div>
+        <div class="card">
+          <h4><span class="pill s-med">RESIDUAL RISK</span></h4>
+          <p>The execution core is trustworthy; the exposure is <strong>secret-on-disk</strong> (tee / tracking DB at
+            0644) and <strong>secret-to-model</strong> (env / curl / aws). With a single trusted user the disk angle is
+            low-impact. Don't rely on the "strips secrets" claim — verify per command.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="do-h">
+      <h3 id="do-h">What to actually do</h3>
+      <ul class="checks">
+        <li><strong>Install the global hook</strong> and let it auto-catch <code>git</code> / test / lint / build —
+          ~80–85% of the realizable win, zero habit change.
+        </li>
+        <li><strong>For real dollar savings, pair it with model routing</strong> (Sonnet/Haiku for routine work). On a
+          pay-as-you-go plan, routing is the bigger lever; rtk is the multiplier on top.
+        </li>
+        <li><strong>Don't re-route Read/Grep/Glob</strong> to <code>rtk read</code>/<code>grep</code> — native tools are
+          faster, lossless, and bypass the hook anyway.
+        </li>
+        <li><strong>Treat <code>rtk env</code> / <code>curl</code> / <code>aws secretsmanager</code> as NOT
+          secret-stripping.</strong> Don't run them against credential-bearing sources expecting redaction.
+        </li>
+        <li><strong>Tee:</strong> fine where the host has a single trusted user; disable via <code>[tee] mode =
+          "never"</code> before using it on a shared host. Telemetry is off by default.
+        </li>
+        <li><strong>Pin a version</strong> and verify release checksums — you're putting a binary in an autonomous
+          agent's command path.
+        </li>
+        <li><strong>Measure, then re-decide.</strong> Run a week, check <code>rtk gain</code>, keep it if the bump is
+          real. If the Read/Grep gap nags you, trial <code>squeez</code>.
+        </li>
+      </ul>
+    </section>
+  </section>
 </main>
 
 <footer class="site muted">
-  <p>Built for <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>.</p>
+  <p>Built for <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>. The rtk
+    evaluation is independent and not affiliated with rtk-ai; security findings were shared with the
+    maintainers and most are already tracked. Savings figures are modeled estimates; API pricing
+    verified 2026-06-26.</p>
 </footer>
+
+<script>
+  (function() {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll("[role=\"tab\"]"));
+    var panels = tabs.map(function(t) {
+      return document.getElementById(t.getAttribute("aria-controls"));
+    });
+
+    function select(i, focus) {
+      tabs.forEach(function(t, j) {
+        var on = j === i;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        if (panels[j]) panels[j].hidden = !on;
+      });
+      if (focus && tabs[i]) tabs[i].focus();
+    }
+
+    tabs.forEach(function(t, i) {
+      t.addEventListener("click", function() {
+        select(i, false);
+      });
+      t.addEventListener("keydown", function(e) {
+        var n;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") n = (i + 1) % tabs.length;
+        else if (e.key === "ArrowLeft" || e.key === "ArrowUp") n = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === "Home") n = 0;
+        else if (e.key === "End") n = tabs.length - 1;
+        else return;
+        e.preventDefault();
+        select(n, true);
+      });
+    });
+    // Progressive enhancement: both panels are visible without JS; activate tab 1 once JS runs.
+    select(0, false);
+  })();
+</script>
 </body>
 </html>

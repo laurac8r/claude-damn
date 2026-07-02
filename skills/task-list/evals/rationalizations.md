@@ -9,6 +9,11 @@
 
 ## Verbatim baseline excerpts
 
+> **Cross-reference:** these R1–R3 excerpts are the same transcripts recorded
+> in `iteration-1/baseline-results.md` (§Captured rationalizations). Both files
+> carry them so each is self-contained per `/lets-make-a-skill`;
+> `baseline-results.md` is the source-of-record for the raw transcripts.
+
 ### R1 — bare-simple
 
 > "The `/task-list` skill is not available in this session. Here is the task

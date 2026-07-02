@@ -9,14 +9,11 @@ plugin.
 
 <img src="img/home-meme.png" alt="home meme" width="800">
 
-> **✅ Status:** v1.0.0 is **live** in the
+> **✅ Status:** `claude-damn` is **live** in the
 > [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community)
-> marketplace as of the 2026-04-28 batch sync (commit
-> [`4749e7a`](https://github.com/anthropics/claude-plugins-community/commit/4749e7a),
-> "sync: 1921 plugins (+285)") — 5 days after the 2026-04-23 submission. v1.7.0
-> was re-submitted on 2026-05-03 and is currently pending review; a future batch
-> sync will bump the marketplace's pinned SHA. See `CHANGELOG.md` for what's in
-> each version.
+> marketplace. The published marketplace version is **v1.12.0**; the working
+> tree is at **v1.12.2**, pending the next batch sync. See `CHANGELOG.md` for
+> what's in each version.
 
 Install:
 
@@ -47,16 +44,17 @@ These combine into four skill families:
 - **TDD** — `/tdd`, `/tdd-cat`, `/duper-tdd`, `/duper-tdd-cat`
 - **Brainstorm + TDD** — `/super`, `/super-cat`, `/super-duper`,
   `/super-duper-cat`
-- **Debug + Brainstorm + TDD** — `/super-debug-and-fix`,
-  `/super-debug-and-fix-cat`, `/super-duper-debug-and-fix`,
-  `/super-duper-debug-and-fix-cat`
-- **Expert Review** — `/expert-review` through `/expert-super-duper-cat-review`
-  (10 variants)
+- **Debug + Fix (fixer)** — `/fixer`, `/super-fixer`, `/super-fixer-cat`,
+  `/super-duper-fixer`, `/super-duper-fixer-cat`, `/super-duper-fixer-tdd-cat`
+- **Expert Review** — `/expert-review` through
+  `/expert-super-duper-tdd-cat-review` (14 combinatoric variants), plus
+  `/expert-final-review` (pre-merge go/no-go gate)
 
-Plus utility skills: `/checkpoint-save`, `/checkpoint-resume`,
+Plus utility skills: `/atlas`, `/checkpoint-save`, `/checkpoint-resume`,
 `/check-yourself`, `/cost_`, `/cost-opt`, `/fast-pr-feedback-to-me`,
-`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, `/listen`,
-`/proceed`, `/sync`, and more.
+`/fast-pr-feedback-to-others`, `/fast-pr-final-self-review`, `/learn`,
+`/legal-visual-aid`, `/listen`, `/pause`, `/proceed`, `/review`, `/sme-test`,
+`/sync`, `/task-list`, `/tesseract`, `/visual-aid`, and more.
 
 See [`skills/README.md`](skills/README.md) for the full combinatoric table.
 
@@ -164,7 +162,7 @@ If you're hacking on `claude-damn` itself, install from a local clone:
 git clone https://github.com/laurac8r/claude-damn
 cd claude-damn
 uv sync        # dev/test dependencies
-uv run pytest  # 422 tests green
+uv run pytest  # 719 tests green (777 total; smoke + performance deselected by default)
 ```
 
 Then point Claude Code at the local checkout so skills, commands, and the
@@ -223,7 +221,7 @@ how `super` / `duper` / `cat` / `tdd` compose into 20+ skill variants.
 │   ├── duper/                 # Git worktree isolation
 │   ├── cat/                   # Subagent-driven development
 │   ├── expert-review/         # Multi-phase expert review
-│   ├── expert-*-review/       # 9 combinatoric expert-review variants
+│   ├── expert-*-review/       # 13 combinatoric variants + /expert-final-review gate
 │   ├── checkpoint-save/       # Save resumable checkpoint
 │   ├── checkpoint-resume/     # Resume from checkpoint
 │   ├── tesseract/             # Cross-session memory via file I/O
@@ -296,9 +294,9 @@ third-party service. Specifically:
 - **Checkpoint state stays in-repo.** `/checkpoint-save` writes `CHECKPOINT.md`
   to your working tree and archives to `.checkpoints/` — local files only.
 - **Tesseract transmissions are local-only.** `/tesseract` reads and writes
-  `~/.claude/tesseract/shelf/*.md` and `~/.claude/tesseract/bulk-beings.md` on
-  your disk. The skill explicitly advises gitignoring these files in any repo
-  that mirrors `~/.claude`.
+  `~/.tesseract/shelf/*.md` and `~/.tesseract/bulk-beings.md` on your disk. The
+  skill explicitly advises gitignoring `~/.tesseract/` entirely in any repo that
+  mirrors `~/.claude`.
 
 **Upstream data flows the plugin does not govern:**
 

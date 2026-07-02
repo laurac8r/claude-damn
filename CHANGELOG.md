@@ -6,6 +6,163 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the PERSONALIZATION
 versioning rule.
 
+## [1.12.2] — 2026-06-29
+
+PATCH: `/cat` reworked from "ask for auto-accept, then the agent self-selects the
+dispatch shape" into the **explicit combination** of both superpowers skills it
+composes — `/subagent-driven-development` (sequential, review-gated) and
+`/dispatching-parallel-agents` (independent fan-out) — fronted by **one combined
+pre-dispatch `AskUserQuestion`** over two orthogonal axes: execution mode (3
+presets — Full parallel / Hybrid / Strict sequential) and edit approval
+(Auto-accept vs Manual-approve). The "No Shortcut for Trivial Edits" guard is
+preserved and extended with an explicit manual-approve closure (foreground /
+manual-approve changes who _approves_ an edit, not who _makes_ it). Built in a
+worktree off `main`.
+
+Note: `/lets-make-a-skill`'s baseline-first pressure grid did **not** bind — a
+RED baseline (4 agents under manual-approve pressure against the current `/cat`)
+produced 0 shortcuts: the existing rationalization-counter table already
+generalized to the new framing, so the Iron Law (ship only after a baseline
+rationalizes) is satisfied without a new behavioral guard, exactly as for
+`/expert-final-review` (1.12.0). A structural test suite was added in its place;
+the manual-approve closure ships as explicitness (removing a derivation step),
+not as a proven-necessary guard. Also corrected an outdated assumption while
+drafting: backgrounded subagents **do** surface permission prompts (Claude Code
+v2.1.186+), so the edit-approval axis turns on auto-accepted-vs-approve-each, not
+background-vs-foreground.
+
+### Added (v1.12.2)
+
+- `tests/skills/cat/` — structural test suite (`conftest.py`, `test_skill_md.py`,
+  `__init__.py`): 16 assertions covering frontmatter, both composed-skill bare
+  invocations, the combined pre-dispatch question (3 presets + 2 approval modes),
+  and the No-Shortcut manual-approve closure + ordering.
+
+### Changed (v1.12.2)
+
+- `skills/cat/SKILL.md` — combined pre-dispatch `AskUserQuestion`; explicit
+  dual-skill composition with bare invocations; manual-approve × execution-mode
+  reconciliation matrix; manual-approve closure in the No-Shortcut section.
+- `.claude-plugin/plugin.json` / `pyproject.toml` / `uv.lock` — 1.12.1 → 1.12.2.
+
+
+## [1.12.1] — 2026-06-27
+
+PATCH: Documentation-drift sync plus a tesseract path-consistency fix.
+Reconciles `README.md`, `ROADMAP.md`, and `skills/README.md` against the current
+repo (catalog grew to 61 skills; marketplace at v1.12.0, working tree v1.12.1),
+and corrects the tesseract shelf/ledger base path from `~/.claude/tesseract/` to
+the real runtime `~/.tesseract/` across the skill doc AND the inline-scripts
+hook. Surfaced by a 5-agent doc-drift audit workflow.
+
+### Changed (v1.12.1)
+
+- **`README.md`** — status block now reflects the live v1.12.0 marketplace
+  publish (was frozen at "v1.0.0 live / v1.7.0 pending review"); test count
+  `422` → `719` (777 total); the non-existent `/super-debug-and-fix` family
+  corrected to the real `fixer` family; Expert Review `10` → `14` combinatoric
+  variants plus `/expert-final-review`; utility-skill list refreshed (`/atlas`,
+  `/learn`, `/pause`, `/review`, `/sme-test`, `/task-list`, `/tesseract`,
+  `/visual-aid`, …); project-tree variant count corrected; Privacy section
+  tesseract paths corrected to `~/.tesseract/`.
+- **`ROADMAP.md`** — skill count `38` → `61`; expert-review `10` → `14`
+  variants; Phase 1/4 marketplace status updated from "awaiting review" to
+  published; `/atlas` checked off (shipped PR #80).
+- **`skills/README.md`** — replaced the four broken `/super-debug-and-fix*`
+  rows (skills that never existed) with the real `fixer` family; added the four
+  missing `expert-super-tdd*` review rows, an `/expert-final-review` row, a
+  `fixer` modifier row, and 17 standalone skills to the Other Skills table.
+
+### Fixed (v1.12.1)
+
+- **Tesseract base path `~/.claude/tesseract/` → `~/.tesseract/`.** The skill's
+  Metaphor table and resume-anchor cascade, and the `block-inline-scripts.py`
+  `TESSERACT_REDIRECT_PATTERN`, all keyed on `~/.claude/tesseract/` — but the
+  skill's operative steps (and the real runtime) read/write `~/.tesseract/`
+  directly under `$HOME`. As shipped, the v1.11.0 rules-2&3 redirect-bypass
+  therefore never matched a genuine bulk-beings append. Repointed the regex and
+  the SKILL.md references to `~/.tesseract/` (redirect-target scoping preserved;
+  comment-only mentions still don't disarm the guards), with the structural +
+  hook tests updated and a regression asserting the legacy path is no longer
+  exempt. Also narrowed the bypass to the one legitimate target
+  `~/.tesseract/bulk-beings.md` (the shelf is written via the Write tool, not
+  Bash), shrinking the exemption surface — per pre-merge review feedback.
+
+## [1.12.0] — 2026-06-26
+
+MINOR: New skill `/expert-final-review` — a final pre-merge gate that composes
+the existing review skills in sequence: `/fast-pr-final-self-review` (confirm
+all PR peer feedback on the current branch is addressed) then `/expert-review
+all` (full multi-phase sweep — bugs, security, simplification, error handling,
+type design), aggregated into one go / no-go merge summary. Joins the
+`expert-*-review` composition family alongside `expert-cat-review` /
+`expert-tdd-review`, matching their minimalist single-body style. Built in a
+worktree off `main`. Note: `/lets-make-a-skill`'s baseline-first pressure grid
+was intentionally **skipped** — a pure A-then-B composition has no
+rationalization surface for a no-skill baseline to shortcut on, so the Iron Law
+(ship only after observing a baseline rationalize) does not bind; no sibling
+composition skill was built through the grid either. A structural smoke test was
+added in its place. Manifests bumped 1.11.1 → 1.12.0 in lockstep.
+
+### Added (v1.12.0)
+
+- `skills/expert-final-review/SKILL.md` — composition body sequencing
+  `/fast-pr-final-self-review` → `/expert-review all`.
+- `tests/skills/expert_final_review/` — structural smoke test (`conftest.py`,
+  `test_skill_md.py`, `__init__.py`) validating frontmatter + both
+  composed-skill references.
+- `.claude-plugin/plugin.json` keyword `expert-final-review`.
+
+## [1.11.1] — 2026-06-24
+
+PATCH: `/tdd` promoted from a one-line shim into an explicit one-at-a-time TDD
+micro-cycle skill — one test → RED → minimal code → GREEN → refactor → repeat,
+run once per behavior. Still delegates to `/test-driven-development` for the
+RED→GREEN core via a bare invocation on its own line (canonical skill untouched;
+active-dev/canonical isolation). Adds the all-tests-upfront anti-pattern, an
+8-row rationalization table, and red flags. Validated via `/lets-make-a-skill`
+eval grid (Sonnet, parse-duration): baseline 0/5 quant → with-skill 5/5;
+iteration-2 refactor closed the general-solution-at-first-combined leak (3/3
+pressure held). Eval reports in `skills/tdd/evals/`. First of three sequential
+PRs (1.11.1 → 1.11.2 → 2.0.0). Manifests bumped 1.11.0 → 1.11.1 in lockstep.
+
+## [1.11.0] — 2026-06-08
+
+MINOR: `hooks/block-inline-scripts.py` — Tesseract **redirect-target** bypass.
+Commands that append (`>>`) into a `~/.claude/tesseract/` path are now exempt
+from rule 2 (command-length) and rule 3 (statement-separator count) so long,
+chained "bulk-beings" appends to that directory aren't blocked; rule 1 (inline
+non-Bash scripts) still fires. The match is scoped to the redirect **target**
+rather than a free substring: a `/expert-review` 3-tier panel (haiku + sonnet +
+opus, unanimous `NARROW`) confirmed the original substring form let any
+over-limit or heavily-chained command (e.g. a `cat … | curl …` exfil pipeline)
+disarm rules 2 & 3 by merely carrying the path in a trailing
+`# ~/.claude/tesseract/` comment — and "rule 1 still fires" is **not** a
+sufficient backstop, since rule 1 matches only `python/ruby/node/perl/php`, not
+pure-Bash pipelines. Also fixed the accompanying tests: `> 300` length
+preconditions sat below the real `MAX_COMMAND_LENGTH = 400` (3 deny-tests
+shipped red, 3 bypass-tests passed vacuously), a contradictory
+`returncode == 1`/`== 0` pair in `test_non_string_command_is_allowed`, and a
+`sys.path`-seeding gap that let the statement-limit bypass test pass only via
+test-ordering pollution (`_load_hook_module` promoted to module scope). +2
+regression tests pin the comment-form denial. 64/64 hook tests pass. Manifests
+bumped 1.10.0 → 1.11.0 in lockstep.
+
+## [1.10.0] — 2026-06-08
+
+MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced
+by `/expert-review` and Copilot on PR #80, completing the ROADMAP Phase 2
+"`/atlas` hardening patches" item. (a) `render.py` now routes
+`TaskRecord.status` through `_html_escape` at both the `class="status-{…}"`
+and inner `<span>` interpolation sites, closing an injection/markup-break
+surface (`Literal[…]` is not runtime-enforced). (b) `resolve_anchor` guards
+an empty-slug override (`--anchor "///"` → `""`): it now falls through to
+`Anchor("void", UNRESOLVED)` with a warning rather than constructing invalid
+downstream paths like `~/.visual-aid/atlas-.html`. +4 tests
+(`test_render_tasks_escapes_status`,
+`test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas
+tests pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
+
 ## [1.9.0] — 2026-05-16
 
 MINOR: New skill `/task-list` — renders and reconciles the session TaskList in
