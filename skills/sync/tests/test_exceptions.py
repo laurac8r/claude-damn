@@ -9,10 +9,10 @@ from skills.sync.scripts.exceptions import (
 
 def test_all_subclass_sync_error() -> None:
     for cls in (
-            SourceNotFoundError,
-            TargetNotWritableError,
-            InvalidModeError,
-            RsyncFailedError,
+        SourceNotFoundError,
+        TargetNotWritableError,
+        InvalidModeError,
+        RsyncFailedError,
     ):
         assert issubclass(cls, SyncError)
 
