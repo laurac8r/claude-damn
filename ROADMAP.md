@@ -373,6 +373,18 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       (D13 / D12). (`rm` and `git commit` are already enforced via
       `settings*.json` deny rules — not hooks, so dropped from this item.)
 
+- [ ] **Extend `block-inline-scripts` caps to `chrome-devtools` MCP
+      `evaluate_script`** — subagents frequently run inline JavaScript via
+      `plugin:chrome-devtools-mcp:chrome-devtools evaluate_script` that far
+      exceeds the 400-char / 4-separator caps (`MAX_COMMAND_LENGTH` /
+      `MAX_STATEMENT_COUNT`) enforced for Bash. These invocations are MCP
+      tool calls, so register the PreToolUse hook on the MCP tool name
+      (`mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script`)
+      and cap the `function` argument the way `command` is capped for Bash.
+      Decide whether the cap is same-size or a larger dedicated limit
+      (browser automation legitimately needs longer snippets). Via TDD, like
+      the sibling inline-interpreter item above.
+
 ### `/atlas` — session-survey skill
 
 - [x] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
