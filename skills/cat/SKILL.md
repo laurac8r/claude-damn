@@ -58,8 +58,11 @@ for approval.
 Map the chosen execution mode to its source skill and follow it. These are bare
 invocations on their own line — they load and run the composed skill:
 
-- **Full parallel** → /dispatching-parallel-agents
-- **Strict sequential** → /subagent-driven-development
+<!-- prettier-ignore -->
+- **Full parallel** →
+  /dispatching-parallel-agents
+- **Strict sequential** →
+  /subagent-driven-development
 - **Hybrid** → apply the **Full parallel** dispatch (above) within each
   independent phase, and the **Strict sequential** dispatch (above) across the
   dependent tasks. Switch on dependency: a task that needs a prior task's output
