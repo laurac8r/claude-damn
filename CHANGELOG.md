@@ -6,11 +6,75 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the PERSONALIZATION
 versioning rule.
 
+## [1.13.0] — 2026-07-06
+
+MINOR: manual canonical → active-dev sync (136 files vs `main`). Ships the
+canonical install's hook, settings, rules, and skill-prose evolution into the
+repo, and repairs everything the sync run itself broke (default suite went from
+126 failures/errors back to 839 green).
+
+### Added (v1.13.0)
+
+- `hooks/block_opus_subagent.py` — PreToolUse Task guard denying Opus-model
+  subagent dispatches (`CLAUDE_BATCH_MODE` env / `[BATCH_OVERRIDE]` sentinel
+  escapes), with wire test `tests/hooks/test_block_opus_subagent.sh`.
+- `hooks/check_git_rev_parse.py` — warn-mode PreToolUse Bash guard flagging
+  unsafe `git rev-parse` patterns (unquoted `$VAR`, `--parseopt` + `eval`), with
+  pytest suite and companion doc `rules/git_rev_parse_safety.md`.
+- `hooks/ensure_remember_logs_dir.py` — SessionStart hook pre-creating
+  `.remember/` log dirs so the remember plugin survives fresh worktrees.
+- `sync-claude-settings.sh` — one-way canonical `settings.json` →
+  `settings.local.json` sync with dry-run/diff preview, y/N confirm, and
+  trash-based (never `rm`) backup.
+- `scripts/parse_lighthouse.py` (Lighthouse a11y score extraction) and
+  `scripts/strip_html.py` (HTML → plain text for legal-doc clause diffing).
+- Root `statusline-command.sh` (canonical status-line variant, alongside the
+  existing `src/statusline-command.sh`).
+- Test suites: `tests/extra_cost/` (22 tests for `src/extract_cost.py`),
+  `skills/tesseract/tests/test_render_visual.py` (19 tests + synthetic
+  fixtures), tesseract smoke `test_skill_md.py` (20 tests, incl.
+  `--anchors {a,b,c}` multi-anchor specs), hook test suites, and per-skill
+  test-layout scaffolding (`helpers/`, `performance/`, `pressure/`).
+
+### Changed (v1.13.0)
+
+- Tracked settings migrated `settings.json` → `settings.local.json` with a
+  permissions overhaul: broader `git commit` deny (`Bash(*git commit*)`), new
+  `rm` deny triple enforcing the trash-only rule, `gh issue` mutations deny →
+  ask, blanket `gh api` ask replaced by granular read-only allows,
+  filesystem-wide Read allows, tesseract/chrome-devtools/flutter allows, and the
+  three new hooks registered.
+- Inline-script caps raised in `hooks/constants.py`: `MAX_COMMAND_LENGTH` 400 →
+  500, `MAX_STATEMENT_COUNT` 4 → 10.
+- `CLAUDE.md` restructured around the `[nudge]` < `[policy]` < `[hard]` severity
+  ladder with a paste-verbatim Subagent Preamble;
+  `rules/PERSONALIZATION.example.md` rewritten (~63 → ~291 lines).
+- `argument-hint` frontmatter added to 35 SKILL.md files; `/check-yourself`
+  boundary triggers enumerated with gated Steps 5/6; `/expert-review` gains
+  mandatory re-trace of ≥90-confidence findings and artifact-shaped custom
+  output; `/super-duper-tdd-cat` gains a subagent-dispatch discipline section (+
+  evals); fixer family gains an explore-only operator override; `/listen` gains
+  satisfaction semantics; `/tesseract` accepts `--signal {…}`; `/visual-aid`
+  default save path moved `/tmp` → `~/.visual-aid/`.
+
+### Fixed (v1.13.0)
+
+- `skills/sync/scripts/apply.py` restored after the sync run clobbered it with
+  `diff.py`'s content (net diff vs `main` now zero for `skills/sync/scripts/`).
+- `tests/conftest.py` repointed at `settings.local.json`; permission regression
+  tests realigned to the canonical-synced semantics.
+- Stale duplicate `tests/hooks/test_hook_inline_scripts.py` removed (53
+  path-broken tests superseded by the limit-agnostic flat suite);
+  separator-limit tests made relative to `MAX_STATEMENT_COUNT` (the old
+  5-element slice silently under-generated at the new limit).
+- `/cat` bare skill-invocation lines made prettier-proof via `prettier-ignore`,
+  restoring the tested invocation-literalness invariant.
+
 ## [1.12.2] — 2026-06-29
 
-PATCH: `/cat` reworked from "ask for auto-accept, then the agent self-selects the
-dispatch shape" into the **explicit combination** of both superpowers skills it
-composes — `/subagent-driven-development` (sequential, review-gated) and
+PATCH: `/cat` reworked from "ask for auto-accept, then the agent self-selects
+the dispatch shape" into the **explicit combination** of both superpowers skills
+it composes — `/subagent-driven-development` (sequential, review-gated) and
 `/dispatching-parallel-agents` (independent fan-out) — fronted by **one combined
 pre-dispatch `AskUserQuestion`** over two orthogonal axes: execution mode (3
 presets — Full parallel / Hybrid / Strict sequential) and edit approval
@@ -28,15 +92,16 @@ rationalizes) is satisfied without a new behavioral guard, exactly as for
 the manual-approve closure ships as explicitness (removing a derivation step),
 not as a proven-necessary guard. Also corrected an outdated assumption while
 drafting: backgrounded subagents **do** surface permission prompts (Claude Code
-v2.1.186+), so the edit-approval axis turns on auto-accepted-vs-approve-each, not
-background-vs-foreground.
+v2.1.186+), so the edit-approval axis turns on auto-accepted-vs-approve-each,
+not background-vs-foreground.
 
 ### Added (v1.12.2)
 
-- `tests/skills/cat/` — structural test suite (`conftest.py`, `test_skill_md.py`,
-  `__init__.py`): 16 assertions covering frontmatter, both composed-skill bare
-  invocations, the combined pre-dispatch question (3 presets + 2 approval modes),
-  and the No-Shortcut manual-approve closure + ordering.
+- `tests/skills/cat/` — structural test suite (`conftest.py`,
+  `test_skill_md.py`, `__init__.py`): 16 assertions covering frontmatter, both
+  composed-skill bare invocations, the combined pre-dispatch question (3
+  presets + 2 approval modes), and the No-Shortcut manual-approve closure +
+  ordering.
 
 ### Changed (v1.12.2)
 
@@ -44,7 +109,6 @@ background-vs-foreground.
   dual-skill composition with bare invocations; manual-approve × execution-mode
   reconciliation matrix; manual-approve closure in the No-Shortcut section.
 - `.claude-plugin/plugin.json` / `pyproject.toml` / `uv.lock` — 1.12.1 → 1.12.2.
-
 
 ## [1.12.1] — 2026-06-27
 
@@ -68,8 +132,8 @@ hook. Surfaced by a 5-agent doc-drift audit workflow.
 - **`ROADMAP.md`** — skill count `38` → `61`; expert-review `10` → `14`
   variants; Phase 1/4 marketplace status updated from "awaiting review" to
   published; `/atlas` checked off (shipped PR #80).
-- **`skills/README.md`** — replaced the four broken `/super-debug-and-fix*`
-  rows (skills that never existed) with the real `fixer` family; added the four
+- **`skills/README.md`** — replaced the four broken `/super-debug-and-fix*` rows
+  (skills that never existed) with the real `fixer` family; added the four
   missing `expert-super-tdd*` review rows, an `/expert-final-review` row, a
   `fixer` modifier row, and 17 standalone skills to the Other Skills table.
 
@@ -92,10 +156,10 @@ hook. Surfaced by a 5-agent doc-drift audit workflow.
 
 MINOR: New skill `/expert-final-review` — a final pre-merge gate that composes
 the existing review skills in sequence: `/fast-pr-final-self-review` (confirm
-all PR peer feedback on the current branch is addressed) then `/expert-review
-all` (full multi-phase sweep — bugs, security, simplification, error handling,
-type design), aggregated into one go / no-go merge summary. Joins the
-`expert-*-review` composition family alongside `expert-cat-review` /
+all PR peer feedback on the current branch is addressed) then
+`/expert-review all` (full multi-phase sweep — bugs, security, simplification,
+error handling, type design), aggregated into one go / no-go merge summary.
+Joins the `expert-*-review` composition family alongside `expert-cat-review` /
 `expert-tdd-review`, matching their minimalist single-body style. Built in a
 worktree off `main`. Note: `/lets-make-a-skill`'s baseline-first pressure grid
 was intentionally **skipped** — a pure A-then-B composition has no
@@ -150,18 +214,17 @@ bumped 1.10.0 → 1.11.0 in lockstep.
 
 ## [1.10.0] — 2026-06-08
 
-MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced
-by `/expert-review` and Copilot on PR #80, completing the ROADMAP Phase 2
-"`/atlas` hardening patches" item. (a) `render.py` now routes
-`TaskRecord.status` through `_html_escape` at both the `class="status-{…}"`
-and inner `<span>` interpolation sites, closing an injection/markup-break
-surface (`Literal[…]` is not runtime-enforced). (b) `resolve_anchor` guards
-an empty-slug override (`--anchor "///"` → `""`): it now falls through to
-`Anchor("void", UNRESOLVED)` with a warning rather than constructing invalid
-downstream paths like `~/.visual-aid/atlas-.html`. +4 tests
-(`test_render_tasks_escapes_status`,
-`test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas
-tests pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
+MINOR: `/atlas` hardening — resolved the two non-blocking findings surfaced by
+`/expert-review` and Copilot on PR #80, completing the ROADMAP Phase 2 "`/atlas`
+hardening patches" item. (a) `render.py` now routes `TaskRecord.status` through
+`_html_escape` at both the `class="status-{…}"` and inner `<span>` interpolation
+sites, closing an injection/markup-break surface (`Literal[…]` is not
+runtime-enforced). (b) `resolve_anchor` guards an empty-slug override
+(`--anchor "///"` → `""`): it now falls through to `Anchor("void", UNRESOLVED)`
+with a warning rather than constructing invalid downstream paths like
+`~/.visual-aid/atlas-.html`. +4 tests (`test_render_tasks_escapes_status`,
+`test_resolve_anchor_empty_override_is_unresolved` ×3 params); 71/71 atlas tests
+pass. Manifests bumped 1.9.0 → 1.10.0 in lockstep.
 
 ## [1.9.0] — 2026-05-16
 
