@@ -267,12 +267,6 @@
         "source": "github",
         "repo": "anthropics/claude-plugins-community"
       }
-    },
-    "jszmajda-lid": {
-      "source": {
-        "source": "github",
-        "repo": "jszmajda/lid"
-      }
     }
   },
   "tui": "fullscreen",
