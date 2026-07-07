@@ -346,6 +346,15 @@ canonical principle reference to read from.
       settings.json directly. `/learn` produces the WHAT (which key) and WHY
       (which session evidence); operator runs `/update-config` to apply.
 
+### Checkpoint cadence & persistence enforcement
+
+- [ ] **Checkpoint-cadence hook** — prompt the main agent to run
+      `/checkpoint-save` at a configurable regularity (e.g., after every N
+      completed TaskList items, default N=5), so persistence doesn't depend
+      solely on the agent recognizing a Tier-1 boundary in `/check-yourself`'s
+      two-tier cadence. Flagged 2026-07-07 during the check-yourself
+      goldilocks-cadence work.
+
 ## Phase 6 — Skill-chain orchestration & enforcement
 
 Beyond individual skill quality (Phases 2 / 5), Phase 6 tackles enforcement
