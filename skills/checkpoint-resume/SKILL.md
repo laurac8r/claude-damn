@@ -2,8 +2,9 @@
 name: checkpoint-resume
 description:
    Use when resuming paused work, starting a session where a CHECKPOINT.md
-   exists, or when the user says "continue from checkpoint", "resume", or "pick
-   up where we left off"
+   exists, when the user says "continue from checkpoint", "resume", or "pick
+   up where we left off" — or when the user names a specific archive, e.g.
+   "Resume from .checkpoints/<slug>.md" (Case N fast-path)
 user-invocable: true
 ---
 
@@ -58,12 +59,43 @@ Collect candidates:
 
 ### Step 4 — Decide Which Checkpoint to Resume
 
-Apply the first matching case:
+Apply the first matching case. **Case N is checked FIRST — an explicit
+named-archive command outranks all auto-discovery below.**
+
+**Case N — the user names a specific archive**
+
+The resume command explicitly references a `.checkpoints/<name>.md` file
+("Resume from .checkpoints/<name>.md", "resume the <name> archive", a
+checkpoint's own Resume Command line pointing there). → Read and resume THAT
+file **in place**:
+
+- Do **NOT** move, copy, or rename the archive to `CHECKPOINT.md` at CWD.
+  Named archives are frequently save-side **Case-D parallel-thread state**:
+  the live `CHECKPOINT.md` belongs to a *different, still-live effort*, and
+  promoting the archive over it destroys that effort's state. The archive's
+  home IS `.checkpoints/<name>.md` — before, during, and after the resume.
+- Do **NOT** touch the live `CHECKPOINT.md`, and do not resume it merely
+  because it exists and its branch line matches — the named command already
+  told you which effort to load.
+- Do **NOT** ask which checkpoint to resume, whether to restore it, or where
+  future saves should land. The command is unambiguous and the archive's home
+  is established. Give a one-line non-blocking receipt instead: *"Resuming
+  <effort> from `.checkpoints/<name>.md` — live `CHECKPOINT.md` (other
+  effort) untouched."* Then start on the checkpoint's Next Steps / ON-RESUME
+  items directly.
+- Later saves for this effort go back to the same named archive —
+  `/checkpoint-save`'s **standing Case-D precedent** applies (no re-ask).
+
+Proceed to Step 5, reading the named archive as the resumed checkpoint.
 
 **Case A — CHECKPOINT.md present, branch matches current**
 
 `CHECKPOINT.md` exists at CWD and its `**Branch:**` line matches the current git
-branch. → Resume it. This is the normal case. Proceed to Step 5.
+branch, and no Case-N command was given. → Resume it. This is the normal case.
+Proceed to Step 5. (If the live file carries a "Case-D named archive /
+unrelated live effort" note, its listed archive — not this file — may be what
+the user means by "resume"; if their intent is not explicit, ask which effort
+to resume before proceeding.)
 
 **Case B — CHECKPOINT.md present, branch differs from current**
 
