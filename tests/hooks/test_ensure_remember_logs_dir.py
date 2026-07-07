@@ -98,3 +98,12 @@ def test_subprocess_fails_open_on_malformed_json() -> None:
     )
     assert result.returncode == 0
     assert result.stdout.strip() == "{}"
+
+
+def test_subprocess_fails_open_on_nul_byte_cwd() -> None:
+    """An embedded NUL in cwd makes Path.mkdir raise ValueError (not OSError);
+    the hook must still fail open (exit 0, print {}) rather than crash and
+    wedge the session."""
+    result = _run_hook({"cwd": "/tmp/x\x00y"})
+    assert result.returncode == 0
+    assert result.stdout.strip() == "{}"

@@ -65,7 +65,7 @@ def ensure_dirs(project_dir: Path) -> list[str]:
 def main_from_stdin() -> None:
     try:
         payload = json.load(sys.stdin)
-    except (json.JSONDecodeError, ValueError):
+    except json.JSONDecodeError, ValueError:
         # Fail open — don't wedge sessions on malformed payloads.
         print("{}")
         return
@@ -73,8 +73,10 @@ def main_from_stdin() -> None:
     if project_dir is not None:
         try:
             ensure_dirs(project_dir)
-        except OSError:
-            # Fail open on permission errors / read-only FS / etc.
+        except OSError, ValueError:
+            # Fail open — never wedge a session. OSError covers permission
+            # errors / read-only FS; ValueError covers an embedded-NUL path
+            # (Path.mkdir raises ValueError, not OSError, for that).
             pass
     print("{}")
 
