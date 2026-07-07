@@ -52,7 +52,7 @@ if cmp -s "$CANONICAL" "$LOCAL"; then
   exit 0
 fi
 
-printf 'diff (canonical → local):\n'
+printf 'diff (local → canonical; - current local, + incoming canonical):\n'
 diff -u "$LOCAL" "$CANONICAL" || true
 
 if [[ "$mode" == "dry" ]]; then

@@ -1,4 +1,4 @@
-"""Tests for ~/.claude/hooks/ensure_remember_logs_dir.py."""
+"""Tests for hooks/ensure_remember_logs_dir.py."""
 
 from __future__ import annotations
 
@@ -9,10 +9,12 @@ from pathlib import Path
 
 import pytest
 
-_HOOK = Path.home() / ".claude" / "hooks" / "ensure_remember_logs_dir.py"
+# Exercise the in-repo hook so the suite is hermetic (independent of the
+# reviewer's ~/.claude install), matching test_check_git_rev_parse.py.
+_HOOK = Path(__file__).parent.parent.parent / "hooks" / "ensure_remember_logs_dir.py"
 
 # Import the module under test directly for unit tests.
-sys.path.insert(0, str(Path.home() / ".claude" / "hooks"))
+sys.path.insert(0, str(_HOOK.parent))
 import ensure_remember_logs_dir as hook  # noqa: E402
 
 
@@ -70,7 +72,7 @@ def test_ensure_dirs_is_idempotent(tmp_path: Path) -> None:
 
 def _run_hook(payload: dict, env: dict | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["python3", str(_HOOK)],
+        [sys.executable, str(_HOOK)],
         input=json.dumps(payload),
         capture_output=True,
         text=True,
@@ -88,7 +90,7 @@ def test_subprocess_creates_dirs_with_payload_cwd(tmp_path: Path) -> None:
 
 def test_subprocess_fails_open_on_malformed_json() -> None:
     result = subprocess.run(
-        ["python3", str(_HOOK)],
+        [sys.executable, str(_HOOK)],
         input="not json at all",
         capture_output=True,
         text=True,

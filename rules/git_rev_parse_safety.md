@@ -6,9 +6,11 @@ for shell scripts, but its safety depends entirely on how inputs and outputs are
 handled.
 
 This rule is the canonical reference for agents writing or reviewing shell that
-calls `git rev-parse`. The companion hook
-`~/.claude/hooks/check_git_rev_parse.py` flags the high-risk patterns at
-PreToolUse time on the `Bash` matcher (warn-mode, non-blocking).
+calls `git rev-parse`. The companion hook `hooks/check_git_rev_parse.py` flags
+the high-risk patterns at PreToolUse time on the `Bash` matcher (warn-mode,
+non-blocking). Paths in this doc are repo-relative; in an installed Claude Code
+config the same files live under `~/.claude/` (e.g.
+`~/.claude/hooks/check_git_rev_parse.py`).
 
 ## ✅ Safe uses
 
@@ -115,10 +117,10 @@ way.
 
 ## Enforcement
 
-`~/.claude/hooks/check_git_rev_parse.py` is registered as a `PreToolUse` hook
-for the `Bash` matcher in `~/.claude/settings.local.json`. It is **warn-mode**:
-it emits a `systemMessage` describing the suspect pattern but does **not** block
-the tool call. The patterns it currently flags:
+`hooks/check_git_rev_parse.py` is registered as a `PreToolUse` hook for the
+`Bash` matcher in `settings.local.json`. It is **warn-mode**: it emits a
+`systemMessage` describing the suspect pattern but does **not** block the tool
+call. The patterns it currently flags:
 
 - **A** — `git rev-parse <unquoted $VAR>`
 - **D** — `git rev-parse --parseopt` co-located with `eval` in the same command
@@ -135,8 +137,10 @@ block — proceed if you are sure.
 
 ## Cross-references
 
-- Doc (this file): `~/.claude/rules/git_rev_parse_safety.md`
-- Hook: `~/.claude/hooks/check_git_rev_parse.py`
-- Hook tests: `~/.claude/tests/hooks/test_check_git_rev_parse.py`
-- Settings registration: `~/.claude/settings.local.json` under
+Repo-relative paths (installed equivalents live under `~/.claude/`):
+
+- Doc (this file): `rules/git_rev_parse_safety.md`
+- Hook: `hooks/check_git_rev_parse.py`
+- Hook tests: `tests/hooks/test_check_git_rev_parse.py`
+- Settings registration: `settings.local.json` under
   `hooks.PreToolUse[matcher="Bash"]`
