@@ -30,14 +30,16 @@ Title: use conventional-commit style, e.g.
 - [ ] `uv run ruff check` — clean
 - [ ] `uv run ruff format` — clean
 - [ ] `uv run pytest` — default suite green
-- [ ] `bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats` — if shell scripts touched
+- [ ] `bats tests/test_checkpoint_archive.bats tests/test_sync_theme.bats` — if
+      shell scripts touched
 - [ ] `uv run pytest -m ""` — full suite incl. smoke/performance (when relevant)
 
 ## Versioning
 
 <!-- SemVer in lockstep: PATCH = docs/renames · MINOR = roadmap item · MAJOR = roadmap phase. -->
 
-- [ ] Bumped `.claude-plugin/plugin.json` + `pyproject.toml` + `uv.lock` in lockstep
+- [ ] Bumped `.claude-plugin/plugin.json` + `pyproject.toml` + `uv.lock` in
+      lockstep
 - [ ] Added a `CHANGELOG.md` entry for the new version
 - [ ] N/A — non-shipping infra / docs-only with no version impact
 
@@ -45,5 +47,6 @@ Title: use conventional-commit style, e.g.
 
 - [ ] ruff clean and test suite green (evidence above)
 - [ ] `CHANGELOG.md` updated (or N/A noted)
-- [ ] No canonical/proprietary content leaked (`~/.claude/rules/`, proprietary `~/.claude/hooks/`, memory, `~/.tesseract/`) — safe to ship public
+- [ ] No canonical/proprietary content leaked (`~/.claude/rules/`, proprietary
+      `~/.claude/hooks/`, memory, `~/.tesseract/`) — safe to ship public
 - [ ] Commits are atomic and conventional (per-file / script+test pairs)

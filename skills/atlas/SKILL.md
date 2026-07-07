@@ -1,14 +1,16 @@
 ---
 name: atlas
-description: Render a single "where am I, what have I done, what's next" survey HTML page composing anchor cascade + tesseract shelf + git state + CHECKPOINT.md + TaskList. Read-only by design.
+description:
+   Render a single "where am I, what have I done, what's next" survey HTML page
+   composing anchor cascade + tesseract shelf + git state + CHECKPOINT.md +
+   TaskList. Read-only by design.
 ---
 
 # /atlas
 
 Survey skill — composes `/tesseract`'s anchor cascade + shelf reads,
 `/checkpoint-resume`'s CHECKPOINT.md discovery, current git state, and the
-agent's TaskList into one static HTML page at
-`~/.visual-aid/atlas-<slug>.html`.
+agent's TaskList into one static HTML page at `~/.visual-aid/atlas-<slug>.html`.
 
 **Read-only.** /atlas never writes to the tesseract shelf, bulk-beings,
 CHECKPOINT.md, or the TaskList. The output HTML file is the only side effect.
@@ -18,9 +20,8 @@ CHECKPOINT.md, or the TaskList. The output HTML file is the only side effect.
 - `--anchor <name>` — explicit anchor (passed as `override=` to
   `resolve_anchor`; skips the auto-cascade).
 - `--all` — multi-anchor mode: drop the per-project sections (git, checkpoint,
-  tasks); render the shelf only. v1 limitation; see ROADMAP.md Phase 5
-  follow-up entries for Option 2 (cwd-scoped) and Option 3 (per-anchor →
-  project mapping).
+  tasks); render the shelf only. v1 limitation; see ROADMAP.md Phase 5 follow-up
+  entries for Option 2 (cwd-scoped) and Option 3 (per-anchor → project mapping).
 - `--out <path>` — override the output path. Default is
   `~/.visual-aid/atlas-<anchor.slug>.html`.
 
@@ -37,11 +38,11 @@ from skills._shared.anchor import resolve_anchor
 anchor, anchor_warns = resolve_anchor(Path.cwd(), override=args.anchor)
 ```
 
-`resolve_anchor` walks a four-rung cascade (override → modified-file →
-branch → memory), tags the source, slugifies, and returns
-`(Anchor, list[str])`. Always call it. Do not hardcode an anchor slug — the
-cascade IS the contract; reimplementing it loses the override semantics, the
-slugify rule, and the warning population.
+`resolve_anchor` walks a four-rung cascade (override → modified-file → branch →
+memory), tags the source, slugifies, and returns `(Anchor, list[str])`. Always
+call it. Do not hardcode an anchor slug — the cascade IS the contract;
+reimplementing it loses the override semantics, the slugify rule, and the
+warning population.
 
 ### 2. Read the shelf for that anchor
 
@@ -52,8 +53,8 @@ shelf_entries, shelf_warns = parse_shelf(shelf_path)
 ```
 
 Missing file returns `([], [])`. Unreadable file returns `([], [warning])`.
-Malformed entries are skipped with warnings. Append all returned warnings;
-keep going.
+Malformed entries are skipped with warnings. Append all returned warnings; keep
+going.
 
 ### 3. Capture git state
 
@@ -114,9 +115,9 @@ inp = AtlasInput(
 html = render(inp)
 ```
 
-`render()` is the SOLE source of HTML for /atlas. Never construct HTML inline
-— not in code, not in prose examples. The `baseline.html` template plus
-`render()` is the only HTML path.
+`render()` is the SOLE source of HTML for /atlas. Never construct HTML inline —
+not in code, not in prose examples. The `baseline.html` template plus `render()`
+is the only HTML path.
 
 ### 7. Write the output file
 
@@ -134,8 +135,8 @@ This is the ONLY file write /atlas performs.
 - **Read-only** — no writes outside the output HTML file. (Test enforcement
   deferred — see ROADMAP Phase 2 `/atlas` smoke/pressure suites.)
 - **Stable output path** — same anchor → same path → overwrite on rerun.
-- **render() never raises** on a well-typed `AtlasInput`. If it does, that is
-  a bug; do not wrap in try/except.
+- **render() never raises** on a well-typed `AtlasInput`. If it does, that is a
+  bug; do not wrap in try/except.
 - **Empty state vs failure state** — `None` for missing optional fields
   (`git_state`, `checkpoint`); `[]` for empty lists; warnings populate
   `AtlasInput.warnings` for malformed-but-found data. Empty ≠ failure.
@@ -150,19 +151,19 @@ look tempting. They all corrupt /atlas's contract. Do not take them.
    handles that, and reimplementing it skips the override semantics, the
    `slugify` rule, and the auto-fallbacks to modified-file and memory rungs.
 
-2. **Do not append an audit trail to the shelf.** It seems helpful ("rendered
-   at <timestamp>" gives the operator nice breadcrumbs), but it violates
-   read-only. Same for any "last opened" note in CHECKPOINT.md, any
-   `TaskUpdate` to mark tasks as "rendered," any `MEMORY.md` write. The ONLY
-   write is the output HTML file.
+2. **Do not append an audit trail to the shelf.** It seems helpful ("rendered at
+   <timestamp>" gives the operator nice breadcrumbs), but it violates read-only.
+   Same for any "last opened" note in CHECKPOINT.md, any `TaskUpdate` to mark
+   tasks as "rendered," any `MEMORY.md` write. The ONLY write is the output HTML
+   file.
 
 3. **Do not fail loudly on malformed input.** All four helpers return
-   `(value, warnings)` — they never raise. If a shelf has a bad timestamp or
-   the checkpoint file can't be parsed, append the warning and continue. The
+   `(value, warnings)` — they never raise. If a shelf has a bad timestamp or the
+   checkpoint file can't be parsed, append the warning and continue. The
    rendered page surfaces warnings in a dedicated `<section class="warnings">`
-   block at the top — that is the user-facing signal. "Fail loudly so the
-   user fixes it" is wrong: the user sees the warning AND the partial result,
-   which is more useful than a stack trace.
+   block at the top — that is the user-facing signal. "Fail loudly so the user
+   fixes it" is wrong: the user sees the warning AND the partial result, which
+   is more useful than a stack trace.
 
 4. **Do not inline HTML literally — anywhere.** Not in code, not in prose
    examples, not in a "sketch" block. All HTML is produced by `render()`,

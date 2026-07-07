@@ -157,14 +157,16 @@ class TestStatementLimit:
         assert hook_out.get("permissionDecision") == "deny"
 
     def test_blocks_command_with_mixed_separators_over_limit(self) -> None:
-        ops = [" && ", " | ", "; ", " > ", " || "][: MAX_STATEMENT_COUNT + 2]
+        pool = [" && ", " | ", "; ", " > ", " || "]
+        ops = [pool[i % len(pool)] for i in range(MAX_STATEMENT_COUNT + 1)]
         command = "echo 0" + "".join(f"{op}echo {i + 1}" for i, op in enumerate(ops))
         output = run_hook("Bash", command)
         hook_out = output.get("hookSpecificOutput", {})
         assert hook_out.get("permissionDecision") == "deny"
 
     def test_allows_command_at_exactly_limit(self) -> None:
-        ops = [" && ", " | ", "; ", " > ", " || "][:MAX_STATEMENT_COUNT]
+        pool = [" && ", " | ", "; ", " > ", " || "]
+        ops = [pool[i % len(pool)] for i in range(MAX_STATEMENT_COUNT)]
         command = "echo 0" + "".join(f"{op}echo {i + 1}" for i, op in enumerate(ops))
         output = run_hook("Bash", command)
         assert output == {}
@@ -298,10 +300,9 @@ class TestTesseractPathBypass:
     def test_tesseract_path_statement_limit_bypassed(self) -> None:
         """Chained separators ending in a `>>` tesseract redirect bypass rule 3."""
         mod = _load_hook_module()
-        # 5 separators: &&, ;, |, ;, >>
-        command = (
-            "echo a && echo b; echo c | grep d; echo e >> ~/.tesseract/bulk-beings.md"
-        )
+        # MAX_STATEMENT_COUNT `;` separators + the final `>>` exceed the limit
+        chained = "; ".join(f"echo {i}" for i in range(mod.MAX_STATEMENT_COUNT + 1))
+        command = f"{chained} >> ~/.tesseract/bulk-beings.md"
         sep_count = len(mod.SEPARATOR_PATTERN.findall(command))
         assert sep_count > mod.MAX_STATEMENT_COUNT, (
             f"precondition: separator count ({sep_count}) must exceed"

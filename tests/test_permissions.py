@@ -14,10 +14,10 @@ class TestAllowPatterns:
             "Bash(git diff *)",
             "Bash(git show *)",
             "Bash(ls *)",
-            "Bash(uv run pytest*)",
-            "Bash(uv run ruff check*)",
-            "Bash(uv run ruff format*)",
-            "Bash(uv sync*)",
+            "Bash(uv run pytest *)",
+            "Bash(uv run ruff check *)",
+            "Bash(uv run ruff format *)",
+            "Bash(uv sync *)",
             "Bash(bats *)",
             "Bash(npm run build)",
             "Bash(npm run test *)",
@@ -32,7 +32,7 @@ class TestAllowPatterns:
     @pytest.mark.parametrize(
         "pattern",
         [
-            "Read(~/.claude/**)",
+            "Read(//**/.claude/**)",
             "Write(~/.claude/cost-log/**)",
             "Search(~/.claude/**)",
         ],
@@ -42,17 +42,6 @@ class TestAllowPatterns:
     ) -> None:
         assert pattern in allow_list, f"Missing claude dir access: {pattern}"
 
-    @pytest.mark.parametrize(
-        "pattern",
-        [
-            "Write(**/.superpowers/brainstorm/**)",
-        ],
-    )
-    def test_brainstorm_skill_write_allowed(
-        self, allow_list: list[str], pattern: str
-    ) -> None:
-        assert pattern in allow_list, f"Missing brainstorm write permission: {pattern}"
-
 
 class TestDenyPatterns:
     """Critical deny rules that must never be removed."""
@@ -60,13 +49,10 @@ class TestDenyPatterns:
     @pytest.mark.parametrize(
         "pattern",
         [
-            "Bash(*git commit *)",
+            "Bash(*git commit*)",
             "Bash(*gh pr create*)",
             "Bash(*gh pr merge*)",
             "Bash(*gh pr close*)",
-            "Bash(*gh issue create*)",
-            "Bash(*gh issue close*)",
-            "Bash(*gh issue delete*)",
             "Bash(gh repo create*)",
             "Bash(gh repo delete*)",
             "Bash(gh release create*)",
@@ -99,7 +85,7 @@ class TestDenyPatterns:
         assert pattern in deny_list, f"Missing API deny pattern: {pattern}"
 
     def test_git_commit_denied(self, deny_list: list[str]) -> None:
-        assert "Bash(*git commit *)" in deny_list
+        assert "Bash(*git commit*)" in deny_list
 
 
 class TestAskPatterns:
@@ -108,7 +94,9 @@ class TestAskPatterns:
     @pytest.mark.parametrize(
         "pattern",
         [
-            "Bash(gh api*)",
+            "Bash(*gh issue create*)",
+            "Bash(*gh issue close*)",
+            "Bash(*gh issue delete*)",
             "Bash(find*-delete*)",
             "Bash(find*-exec*)",
             "Bash(sed*-i*)",

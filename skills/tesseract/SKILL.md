@@ -25,14 +25,14 @@ cannot visit the tesseract silently.
 
 ## Metaphor
 
-| Movie                    | Skill                                                           |
-| ------------------------ | --------------------------------------------------------------- |
-| Murph point of reference | **Anchor** — the file/branch/topic everything is framed around  |
-| Gravity                  | **File I/O** — the only cross-session channel                   |
-| Books on the shelf       | **Shelf entries** at `~/.tesseract/shelf/<slug>.md`             |
-| Morse via the watch      | **`--signal "<morse>"`** — optional short payload               |
-| Bulk-beings transmission | **`~/.tesseract/bulk-beings.md`** — append-only self-log         |
-| Four hallways            | git · memory · shelf · bulk — the four evidence streams         |
+| Movie                    | Skill                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| Murph point of reference | **Anchor** — the file/branch/topic everything is framed around |
+| Gravity                  | **File I/O** — the only cross-session channel                  |
+| Books on the shelf       | **Shelf entries** at `~/.tesseract/shelf/<slug>.md`            |
+| Morse via the watch      | **`--signal "<morse>"`** — optional short payload              |
+| Bulk-beings transmission | **`~/.tesseract/bulk-beings.md`** — append-only self-log       |
+| Four hallways            | git · memory · shelf · bulk — the four evidence streams        |
 
 ---
 
@@ -50,28 +50,32 @@ not read hallways, and do not drop a book. Instead:
 
 `--visual` is read-only by design: it surveys the whole shelf, which is not a
 visit to any single anchor, so writing a shelf block + bulk-beings line would
-pollute the ledger with meta-entries. The render step only writes the HTML at
-`--out` and never touches the shelf or bulk-beings ledger.
+pollute the ledger with meta-entries. See the test contract in
+`tests/test_render_visual.py::test_cli_visual_writes_html_and_does_not_touch_shelf_or_bulk`.
 
 ### 1 · Resolve the anchor
 
 Parse `$ARGUMENTS` in two passes — first strip the standalone `--retro` flag,
-then split on `--signal`. Treat a quoted `--signal "..."` value as opaque
-signal text while parsing flags: tokens inside that quoted string are not
-scanned for `--retro` or any other flag syntax.
+then split on `--signal`. Treat a quoted `--signal "..."` value as opaque signal
+text while parsing flags: tokens inside that quoted string are not scanned for
+`--retro` or any other flag syntax.
 
-- **`--retro` pass.** If the standalone token `--retro` appears in
-  `$ARGUMENTS` outside any quoted `--signal` value, set `retro=true` and
-  remove that token from the argument string. If no such standalone token
-  appears, `retro=false`. Order-independent among top-level arguments:
-  `--retro` may sit before the anchor, between anchor and `--signal`, or after
-  the signal value; if `--signal` is also present, only a separate standalone
-  `--retro` token outside the quoted signal value counts.
+- **`--retro` pass.** If the standalone token `--retro` appears in `$ARGUMENTS`
+  outside any quoted `--signal` value, set `retro=true` and remove that token
+  from the argument string. If no such standalone token appears, `retro=false`.
+  Order-independent among top-level arguments: `--retro` may sit before the
+  anchor, between anchor and `--signal`, or after the signal value; if
+  `--signal` is also present, only a separate standalone `--retro` token outside
+  the quoted signal value counts.
 - **`--signal` split.** With `--retro` removed, split the remainder on
-  `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right
-  side must begin with a `"..."` quoted string → `signal`. If `--signal`
-  appears but no quoted value follows, print a one-line warning and fall back
-  to the default signal.
+  `--signal` (surrounded by spaces). Left side (trimmed) → `anchor`. Right side
+  must begin with a delimited value → `signal`. Accepted delimiter forms:
+  `"..."` (canonical double-quote) or `{...}` (brace-form, symmetric with
+  `--anchors {a,b,c}`). Both are equivalent — pick whichever reads better in
+  context. Brace-form is parsed as a single opaque value even if it contains
+  commas (no per-comma split — that's reserved for the `--anchors` multi-value
+  syntax). If `--signal` appears but no delimited value follows, print a
+  one-line warning and fall back to the default signal.
 - **`--retro` + `--signal` combination.** If `retro=true` and `--signal` was
   provided, print a one-line warning (`(retro mode — ignoring --signal)`) and
   discard the signal entirely — do not write, log, or emit it in the rendered
@@ -88,8 +92,8 @@ scanned for `--retro` or any other flag syntax.
    2. `git branch --show-current`.
    3. `ls -t ~/.claude/projects/*/memory/*.md 2>/dev/null | head -1` → its
       `name:` frontmatter field; if none, the basename without `.md`.
-   4. `ls -t ~/.tesseract/shelf/*.md 2>/dev/null | head -1` → filename
-      stem. Past-you's last anchor, recovered from the shelf itself.
+   4. `ls -t ~/.tesseract/shelf/*.md 2>/dev/null | head -1` → filename stem.
+      Past-you's last anchor, recovered from the shelf itself.
    5. `basename "$PWD"`. Where you are when history is empty.
 
    If every step yields nothing (first-ever invocation outside any repo with
@@ -167,10 +171,10 @@ inside a hallway (storage is a separate concern — see step 6).
 
 **Hallway 1 — git time-strings.** Run a precondition check first:
 `git rev-parse --is-inside-work-tree 2>/dev/null`. If this exits non-zero (cwd
-isn't a git repository), print
-`(not in a git repository — Hallway 1 silent)` and skip the cascade entirely.
-Do **not** synthesize a custom message ("not in a git repo at /path/x") and do
-**not** fall through to the free-text grep — both leak cwd or produce noise.
+isn't a git repository), print `(not in a git repository — Hallway 1 silent)`
+and skip the cascade entirely. Do **not** synthesize a custom message ("not in a
+git repo at /path/x") and do **not** fall through to the free-text grep — both
+leak cwd or produce noise.
 
 Otherwise cascade; stop at first match:
 
@@ -215,8 +219,8 @@ each: `- <d>d ago — "<signal>"`. If none, `(no prior signals — first visit)`
 
 ### 6 · Drop a book (leave gravity signals)
 
-**Retro short-circuit.** If `retro=true`, skip this entire step. In retro
-mode the skill does **not** prepend a shelf block and does **not** append a
+**Retro short-circuit.** If `retro=true`, skip this entire step. In retro mode
+the skill does **not** prepend a shelf block and does **not** append a
 bulk-beings line — no `<ts>`, no `printf`, no Write to either file. Retro is
 observation-only: you are looking at the tesseract from outside; you are not
 adding a book to its shelf. Skip directly to step 7.
@@ -301,9 +305,9 @@ Signal: "<signal>"
 Learning: <one-line-learning>
 ```
 
-**Retro mode (`retro=true`):** the header carries a `[retro …]` marker, and
-the `📉 Dropped a book` block is replaced with an `👁️ Observed only` block
-that affirms the read-only nature of the visit.
+**Retro mode (`retro=true`):** the header carries a `[retro …]` marker, and the
+`📉 Dropped a book` block is replaced with an `👁️ Observed only` block that
+affirms the read-only nature of the visit.
 
 ```text
 # 🧊 Tesseract: <anchor>
@@ -337,8 +341,8 @@ Mode: retro (no shelf prepend, no bulk-beings append)
 
 `<N>` is `N_before` — the count of visits _before_ this invocation's shelf
 write. On a first visit this reads `0 prior visits`, which is correct: the
-current invocation's own book-drop isn't prior to itself. Retro mode performs
-no write, so `N_before` simply equals the current shelf count for that anchor.
+current invocation's own book-drop isn't prior to itself. Retro mode performs no
+write, so `N_before` simply equals the current shelf count for that anchor.
 
 ---
 
@@ -415,9 +419,8 @@ no write, so `N_before` simply equals the current shelf count for that anchor.
   next invocation what this anchor's landscape contains. Future-you built this
   interface for past-you by using it.
 - **Shared helpers.** The slug rule, anchor cascade, and shelf parser are
-  factored into `skills/_shared/` (`slugify.py`, `anchor.py`,
-  `parse_shelf.py`) so `/atlas` and any future Python entrypoint can reuse
-  them without copy-paste drift. Today this skill remains prose-only — the
-  reference is informational, not a Python import you need to make. When a
-  future change adds Python here, import from `skills/_shared/` rather than
-  inlining.
+  factored into `skills/_shared/` (`slugify.py`, `anchor.py`, `parse_shelf.py`)
+  so `/atlas` and any future Python entrypoint can reuse them without copy-paste
+  drift. Today this skill remains prose-only — the reference is informational,
+  not a Python import you need to make. When a future change adds Python here,
+  import from `skills/_shared/` rather than inlining.

@@ -25,7 +25,7 @@ class TestNoSkillsInSession:
         output = result.stdout.lower()
         assert any(
             phrase in output
-            for phrase in [
+                for phrase in [
                 "no skill invocations",
                 "no misfires",
                 "nothing to",

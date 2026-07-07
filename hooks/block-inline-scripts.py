@@ -22,6 +22,7 @@ from constants import (  # type: ignore[import-not-found]
     MAX_STATEMENT_COUNT,
 )
 
+
 # ---------------------------------------------------------------------------
 # Rule dataclass
 # ---------------------------------------------------------------------------
@@ -183,3 +184,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    sys.exit(0)

@@ -23,7 +23,11 @@ def test_sync_invocation_works_from_any_directory(tmp_path: Path) -> None:
         f"expected repo root containing skills/ under {repo_root}"
     )
 
-    env = {**os.environ, "PYTHONPATH": str(repo_root)}
+    # Strip color-forcing vars (the Claude Code harness exports FORCE_COLOR):
+    # Python 3.14 argparse would otherwise ANSI-colorize the piped usage text.
+    env = {**os.environ, "PYTHONPATH": str(repo_root), "NO_COLOR": "1"}
+    for var in ("FORCE_COLOR", "PYTHON_COLORS", "CLICOLOR_FORCE"):
+        env.pop(var, None)
     result = subprocess.run(
         [sys.executable, "-m", "skills.sync.scripts.sync", "--help"],
         cwd=tmp_path,
