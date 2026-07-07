@@ -170,13 +170,40 @@ effort. Treat as Case D (save to a named slug, leave live file untouched) or
 treat as Case A (overwrite)?"_ Never silently downgrade to Case A without
 asking.
 
+**Standing Case-D precedent — proceed without re-asking.** The ask-gate above
+exists to *establish* a Case-D pairing the first time. Once established, do
+not re-litigate it. The pairing is **standing** when ALL three hold:
+
+1. A named archive for THIS session's effort already exists at
+   `.checkpoints/<slug>.md`, created as a Case-D archive (its header/body
+   records the Case-D pairing).
+2. The live `CHECKPOINT.md` records the same pairing from its side (e.g., a
+   "Case-D named archive — the live CHECKPOINT.md is an UNRELATED effort,
+   left untouched" note).
+3. The operator reaffirmed the split this session — most commonly by starting
+   it with `Resume from .checkpoints/<slug>.md`, or by any equivalent
+   explicit reference to the named archive as this effort's home.
+
+When all three hold: proceed under Case D and **state the decision in one
+line** ("Case D standing precedent — superseding `.checkpoints/<slug>.md`;
+live `CHECKPOINT.md` untouched"), write the same-effort supersession to the
+named archive (carry forward or roll prior content — a natural supersession,
+like Case A's, but at the named path), and skip staging as usual. Re-asking a
+question the operator has already answered is re-litigation, not diligence.
+
+If ANY of the three is missing — or the two sides contradict each other (the
+live file names a different archive; the archive's header disagrees; the
+operator's reference is ambiguous) — the precedent is NOT standing. Fall back
+to the ask above.
+
 Behavior under Case D:
 
 1. Propose (or accept operator-supplied) a **descriptive slug** capturing this
    session's focus — not the branch name. Slug rules from Step 1 apply
    (lowercase, `[a-z0-9-]`). Example: `claude-damn-skills-roadmap`,
    `statusline-pricing-opus-4-7`.
-2. Ask the operator to confirm before writing: _"Existing CHECKPOINT.md on
+2. Ask the operator to confirm before writing — **first establishment only;
+   skip under a standing precedent (see above)**: _"Existing CHECKPOINT.md on
    branch `<X>` appears to be a separate live effort (`<brief>`). Save this
    session's checkpoint to `.checkpoints/<proposed-slug>.md` and leave
    CHECKPOINT.md untouched? (y / choose different slug / treat as Case A
