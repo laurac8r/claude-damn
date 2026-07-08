@@ -17,6 +17,7 @@ HAS_RSYNC = shutil.which("rsync") is not None
 RSYNC_REQUIRED_REASON = "rsync is required for end-to-end apply tests"
 GIT_REQUIRED_REASON = "git is required for .gitignore integration test"
 
+
 # ---------------------------------------------------------------------------
 # 1. Missing target errors usefully
 # ---------------------------------------------------------------------------

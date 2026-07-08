@@ -104,11 +104,19 @@ HTML comment (`<!-- Input: text; layout: cards -->`).
    custom properties set on `:root` (and re-set under
    `prefers-color-scheme: light`). `color: #fff` in a class body is a bug — it
    breaks dark mode and theming.
-7. **Save path.** Default to `/tmp/visual-aid-<slug>.html` on macOS/Linux,
-   `%TEMP%\visual-aid-<slug>.html` on Windows. If the user names a path, use it.
-   Print the resolved `file://` URL on its own line. Put a
+7. **Save path.** Default to `~/.visual-aid/visual-aid-<slug>.html` on
+   macOS/Linux, `%USERPROFILE%\.visual-aid\visual-aid-<slug>.html` on Windows.
+   Create the directory if it doesn't exist (`mkdir -p ~/.visual-aid/` or
+   Windows equivalent) before writing. If the user names a path, use it. Print
+   the resolved `file://` URL on its own line. Put a
    `<!-- Generated from: "{one-line prompt summary}" -->` comment at the very
    top for traceability.
+
+   **Why `~/.visual-aid/` and not `/tmp/`:** visual aids are durable artifacts
+   the operator archives and re-opens days later; `/tmp/` wipes on reboot, so
+   the prior default lost renders silently. The home-directory default keeps
+   prior renders around. Override by naming an explicit path (including
+   `/tmp/...`) when ephemeral is actually what's wanted.
 
 ## Exporting to PDF
 

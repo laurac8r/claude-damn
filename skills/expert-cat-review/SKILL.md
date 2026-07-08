@@ -2,6 +2,7 @@
 name: expert-cat-review
 description:
    Expert-level review with each phase dispatched as a parallel subagent
+argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
 

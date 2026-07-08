@@ -105,8 +105,8 @@ mirror written by `/checkpoint-save` Step 5b). → Offer to restore it:
 > (`<current-slug>`). This was saved from a worktree that may have been removed.
 > Restore it to continue work?
 
-On user confirmation: **copy** (not move) `$ARCHIVE/<current-slug>.mirror.md`
-to `CHECKPOINT.md` at CWD, then proceed to Step 5. (Copy, not move — keep the
+On user confirmation: **copy** (not move) `$ARCHIVE/<current-slug>.mirror.md` to
+`CHECKPOINT.md` at CWD, then proceed to Step 5. (Copy, not move — keep the
 mirror in place in case the restore is tentative.) On user decline: stop and
 report no active checkpoint to resume.
 

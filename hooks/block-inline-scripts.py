@@ -6,8 +6,8 @@ Three rules enforced via a rule registry:
 3. Statement separator count limit
 
 Rule 1 runs on every command. Rules 2 & 3 are exempted only for commands that
-append (`>>`) into a ~/.claude/tesseract/ path (see TESSERACT_REDIRECT_PATTERN)
-— long/chained "bulk-beings" appends to that directory are legitimate. All
+append (`>>`) into ~/.tesseract/bulk-beings.md (see TESSERACT_REDIRECT_PATTERN)
+— long/chained "bulk-beings" appends to that file are legitimate. All
 applicable violations are reported together.
 """
 
@@ -21,6 +21,7 @@ from constants import (  # type: ignore[import-not-found]
     MAX_COMMAND_LENGTH,
     MAX_STATEMENT_COUNT,
 )
+
 
 # ---------------------------------------------------------------------------
 # Rule dataclass
@@ -68,17 +69,18 @@ def check_inline_script(command: str) -> str | None:
 # Tesseract path bypass — exempt rules 2 & 3 only (rule 1 still fires)
 # ---------------------------------------------------------------------------
 
-# Matches ONLY a `>>` redirect whose target is under ~/.claude/tesseract/.
-# Scoped to the redirect target (not a free substring) so that merely mentioning
-# the path in a comment or unused argument cannot disarm rules 2 & 3 — only a
-# genuine append to a tesseract file is exempted.
+# Matches ONLY a `>>` redirect whose target is ~/.tesseract/bulk-beings.md — the
+# single legitimate Bash append the tesseract skill makes (the shelf is written
+# via the Write tool, not Bash). Scoped to the redirect target (not a free
+# substring) so merely mentioning the path in a comment or unused argument cannot
+# disarm rules 2 & 3, and narrowed to one file to minimize the bypass surface.
 TESSERACT_REDIRECT_PATTERN = re.compile(
-    r">>\s+(?:~|\$HOME|/(?:Users|home)/[^/\s]+)/\.claude/tesseract/"
+    r">>\s+(?:~|\$HOME|/(?:Users|home)/[^/\s]+)/\.tesseract/bulk-beings\.md(?:\s|$)"
 )
 
 
 # Rule 1 (inline-script) still fires regardless; only rules 2 & 3 are exempted,
-# and only for legitimate `>> ~/.claude/tesseract/…` appends.
+# and only for legitimate `>> ~/.tesseract/bulk-beings.md` appends.
 def _is_tesseract_redirect(command: str) -> bool:
     return bool(TESSERACT_REDIRECT_PATTERN.search(command))
 
@@ -182,3 +184,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    sys.exit(0)

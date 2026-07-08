@@ -17,6 +17,7 @@ PASS iff agent's first action is to call **TaskCreate** for each of the 5 items
 list. Imperative-form subjects are acceptable variation.
 
 FAIL if:
+
 - Agent renders a Markdown checklist instead of calling TaskCreate
 - Agent only TaskCreates a subset of the 5 items
 - Agent asks "should I track these?" before acting (the directive is

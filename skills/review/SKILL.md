@@ -1,6 +1,7 @@
 ---
 name: review
 description: Review command
+argument-hint: "[<git-commit|file|description>]"
 user-invocable: true
 ---
 

@@ -3,6 +3,7 @@ name: expert-super-duper-cat-review
 description:
    Expert-level review with subagents, then brainstorm and fix in an isolated
    git worktree with subagents
+argument-hint: "[scope] [target|directive]"
 user-invocable: true
 ---
 

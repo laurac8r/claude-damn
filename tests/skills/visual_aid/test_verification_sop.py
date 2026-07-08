@@ -16,7 +16,7 @@ def _extract_verification_section(skill_md: str) -> str:
     if not match:
         return ""
     start = match.start()
-    next_section = re.search(r"^## ", skill_md[match.end() :], re.MULTILINE)
+    next_section = re.search(r"^## ", skill_md[match.end():], re.MULTILINE)
     if next_section:
         end = match.end() + next_section.start()
     else:
@@ -154,7 +154,7 @@ class TestHumanVerificationHandoffRemoved:
     def test_lighthouse_a11y_failure_condition_present(self, skill_md: str) -> None:
         lh_idx = skill_md.lower().find("lighthouse")
         assert lh_idx != -1, "The word 'lighthouse' must appear in SKILL.md."
-        window = skill_md[max(0, lh_idx - 300) : lh_idx + 300]
+        window = skill_md[max(0, lh_idx - 300): lh_idx + 300]
         assert re.search(r"threshold|score|fail", window, re.IGNORECASE), (
             "A lighthouse failure condition must be present: 'lighthouse' and "
             "one of 'threshold'/'score'/'fail' must appear within 300 characters."
@@ -264,7 +264,7 @@ class TestProfileLockFallback:
         )
         # The cleanup instruction ("execute step 8" or "kill") must appear in
         # the fallback block (up to ~800 chars covers the full bullet list)
-        window = sop_section[fallback_match.start() : fallback_match.start() + 800]
+        window = sop_section[fallback_match.start(): fallback_match.start() + 800]
         has_step8 = "step 8" in window.lower()
         has_kill = bool(
             re.search(r"kill|stop.*server|server.*stop", window, re.IGNORECASE)
@@ -282,7 +282,7 @@ class TestProfileLockFallback:
         console_match = re.search(r"list_console_messages", sop_section)
         assert console_match, "'list_console_messages' must appear in the SOP."
         window = sop_section[
-            max(0, console_match.start() - 50) : console_match.end() + 400
+            max(0, console_match.start() - 50): console_match.end() + 400
         ]
         has_step8 = "step 8" in window.lower()
         has_kill = bool(
@@ -301,7 +301,7 @@ class TestProfileLockFallback:
         assert sop_section, "## Verification (chrome-devtools) section must exist."
         lh_match = re.search(r"lighthouse_audit", sop_section)
         assert lh_match, "'lighthouse_audit' must appear in the SOP."
-        window = sop_section[max(0, lh_match.start() - 50) : lh_match.end() + 400]
+        window = sop_section[max(0, lh_match.start() - 50): lh_match.end() + 400]
         has_step8 = "step 8" in window.lower()
         has_kill = bool(
             re.search(r"kill|stop.*server|server.*stop", window, re.IGNORECASE)
@@ -326,7 +326,7 @@ class TestSlotCrossCheck:
         slot_match = re.search(r"^### Slot conventions", skill_md, re.MULTILINE)
         assert slot_match, "'### Slot conventions' heading must exist in SKILL.md."
         slot_start = slot_match.start()
-        next_h2 = re.search(r"^## ", skill_md[slot_match.end() :], re.MULTILINE)
+        next_h2 = re.search(r"^## ", skill_md[slot_match.end():], re.MULTILINE)
         if next_h2:
             slot_end = slot_match.end() + next_h2.start()
         else:

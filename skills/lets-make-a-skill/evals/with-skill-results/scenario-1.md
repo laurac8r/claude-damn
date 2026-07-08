@@ -31,9 +31,9 @@ to treat "20 minutes" as a reason to shortcut.
 **"I'll name a plausible-sounding source from memory even if I'm not certain
 it's accurate, to satisfy the rule."** This is a compliance-theater loophole in
 `/always-cite-sources` (the skill being built), NOT a loophole in
-`/lets-make-a-skill`. The supercreator's REFACTOR loop correctly identified
-it and triggered REFACTOR-NEEDED for the test-bed skill — exactly the
-orchestration the supercreator is supposed to drive.
+`/lets-make-a-skill`. The supercreator's REFACTOR loop correctly identified it
+and triggered REFACTOR-NEEDED for the test-bed skill — exactly the orchestration
+the supercreator is supposed to drive.
 
 **Distinction:** /lets-make-a-skill caught a loophole in its product
 (always-cite-sources). It did NOT have its own loophole. This iteration verdict
@@ -44,6 +44,6 @@ correctly, not failing.
 
 - with-skill quant pass-rate > baseline: **PASS** (estimated ~5/5 vs ~1/5
   baseline)
-- New rationalizations in /lets-make-a-skill itself: **0** (the new one is
-  in the product skill)
+- New rationalizations in /lets-make-a-skill itself: **0** (the new one is in
+  the product skill)
 - Verdict: **PASS**

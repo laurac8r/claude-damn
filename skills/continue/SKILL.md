@@ -6,4 +6,6 @@ description:
 user-invocable: true
 ---
 
-please continue, sorry for interrupting
+please continue, sorry for interrupting -> /proceed with the last tool use or
+file edit attempted that I inadvertently rejected, if one was rejected,
+otherwise continue with the work in this session
