@@ -128,14 +128,34 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       (`render()` latency under realistic shelf/git/commit volumes).
       Tracks the plan's Tasks 19-21 deferred from the initial `/atlas`
       PR boundary. Cross-reference: ROADMAP `/atlas` entry in Phase 5.
-- [ ] **Root-cause `/check-yourself` skip-rate** — `/check-yourself` fires at
-      only a fraction of its enumerated task-boundary triggers (Skill returns,
-      `/proceed` gates, test-runs, durable file-writes). Observed 2026-05-16:
-      one long multi-skill session invoked it once (at `/pause`), skipping
-      ~15+ boundaries. The skill text is already maximal (full trigger
-      enumeration + 11-row rationalization table), so brainstorm whether the
-      gap is invocation-discipline, harness enforcement, or a structural fix
-      (e.g. hook-based boundary detection). Surfaced via `/learn`.
+- [ ] **Root-cause `/check-yourself` skip-rate → hookify (operator-ratified
+      2026-07-11)** — `/check-yourself` fires at only a fraction of its
+      enumerated task-boundary triggers (Skill returns, `/proceed` gates,
+      test-runs, durable file-writes). Observed 2026-05-16: one long multi-skill
+      session invoked it once (at `/pause`), skipping ~15+ boundaries. The skill
+      text is already maximal (full trigger enumeration + 11-row rationalization
+      table), so brainstorm whether the gap is invocation-discipline, harness
+      enforcement, or a structural fix (e.g. hook-based boundary detection).
+      Surfaced via `/learn`. **Recurred 2026-07-11** (~10 stale-task
+      system-reminders, still fired only at `/pause`); the `/tesseract` `learn`
+      shelf shows the same "fired only at /pause" pattern flagged 2026-07-05.
+      **Operator ratified the structural fix: hookify** — a hook that detects
+      boundary events and forces (or hard-nudges) the invocation, since a
+      self-invoked skill can't enforce itself.
+- [ ] **Bake the `/tesseract` TaskList bookend into the skill** — the operator's
+      "write a TaskList before `/tesseract`, resume from it on exit" rule lives
+      only in `PERSONALIZATION.md`, so the skill never enforces it; it was
+      skipped 2026-07-11 even though the `feedback_tesseract_task_list_bookend`
+      memory surfaced in that same run's Hallway 2. Add a bookend step to the
+      skill (guarded/optional so the shippable skill doesn't hardcode operator
+      preference). Surfaced via `/learn`.
+- [ ] **`checkpoint-save`/`remember` parallel-lane shared-slot handling** — both
+      skills say "overwrite the rolling `.remember/` slot" without covering the
+      multi-lane case where the slot holds another live lane's handoff. On
+      2026-07-11 a session had to verify the per-worktree `CHECKPOINT.md`
+      backup before overwriting the shared slot. Add a step:
+      before overwriting, confirm the displaced lane's per-worktree checkpoint
+      exists (else preserve/append, don't clobber). Surfaced via `/learn`.
 - [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
       in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
       The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
