@@ -131,11 +131,15 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
 - [ ] **Root-cause `/check-yourself` skip-rate** — `/check-yourself` fires at
       only a fraction of its enumerated task-boundary triggers (Skill returns,
       `/proceed` gates, test-runs, durable file-writes). Observed 2026-05-16:
-      one long multi-skill session invoked it once (at `/pause`), skipping
-      ~15+ boundaries. The skill text is already maximal (full trigger
-      enumeration + 11-row rationalization table), so brainstorm whether the
-      gap is invocation-discipline, harness enforcement, or a structural fix
-      (e.g. hook-based boundary detection). Surfaced via `/learn`.
+      one long multi-skill session invoked it once (at `/pause`), skipping ~15+
+      boundaries. The skill text is already maximal (full trigger enumeration +
+      11-row rationalization table), so brainstorm whether the gap is
+      invocation-discipline, harness enforcement, or a structural fix (e.g.
+      hook-based boundary detection). Surfaced via `/learn`. Datum 2026-07-05: a
+      full ship-cycle session (RCA → spec → plan → /cat → merge) fired it
+      exactly once, at `/pause` — ~25+ enumerated boundaries skipped despite the
+      ~5-boundary cadence memory; reinforces harness-enforcement over further
+      skill-text patching.
 - [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
       in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
       The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
@@ -164,6 +168,13 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       signal-kill or a lingering process. Deferred second half of the
       `roadmap-visual-atlas-shutdown-endpoint` worktree; follow-up PR after
       `/atlas` PR #80 merges.
+- [ ] **`/cost_` Fable-era model-routing update** — teach `extract_cost.py`'s
+      pricing table + `statusline-command.sh` the `claude-fable-5` model id at
+      API-rate pricing (promo access ends 2026-07-07; during the promo only 50%
+      of weekly subscription usage may route to Fable before API billing kicks
+      in), and add a per-tier (Fable/Opus/Sonnet/Haiku) session-spend breakdown
+      so the Fable-vs-Opus subagent-routing rule in PERSONALIZATION is
+      measurable from the cost logs. Surfaced 2026-07-03.
 
 ## Phase 3 — Harness integration
 
