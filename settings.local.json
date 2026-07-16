@@ -6,9 +6,7 @@
   "permissions": {
     "allow": [
       "Bash(echo \"exit=$?\")",
-      "Write(//**/.worktrees/*/iteration-*/**/pressure/output/**)",
       "Edit(//**/.worktrees/*/iteration-*/**/pressure/output/**)",
-      "Write(//**/.worktrees/*/iteration-*/**/quant/output/**)",
       "Edit(//**/.worktrees/*/iteration-*/**/quant/output/**)",
       "Bash(command -v *)",
       "Bash(prettier *)",
@@ -19,7 +17,6 @@
       "Bash(echo * >> */.tesseract/**)",
       "Bash(printf * >> */.tesseract/**)",
       "Read(//**/.tesseract/**)",
-      "Write(//**/.tesseract/**)",
       "Edit(//**/.tesseract/**)",
       "Search(//**/.tesseract/**)",
       "Bash(mkdir -p ~/.tesseract/shelf && ls -la ~/.tesseract/shelf/ 2>/dev/null)",
@@ -104,12 +101,12 @@
       "Skill(keybindings-help)",
       "Skill(remember)",
       "Skill(remember:remember)",
-      "Write(.checkpoints/**)",
-      "Write(.remember/**)",
-      "Write(//*/CHECKPOINT.md)",
-      "Write(~/.claude/COST-SUMMARY.md)",
-      "Write(~/.claude/cost-log/**)",
-      "Write(~/.claude/extract_cost.py)",
+      "Edit(.checkpoints/**)",
+      "Edit(.remember/**)",
+      "Edit(//*/CHECKPOINT.md)",
+      "Edit(~/.claude/COST-SUMMARY.md)",
+      "Edit(~/.claude/cost-log/**)",
+      "Edit(~/.claude/extract_cost.py)",
       "Bash(gh search *)",
       "Bash(gh api repos/*/comments --jq '*')",
       "Bash(gh api repos/*/comments --paginate)",
@@ -195,14 +192,11 @@
       "Bash(find*-exec*)",
       "Bash(sed*-i*)",
       "Edit(*settings.json*)",
-      "Write(*settings.json*)",
-      "Write(.)",
-      "Edit(.)",
       "Bash(*gh pr review*)"
     ],
     "defaultMode": "default"
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -270,6 +264,7 @@
       }
     }
   },
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "prefersReducedMotion": true,
   "skipWorkflowUsageWarning": true,

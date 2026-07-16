@@ -38,7 +38,9 @@ eval-compose/
 docs/superpowers
 
 # Claude localdev
-.claude/
+.claude/*
+# ...but track `hookify` rules
+!.claude/hookify.*.md
 
 # Worktrees
 .credentials.json
@@ -62,6 +64,9 @@ daemon-auth-status.json
 .last-update-result.json
 .last-cleanup
 security/
+stats-cache.json
+daemon.lock
+daemon.status.json
 
 # NOTE to `/sync` Skill -> NEVER delete the below line(s)
 rules/PERSONALIZATION.md
