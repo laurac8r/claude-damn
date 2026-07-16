@@ -315,7 +315,7 @@ this section will be updated before that version ships.
 Prettier `Run for Files` setting:
 
 ```
-**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,json,vue,astro,md,mdx,toml,yaml,yml}
+\*_/_.{js,ts,jsx,tsx,cjs,cts,mjs,mts,json,vue,astro,md,mdx,toml,yaml,yml}
 ```
 
 `Compare Files` tool canonical vs. active-dev:

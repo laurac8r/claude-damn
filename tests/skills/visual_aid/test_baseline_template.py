@@ -47,7 +47,7 @@ class TestBaselineHtmlExtracted:
         assert ":focus-visible" in baseline_html
         # Find the region around :focus-visible to check selector tokens.
         idx = baseline_html.index(":focus-visible")
-        region = baseline_html[max(0, idx - 300): idx + 20]
+        region = baseline_html[max(0, idx - 300) : idx + 20]
         for token in (
             "a",
             "button",
@@ -142,7 +142,7 @@ class TestSkillMdReferencesBaseline:
         """SKILL.md must instruct the agent to copy/include/use baseline.html."""
         idx = skill_md.find("baseline.html")
         assert idx != -1, "baseline.html not mentioned in SKILL.md"
-        region = skill_md[max(0, idx - 200): idx + 200]
+        region = skill_md[max(0, idx - 200) : idx + 200]
         assert re.search(
             r"\b(copy|include|use|start from)\b",
             region,

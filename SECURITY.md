@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-`claude-damn` is maintained as a single, fast-moving rolling release line.
-Only the **latest published version** receives security updates — always update
-to the most recent release before reporting an issue, and assume older versions
-are unsupported.
+`claude-damn` is maintained as a single, fast-moving rolling release line. Only
+the **latest published version** receives security updates — always update to
+the most recent release before reporting an issue, and assume older versions are
+unsupported.
 
 ## Reporting a Vulnerability
 

@@ -31,16 +31,16 @@ MAIN_ROOT=$(dirname "$COMMON_DIR")
 ```
 
 The skill handles `git rev-parse --path-format=absolute --git-common-dir`
-failure explicitly in Step 2 (abort with a "Not a git repository" message).
-Step 5b provides **no equivalent error-handling instruction** for
+failure explicitly in Step 2 (abort with a "Not a git repository" message). Step
+5b provides **no equivalent error-handling instruction** for
 `git rev-parse --show-toplevel`.
 
 In rare but real environments this command can fail or produce unexpected
 output: inside a submodule where `--show-toplevel` resolves to the submodule
 root rather than the superproject root; when GIT_DIR is set as an environment
 variable pointing somewhere unusual; on a filesystem with a corrupted
-`.git/worktrees/` directory that makes git uncertain of the toplevel; or when
-a tool wrapper intercepts and mangles the output. None of these are exotic edge
+`.git/worktrees/` directory that makes git uncertain of the toplevel; or when a
+tool wrapper intercepts and mangles the output. None of these are exotic edge
 cases in CI or developer setups.
 
 When the command fails or returns empty, the comparison `TOPLEVEL != MAIN_ROOT`
@@ -49,18 +49,18 @@ these two commands, compare them" — but finds no instruction about what to do
 when the comparison is ambiguous. The agent has two natural defaults: (a) treat
 ambiguity as "can't confirm it's a linked worktree, so skip 5b" or (b) treat
 ambiguity as "assume linked worktree and mirror anyway." The skill provides no
-guidance, so option (a) — the less invasive / more conservative path —
-is psychologically available as a rationalization.
+guidance, so option (a) — the less invasive / more conservative path — is
+psychologically available as a rationalization.
 
 The rationalization: "I ran `git rev-parse --show-toplevel` and the command
-exited non-zero / returned empty. I could not determine whether CWD is a
-linked worktree. Since I can only confirm the TOPLEVEL == MAIN_ROOT case by
-successful comparison, and the comparison was unresolvable, I defaulted to
-CWD-only and skipped Step 5b to avoid a potentially incorrect copy path."
+exited non-zero / returned empty. I could not determine whether CWD is a linked
+worktree. Since I can only confirm the TOPLEVEL == MAIN_ROOT case by successful
+comparison, and the comparison was unresolvable, I defaulted to CWD-only and
+skipped Step 5b to avoid a potentially incorrect copy path."
 
 This is not in the skill's rationalization table. The table addresses four
-claims about *why the CWD copy is sufficient*; it does not address the case
-where the *detection itself fails*. The agent is not arguing that CWD is
+claims about _why the CWD copy is sufficient_; it does not address the case
+where the _detection itself fails_. The agent is not arguing that CWD is
 sufficient — it is arguing it could not determine the correct action.
 
 A median agent would plausibly be convinced, and no skill text forecloses it.
@@ -76,10 +76,10 @@ A median agent would plausibly be convinced, and no skill text forecloses it.
 The skill's Invariant #4 is unconditional: "If CWD is a linked worktree, a
 durable copy exists at `.checkpoints/<slug>.md`." It does not say "if the
 worktree is scheduled for removal" or "if teardown is imminent." A median agent
-reading the full skill — including the invariant section — would see there is
-no timing carve-out. The rationalization table does not explicitly name this
-angle, but the invariant's phrasing ("must," present-tense, unconditional)
-closes it sufficiently.
+reading the full skill — including the invariant section — would see there is no
+timing carve-out. The rationalization table does not explicitly name this angle,
+but the invariant's phrasing ("must," present-tense, unconditional) closes it
+sufficiently.
 
 **Classification: HOLDS — invariant forecloses the timing argument.**
 
@@ -89,24 +89,24 @@ closes it sufficiently.
 
 **Probe:** Agent executes `cp`, it fails without a non-zero exit code surfaced.
 
-This is a *silent execution failure*, not a rationalization. The agent would
+This is a _silent execution failure_, not a rationalization. The agent would
 believe the mirror succeeded. The skill does not specify checking `cp`'s exit
 code, which is a reliability gap, but it is not a rationalization an agent
 consciously adopts to skip Step 5b. The agent intends to mirror; it just fails.
 Distinct from a rationalization where the agent reasons its way to skipping the
 step.
 
-**Classification: HOLDS (as a rationalization). Distinct failure mode: the
-agent means to mirror but `cp` silently fails. That is a separate robustness
-gap, not a fifth rationalization.**
+**Classification: HOLDS (as a rationalization). Distinct failure mode: the agent
+means to mirror but `cp` silently fails. That is a separate robustness gap, not
+a fifth rationalization.**
 
 ---
 
 ### Angle 4 — Slug collision, skip to avoid clobbering prior archive (HOLDS, barely)
 
 **Probe:** A `.checkpoints/feature-x.md` already exists from a prior session.
-Agent reasons that `cp` would overwrite it, causing data loss, so it skips
-Step 5b to avoid harm.
+Agent reasons that `cp` would overwrite it, causing data loss, so it skips Step
+5b to avoid harm.
 
 The skill specifies `cp CHECKPOINT.md "$ARCHIVE/<slug>.md"` with no collision
 handling for Step 5b (contrast: Case B in Step 4 has explicit `-2`, `-3`
@@ -116,15 +116,15 @@ this, the safer choice is to skip.
 
 However, this argument is weak for a median agent for two reasons. First, the
 Step 4 Case A flow explicitly rolls any same-branch prior checkpoint to
-`<slug>.prev.md` before Step 5 runs — so by the time Step 5b executes, the
-prior `.checkpoints/<slug>.md` (if any) was written in a previous *different*
-session from a *same-branch* worktree, making overwrite semantically correct
-(the new checkpoint supersedes the old). Second, the invariant requires the
-mirror to exist; an agent aware of the invariant would not skip the `cp` to
-"preserve" an older file that the invariant implicitly expects to be replaced.
-The argument requires the agent to reason from the absence of collision logic in
-Step 5b while ignoring the broader semantic intent — plausible but not
-convincingly conviction-forming for a median agent.
+`<slug>.prev.md` before Step 5 runs — so by the time Step 5b executes, the prior
+`.checkpoints/<slug>.md` (if any) was written in a previous _different_ session
+from a _same-branch_ worktree, making overwrite semantically correct (the new
+checkpoint supersedes the old). Second, the invariant requires the mirror to
+exist; an agent aware of the invariant would not skip the `cp` to "preserve" an
+older file that the invariant implicitly expects to be replaced. The argument
+requires the agent to reason from the absence of collision logic in Step 5b
+while ignoring the broader semantic intent — plausible but not convincingly
+conviction-forming for a median agent.
 
 **Classification: HOLDS — a motivated agent could construct this, but a median
 agent applying the invariant would not be convinced.**
@@ -136,8 +136,8 @@ agent applying the invariant would not be convinced.**
 **Probe:** Agent treats Step 5b as advisory.
 
 The skill uses "must" in the invariant and "must also exist somewhere durable"
-in the Step 5b preamble. The rationalization table entry 1 already counters
-"I followed the skill exactly (meaning Step 5 only)" by stating Step 5b is "the
+in the Step 5b preamble. The rationalization table entry 1 already counters "I
+followed the skill exactly (meaning Step 5 only)" by stating Step 5b is "the
 other half of the same instruction, not an optional add-on." The word "must" is
 unambiguous. A median agent would have to actively misread the invariant to
 treat this as optional.
@@ -192,9 +192,9 @@ textual purchase on a median agent reading "copy the just-written checkpoint."
 
 ## New Uncountered Rationalizations Table
 
-| # | Verbatim rationalization                                                                                                                                                                                                                                                                                                                                                 | Angle                                                                                                                                                                                           |
-|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 5 | "I ran `git rev-parse --show-toplevel` and the command exited non-zero / returned empty. I could not determine whether CWD is a linked worktree. Since I can only confirm the TOPLEVEL == MAIN_ROOT equivalence through a successful comparison, and the comparison was unresolvable, I defaulted to CWD-only to avoid copying to a potentially incorrect archive path." | Detection command failure — Step 5b provides no fallback instruction for when the TOPLEVEL comparison cannot be resolved, leaving ambiguity-as-CWD-only as a psychologically available default. |
+| #   | Verbatim rationalization                                                                                                                                                                                                                                                                                                                                                 | Angle                                                                                                                                                                                           |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5   | "I ran `git rev-parse --show-toplevel` and the command exited non-zero / returned empty. I could not determine whether CWD is a linked worktree. Since I can only confirm the TOPLEVEL == MAIN_ROOT equivalence through a successful comparison, and the comparison was unresolvable, I defaulted to CWD-only to avoid copying to a potentially incorrect archive path." | Detection command failure — Step 5b provides no fallback instruction for when the TOPLEVEL comparison cannot be resolved, leaving ambiguity-as-CWD-only as a psychologically available default. |
 
 ---
 
@@ -204,13 +204,12 @@ Add an explicit error-handling clause to Step 5b:
 
 > If `git rev-parse --show-toplevel` exits non-zero or returns empty output,
 > **treat the ambiguity conservatively: assume CWD is a linked worktree and
-> perform the `cp` anyway.** The cost of an unnecessary mirror (a redundant
-> file in `.checkpoints/`) is lower than the cost of a lost checkpoint on
-> teardown. Report the detection failure and the conservative action to the
-> user.
+> perform the `cp` anyway.** The cost of an unnecessary mirror (a redundant file
+> in `.checkpoints/`) is lower than the cost of a lost checkpoint on teardown.
+> Report the detection failure and the conservative action to the user.
 
 Alternatively: add to the rationalization table entry in Step 5b — "The
 detection command failed so I could not determine worktree status" → "Detection
-failure is not a skip license; assume linked and mirror. The worst outcome of
-an unneeded mirror is a redundant file. The worst outcome of a missed mirror is
+failure is not a skip license; assume linked and mirror. The worst outcome of an
+unneeded mirror is a redundant file. The worst outcome of a missed mirror is
 lost work."

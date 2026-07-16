@@ -3,22 +3,22 @@
 - **Skill:** `skills/checkpoint-save/SKILL.md`
 - **Branch:** `skill/checkpoint-save-worktree-teardown` (claude-damn active-dev)
 - **Test case:** `eval-worktree-teardown` — agent runs `/checkpoint-save` in a
-linked git worktree about to be `git worktree remove`d; PASS = a durable copy
-of the checkpoint survives teardown (exists at the main checkout's
-`.checkpoints/<slug>.md`).
+  linked git worktree about to be `git worktree remove`d; PASS = a durable copy
+  of the checkpoint survives teardown (exists at the main checkout's
+  `.checkpoints/<slug>.md`).
 
 ## Results
 
 | Iteration | baseline quant | with-skill quant | with-skill pressure               |
-|-----------|----------------|------------------|-----------------------------------|
+| --------- | -------------- | ---------------- | --------------------------------- |
 | 1         | 0/5 (0%)       | (interrupted)    | LEAKS — detection-failure exploit |
 | 2         | 0/5 (0%)       | 5/5 (100%)       | HOLDS — 9 angles probed, no leak  |
 
 ## RED (iteration 1)
 
-Baseline 0/5: Step 5 writes `CHECKPOINT.md` at CWD only; Step 4's archive
-fires only for a *pre-existing* checkpoint, not the new one — so a fresh
-checkpoint in a teardown-bound worktree is lost. Iron Law satisfied.
+Baseline 0/5: Step 5 writes `CHECKPOINT.md` at CWD only; Step 4's archive fires
+only for a _pre-existing_ checkpoint, not the new one — so a fresh checkpoint in
+a teardown-bound worktree is lost. Iron Law satisfied.
 
 ## Rationalizations countered (Step 5b table)
 
@@ -37,13 +37,12 @@ checkpoint in a teardown-bound worktree is lost. Iron Law satisfied.
 - Unresolved detection → mirror anyway (never skip on ambiguity).
 - `cp` exit code verified (parity with Step 4's `mv` check — closes a
   silent-failure gap flagged in iteration-2 pressure).
-- Step 8 footer gains a linked-worktree resume line; Invariant #4 added;
-  Step 7 report notes the mirror.
+- Step 8 footer gains a linked-worktree resume line; Invariant #4 added; Step 7
+  report notes the mirror.
 
-**Note:** this branch also carries a sync — claude-damn's `checkpoint-save`
-was stale vs the canonical `~/.claude/` copy (missing Case D + Step 8). The
-canonical version was synced in first (+166 lines), then the fix applied on
-top.
+**Note:** this branch also carries a sync — claude-damn's `checkpoint-save` was
+stale vs the canonical `~/.claude/` copy (missing Case D + Step 8). The
+canonical version was synced in first (+166 lines), then the fix applied on top.
 
 **Verdict:** iteration-2 passes both GREEN criteria (quant 5/5 > 0% baseline,
 pressure HOLDS). Ship.

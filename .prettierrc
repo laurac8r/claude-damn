@@ -1,33 +1,28 @@
 {
-    "plugins": [
-        "/opt/homebrew/lib/node_modules/prettier-plugin-toml/lib/index.cjs"
-    ],
-    "overrides": [
-        {
-            "files": [
-                "*.md",
-                "*.mdx"
-            ],
-            "options": {
-                "parser": "markdown",
-                "proseWrap": "always",
-                "printWidth": 80,
-                "tabWidth": 3,
-                "useTabs": false,
-                "embeddedLanguageFormatting": "auto",
-                "htmlWhitespaceSensitivity": "css"
-            }
-        },
-        {
-            "files": [
-                "*.toml"
-            ],
-            "options": {
-                "parser": "toml",
-                "printWidth": 88,
-                "tabWidth": 4,
-                "useTabs": false
-            }
-        }
-    ]
+  "plugins": [
+    "/opt/homebrew/lib/node_modules/prettier-plugin-toml/lib/index.cjs"
+  ],
+  "overrides": [
+    {
+      "files": ["*.md", "*.mdx"],
+      "options": {
+        "parser": "markdown",
+        "proseWrap": "always",
+        "printWidth": 80,
+        "tabWidth": 3,
+        "useTabs": false,
+        "embeddedLanguageFormatting": "auto",
+        "htmlWhitespaceSensitivity": "css"
+      }
+    },
+    {
+      "files": ["*.toml"],
+      "options": {
+        "parser": "toml",
+        "printWidth": 88,
+        "tabWidth": 4,
+        "useTabs": false
+      }
+    }
+  ]
 }

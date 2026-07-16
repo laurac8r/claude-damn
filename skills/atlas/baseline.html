@@ -1,93 +1,97 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
+  <head>
+    <meta charset="utf-8" />
     <title>atlas</title>
     <style>
-        :root {
-            color-scheme: light dark;
-        }
+      :root {
+        color-scheme: light dark;
+      }
 
-        body {
-            font: 14px/1.5 system-ui, -apple-system, sans-serif;
-            max-width: 70rem;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+      body {
+        font:
+          14px/1.5 system-ui,
+          -apple-system,
+          sans-serif;
+        max-width: 70rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
 
-        section {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-            border-radius: 6px;
-        }
+      section {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+        border-radius: 6px;
+      }
 
-        section.empty {
-            opacity: 0.6;
-        }
+      section.empty {
+        opacity: 0.6;
+      }
 
-        section.warning {
-            border-color: #c50;
-        }
+      section.warning {
+        border-color: #c50;
+      }
 
-        section.warnings {
-            background: color-mix(in srgb, #c50 8%, transparent);
-            border-color: #c50;
-        }
+      section.warnings {
+        background: color-mix(in srgb, #c50 8%, transparent);
+        border-color: #c50;
+      }
 
-        h1 {
-            margin: 0 0 0.5rem;
-            font-size: 1.5rem;
-        }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+      }
 
-        h2 {
-            margin: 0 0 0.5rem;
-            font-size: 1.1rem;
-        }
+      h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+      }
 
-        h3 {
-            margin: 1rem 0 0.25rem;
-            font-size: 0.95rem;
-            opacity: 0.8;
-        }
+      h3 {
+        margin: 1rem 0 0.25rem;
+        font-size: 0.95rem;
+        opacity: 0.8;
+      }
 
-        pre {
-            white-space: pre-wrap;
-            font: 12px/1.4 ui-monospace, monospace;
-            margin: 0;
-        }
+      pre {
+        white-space: pre-wrap;
+        font:
+          12px/1.4 ui-monospace,
+          monospace;
+        margin: 0;
+      }
 
-        ul {
-            margin: 0;
-            padding-left: 1.25rem;
-        }
+      ul {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
 
-        .task .status {
-            display: inline-block;
-            padding: 0 0.4rem;
-            border-radius: 3px;
-            font-size: 0.8em;
-            background: color-mix(in srgb, currentColor 12%, transparent);
-        }
+      .task .status {
+        display: inline-block;
+        padding: 0 0.4rem;
+        border-radius: 3px;
+        font-size: 0.8em;
+        background: color-mix(in srgb, currentColor 12%, transparent);
+      }
 
-        .task.status-completed {
-            opacity: 0.6;
-        }
+      .task.status-completed {
+        opacity: 0.6;
+      }
 
-        .task.status-in_progress .status {
-            background: #2a7;
-            color: white;
-        }
+      .task.status-in_progress .status {
+        background: #2a7;
+        color: white;
+      }
 
-        .blocked {
-            font-size: 0.85em;
-            opacity: 0.7;
-            margin-left: 0.5em;
-        }
+      .blocked {
+        font-size: 0.85em;
+        opacity: 0.7;
+        margin-left: 0.5em;
+      }
     </style>
-</head>
-<body>
-{{WARNINGS}}
-{{BODY}}
-</body>
+  </head>
+  <body>
+    {{WARNINGS}} {{BODY}}
+  </body>
 </html>

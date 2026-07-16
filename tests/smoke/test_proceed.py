@@ -26,7 +26,7 @@ class TestProceedSkillSummary:
         output = result.stdout.lower()
         assert any(
             phrase in output
-                for phrase in ["aligned", "approved", "gate", "proceed", "authorization"]
+            for phrase in ["aligned", "approved", "gate", "proceed", "authorization"]
         ), f"Expected approval-related output, got:\n{result.stdout[:500]}"
 
 

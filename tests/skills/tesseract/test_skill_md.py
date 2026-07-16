@@ -271,7 +271,7 @@ class TestTesseractRetroFlag:
             f"Step 1 must contain the bullet '{marker}' that documents "
             "the --retro + --signal combination."
         )
-        rest = skill_md[start + len(marker):]
+        rest = skill_md[start + len(marker) :]
         end_match = re.search(r"\n- |\n\n", rest)
         body = rest[: end_match.start()] if end_match else rest
         assert re.search(r"\b(warn\w*|ignor\w*|discard\w*)\b", body, re.IGNORECASE), (
@@ -330,7 +330,7 @@ class TestTesseractRetroFlag:
             # If it's still there, it must be qualified within ~120 chars
             # by a retro carve-out.
             idx = skill_md.index(absolute_phrase)
-            window = skill_md[idx: idx + 400]
+            window = skill_md[idx : idx + 400]
             assert re.search(r"retro", window, re.IGNORECASE), (
                 "If the absolute 'Every invocation drops a book' bullet is "
                 "kept, it must carry an inline retro carve-out within the "
