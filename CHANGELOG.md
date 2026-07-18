@@ -6,6 +6,41 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the PERSONALIZATION
 versioning rule.
 
+## [2.0.0] — 2026-07-18
+
+MAJOR (operator-designated milestone): completes the tdd+cat family arc —
+`/tdd` micro-cycle (PR #83) → `/cat` SDD+parallel combination (PR #89) → this
+release: the A/B TDD execution-mode axis across all nine `*-tdd-cat`
+compositions.
+
+### Added (v2.0.0)
+
+- `skills/tdd-cat/SKILL.md` — rewritten as the canonical home of the TDD
+  execution-mode axis: **Mode A** (split-phase: one RED/GREEN/REFACTOR phase
+  per subagent) vs **Mode B** (micro-cycle: full `/tdd` loop inside each
+  subagent), asked as a **third question** in `/cat`'s ONE combined
+  pre-dispatch `AskUserQuestion`; standalone bare invocations of `/tdd` +
+  `/cat`; orthogonality note (within a behavior, RED precedes GREEN — phases
+  of the same behavior never parallelize); and a "No Shortcut — Never Default
+  the TDD Mode Silently" guard with rationalization-counter table.
+- Axis reference blocks in the other eight compositions: `duper-tdd-cat`,
+  `super-tdd-cat`, `super-duper-tdd-cat`, `super-duper-fixer-tdd-cat`,
+  `expert-tdd-cat-review`, `expert-duper-tdd-cat-review`,
+  `expert-super-tdd-cat-review`, `expert-super-duper-tdd-cat-review`.
+- `tests/skills/tdd_cat/` — 57 structural tests (RED→GREEN: 43 observed
+  failing pre-edit; axis + guard + 8×5 family references + `/cat`-untouched
+  pin).
+
+### Notes (v2.0.0)
+
+- `/cat` deliberately untouched — it serves non-TDD compositions; the axis
+  rides its combined question from the tdd side only.
+- Proportionate eval per the `/cat` precedent: a RED pressure probe of the
+  as-written skills silently self-assigned the phase↔subagent mapping under
+  dispatch-overhead pressure ("I decided it myself"); the GREEN re-probe
+  against the rewrite surfaced all three axes in one combined call and quoted
+  the guard as what stopped the skip.
+
 ## [1.13.0] — 2026-07-06
 
 MINOR: manual canonical → active-dev sync (136 files vs `main`). Ships the
