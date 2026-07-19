@@ -1,7 +1,8 @@
 #!/bin/zsh
 
 # Sync Claude Code theme with macOS Light/Dark mode
-# Triggered by LaunchAgent when ~/Library/Preferences/.GlobalPreferences.plist changes
+# Triggered by LaunchAgent when
+# ~/Library/Preferences/.GlobalPreferences.plist changes
 
 set -euo pipefail
 
@@ -42,7 +43,8 @@ if command -v jq &>/dev/null; then
       restore_from_backup
       exit 1
     fi
-    if ! echo "$CONTENT" | jq empty &>/dev/null; then
+    if ! echo "$CONTENT" \
+      | jq empty &>/dev/null; then
       restore_from_backup
       exit 1
     fi

@@ -1,4 +1,4 @@
-"""Shared fixtures for settings.json regression tests and xdist worktrees."""
+"""Shared fixtures for settings.local.json regression tests and xdist worktrees."""
 
 import json
 import os
@@ -8,9 +8,8 @@ from pathlib import Path
 
 import pytest
 
-SETTINGS_PATH = Path(__file__).parent / "fixtures" / "settings.json"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SETTINGS_PATH = PROJECT_ROOT / "settings.json"
+SETTINGS_PATH = PROJECT_ROOT / "settings.local.json"
 
 
 @pytest.fixture(scope="session")
@@ -42,7 +41,7 @@ def worker_worktree(tmp_path_factory) -> Iterator[Path | None]:
 
 @pytest.fixture(scope="session")
 def settings() -> dict:
-    """Load settings.json once for the entire test session."""
+    """Load settings.local.json once for the entire test session."""
     return json.loads(SETTINGS_PATH.read_text())
 
 

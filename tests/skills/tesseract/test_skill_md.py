@@ -146,15 +146,25 @@ class TestTesseractStructure:
         )
 
     def test_paths_use_consistent_tesseract_spelling(self, skill_md: str) -> None:
-        """All `~/.claude/...` paths must use the 'tesseract' spelling
-        (not 'tessaract'). Earlier PR commits already corrected this.
+        """The shelf/ledger live under `~/.tesseract/` (directly under $HOME,
+        not `~/.claude/`), spelled 'tesseract' (not 'tessaract'). The legacy
+        `~/.claude/tesseract/` base must not reappear.
         """
-        assert "~/.claude/tessaract" not in skill_md, (
-            "Found pre-fix '~/.claude/tessaract' (misspelled) — should be "
-            "'~/.claude/tesseract'."
+        assert "tessaract" not in skill_md, (
+            "Found misspelled 'tessaract' — should be 'tesseract'."
         )
-        assert "~/.claude/tesseract/shelf" in skill_md
-        assert "~/.claude/tesseract/bulk-beings.md" in skill_md
+        assert "~/.tesseract/shelf" in skill_md
+        assert "~/.tesseract/bulk-beings.md" in skill_md
+        assert "~/.claude/tesseract/" not in skill_md, (
+            "Tesseract paths must be ~/.tesseract/, not ~/.claude/tesseract/."
+        )
+
+    def test_skill_md_references_shared_helpers(self, skill_md: str) -> None:
+        """SKILL.md must point at skills/_shared/ as the canonical home for
+        slugify, anchor, parse_shelf so future Python entrypoints reuse the
+        shared modules instead of inlining copies (drift prevention).
+        """
+        assert "skills/_shared" in skill_md
 
 
 class TestTesseractRetroFlag:
@@ -261,7 +271,7 @@ class TestTesseractRetroFlag:
             f"Step 1 must contain the bullet '{marker}' that documents "
             "the --retro + --signal combination."
         )
-        rest = skill_md[start + len(marker) :]
+        rest = skill_md[start + len(marker):]
         end_match = re.search(r"\n- |\n\n", rest)
         body = rest[: end_match.start()] if end_match else rest
         assert re.search(r"\b(warn\w*|ignor\w*|discard\w*)\b", body, re.IGNORECASE), (
@@ -320,7 +330,7 @@ class TestTesseractRetroFlag:
             # If it's still there, it must be qualified within ~120 chars
             # by a retro carve-out.
             idx = skill_md.index(absolute_phrase)
-            window = skill_md[idx : idx + 400]
+            window = skill_md[idx: idx + 400]
             assert re.search(r"retro", window, re.IGNORECASE), (
                 "If the absolute 'Every invocation drops a book' bullet is "
                 "kept, it must carry an inline retro carve-out within the "

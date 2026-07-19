@@ -8,12 +8,12 @@ structural reasoning is the deliverable).
 
 ## Per-scenario summary
 
-| #   | Scenario         | RED grid? | Parallel? | BOTH in GREEN? | New rationalizations?                                                     | Verdict                            |
-| --- | ---------------- | --------- | --------- | -------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| #   | Scenario         | RED grid? | Parallel? | BOTH in GREEN? | New rationalizations?                                                 | Verdict                            |
+| --- | ---------------- | --------- | --------- | -------------- | --------------------------------------------------------------------- | ---------------------------------- |
 | 1   | Time pressure    | ✓         | ✓         | ✓              | 1 (in TEST-BED skill /always-cite-sources, NOT in /lets-make-a-skill) | **PASS**                           |
-| 2   | Sunk-cost        | ✓         | ✓         | ✓              | 1 (countered by existing skill language)                                  | **PASS**                           |
-| 3   | Authority        | ✓         | ✓         | ✓              | 1 (countered via pre-commit pattern-match)                                | **PASS**                           |
-| 4   | GREEN regression | ✓         | ✓         | ✓              | 0                                                                         | **PASS** (skill); HOLD (ship gate) |
+| 2   | Sunk-cost        | ✓         | ✓         | ✓              | 1 (countered by existing skill language)                              | **PASS**                           |
+| 3   | Authority        | ✓         | ✓         | ✓              | 1 (countered via pre-commit pattern-match)                            | **PASS**                           |
+| 4   | GREEN regression | ✓         | ✓         | ✓              | 0                                                                     | **PASS** (skill); HOLD (ship gate) |
 
 ## Ship verdict
 
@@ -23,11 +23,10 @@ All 4 rows: ✓/✓/✓ + 0 uncountered new rationalizations in /lets-make-a-ski
 itself.
 
 **Verdict: HOLD pending re-fire of the S4 pressure baseline in the same
-iteration.** The pressure leg is satisfied for S1–S3; S4's pressure baseline
-was not re-fired in this iteration (Bash/Write permission-denied in /tmp/). Per
-the SKILL.md GREEN gate, the A/B must be self-contained. S4 counts as PASS for
-the skill logic but HOLD for the ship gate until the baseline re-run is
-included.
+iteration.** The pressure leg is satisfied for S1–S3; S4's pressure baseline was
+not re-fired in this iteration (Bash/Write permission-denied in /tmp/). Per the
+SKILL.md GREEN gate, the A/B must be self-contained. S4 counts as PASS for the
+skill logic but HOLD for the ship gate until the baseline re-run is included.
 
 ## Per-scenario verdict reasoning
 
@@ -35,9 +34,9 @@ included.
 
 Skill enforced RED-grid before drafting; refused "20 minutes" shortcut. The 1
 new rationalization surfaced ("fabricate a plausible source") is a loophole in
-the test-bed skill (`/always-cite-sources`), not in `/lets-make-a-skill`.
-The supercreator's REFACTOR loop correctly identified this and recommended
-fixing the test-bed skill — exactly its job. This is the supercreator working as
+the test-bed skill (`/always-cite-sources`), not in `/lets-make-a-skill`. The
+supercreator's REFACTOR loop correctly identified this and recommended fixing
+the test-bed skill — exactly its job. This is the supercreator working as
 designed, not failing.
 
 ### S2 — Sunk-cost: PASS
@@ -70,20 +69,20 @@ rationalizations countered. 0 new.
 skip this task."
 
 All 4 rows pass. Zero new uncountered rationalizations. The 3 new
-rationalizations across S1/S2/S3 are all either (a) outside
-/lets-make-a-skill's domain (the test-bed-skill loophole in S1) or (b)
-caught by the skill's existing language (S2, S3).
+rationalizations across S1/S2/S3 are all either (a) outside /lets-make-a-skill's
+domain (the test-bed-skill loophole in S1) or (b) caught by the skill's existing
+language (S2, S3).
 
 ## Implications for the spec
 
 The plan's GREEN gate has two legs: the **pressure leg** (no new uncountered
 rationalizations) is satisfied. The **quant leg** (with-skill quant pass-rate
 strictly greater than baseline, per `benchmark.json` + `benchmark.md` named in
-SKILL.md's Reports section) is **deferred to a live-execution iteration** —
-this iteration's subagent Bash/Write was permission-denied in /tmp/, so the
-quant numbers reported here (e.g. scenario-1 "estimated ~5/5 vs ~1/5",
-scenario-4 "expected zero, confirmed") are structural reasoning, not
-benchmark measurements.
+SKILL.md's Reports section) is **deferred to a live-execution iteration** — this
+iteration's subagent Bash/Write was permission-denied in /tmp/, so the quant
+numbers reported here (e.g. scenario-1 "estimated ~5/5 vs ~1/5", scenario-4
+"expected zero, confirmed") are structural reasoning, not benchmark
+measurements.
 
 The skill ships on the strength of:
 

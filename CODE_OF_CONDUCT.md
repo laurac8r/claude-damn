@@ -17,23 +17,23 @@ diverse, inclusive, and healthy community.
 Examples of behavior that contributes to a positive environment for our
 community include:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes,
+- Demonstrating empathy and kindness toward other people
+- Being respectful of differing opinions, viewpoints, and experiences
+- Giving and gracefully accepting constructive feedback
+- Accepting responsibility and apologizing to those affected by our mistakes,
   and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the
-  overall community
+- Focusing on what is best not just for us as individuals, but for the overall
+  community
 
 Examples of unacceptable behavior include:
 
-* The use of sexualized language or imagery, and sexual attention or
-  advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email
-  address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
+- The use of sexualized language or imagery, and sexual attention or advances of
+  any kind
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or email address,
+  without their explicit permission
+- Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
 ## Enforcement Responsibilities
@@ -61,8 +61,8 @@ representative at an online or offline event.
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
 conduct@webcatgirl.com, or via this repository's Security tab → "Report a
-vulnerability" for private GitHub-mediated reporting.
-All complaints will be reviewed and investigated promptly and fairly.
+vulnerability" for private GitHub-mediated reporting. All complaints will be
+reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
 reporter of any incident.
@@ -83,15 +83,15 @@ behavior was inappropriate. A public apology may be requested.
 
 ### 2. Warning
 
-**Community Impact**: A violation through a single incident or series
-of actions.
+**Community Impact**: A violation through a single incident or series of
+actions.
 
 **Consequence**: A warning with consequences for continued behavior. No
 interaction with the people involved, including unsolicited interaction with
 those enforcing the Code of Conduct, for a specified period of time. This
 includes avoiding interactions in community spaces as well as external channels
-like social media. Violating these terms may lead to a temporary or
-permanent ban.
+like social media. Violating these terms may lead to a temporary or permanent
+ban.
 
 ### 3. Temporary Ban
 
@@ -110,19 +110,19 @@ Violating these terms may lead to a permanent ban.
 standards, including sustained inappropriate behavior, harassment of an
 individual, or aggression toward or disparagement of classes of individuals.
 
-**Consequence**: A permanent ban from any sort of public interaction within
-the community.
+**Consequence**: A permanent ban from any sort of public interaction within the
+community.
 
 ## Project specifics
 
-**Names and identity.** Contributors are addressed by the name and pronouns
-each person currently uses; historical names in archives or legal records are
-not active identifiers here.
+**Names and identity.** Contributors are addressed by the name and pronouns each
+person currently uses; historical names in archives or legal records are not
+active identifiers here.
 
 **Accessibility.** Contributions that improve screen-reader behavior, color
-contrast, keyboard access, motion preferences, and similar are first-class
-work, not optional polish. Reviewers do not gate these on the contributor
-justifying that real users need them.
+contrast, keyboard access, motion preferences, and similar are first-class work,
+not optional polish. Reviewers do not gate these on the contributor justifying
+that real users need them.
 
 **Good faith.** Misunderstandings happen in writing across timezones and
 languages. Assume the other person is doing their best until evidence says
@@ -134,8 +134,8 @@ This Code of Conduct is adapted from the [Contributor Covenant][homepage],
 version 2.1, available at
 https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.
 
-Community Impact Guidelines were inspired by [Mozilla's code of conduct
-enforcement ladder](https://github.com/mozilla/diversity).
+Community Impact Guidelines were inspired by
+[Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity).
 
 [homepage]: https://www.contributor-covenant.org
 

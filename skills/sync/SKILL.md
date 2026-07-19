@@ -22,8 +22,8 @@ explicitly with `--from`). Target is the first positional argument or `--to`
 1. **Parse the user's arguments** and translate shorthand:
    - If the user's first token is a mode name (`plan`, `interactive`, `push`,
      `pull`, `mirror`), rewrite it to `--mode <name>`. The script treats any
-     bare positional as the `target` directory, so `plan` as a bare arg
-     collides with `--to` and errors.
+     bare positional as the `target` directory, so `plan` as a bare arg collides
+     with `--to` and errors.
    - Strip any leading `@` from path tokens (e.g. `@.claude/docs/…` →
      `.claude/docs/…`). `@` is a convention from the Claude Code slash-command
      surface, not a valid shell path.
@@ -35,8 +35,8 @@ explicitly with `--from`). Target is the first positional argument or `--to`
    ```bash
    PYTHONPATH="$HOME/.claude" python3 -m skills.sync.scripts.sync <args>
    ```
-   If you are in a claude-damn worktree (`.worktrees/<slug>`), that also works
-   — the module is available from any checkout. Don't `cd` into the source or
+   If you are in a claude-damn worktree (`.worktrees/<slug>`), that also works —
+   the module is available from any checkout. Don't `cd` into the source or
    target being synced; `cd` into the repo that hosts the sync module.
 3. **Show the output to the user.**
 

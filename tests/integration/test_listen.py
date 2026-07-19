@@ -1,12 +1,10 @@
 """Integration regression tests: /listen skill repo integration."""
 
-from pathlib import Path
-
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-SKILLS_DIR = PROJECT_ROOT / "skills"
-SKILL_DIR = SKILLS_DIR / "listen"
+from tests._skill_helpers import PROJECT_ROOT, SKILLS_ROOT
+
+SKILL_DIR = SKILLS_ROOT / "listen"
 SKILL_PATH = SKILL_DIR / "SKILL.md"
 
 
@@ -14,11 +12,11 @@ class TestOldNameAbsent:
     """Verify no trace of the old /enforce skill name remains."""
 
     def test_enforce_dir_not_in_skills(self) -> None:
-        skill_dirs = [d.name for d in SKILLS_DIR.iterdir() if d.is_dir()]
+        skill_dirs = [d.name for d in SKILLS_ROOT.iterdir() if d.is_dir()]
         assert "enforce" not in skill_dirs
 
     def test_listen_dir_in_skills(self) -> None:
-        skill_dirs = [d.name for d in SKILLS_DIR.iterdir() if d.is_dir()]
+        skill_dirs = [d.name for d in SKILLS_ROOT.iterdir() if d.is_dir()]
         assert "listen" in skill_dirs
 
     def test_no_enforce_skill_invocation_in_repo(self) -> None:
