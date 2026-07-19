@@ -27,9 +27,9 @@ compositions.
   `super-tdd-cat`, `super-duper-tdd-cat`, `super-duper-fixer-tdd-cat`,
   `expert-tdd-cat-review`, `expert-duper-tdd-cat-review`,
   `expert-super-tdd-cat-review`, `expert-super-duper-tdd-cat-review`.
-- `tests/skills/tdd_cat/` — 57 structural tests (RED→GREEN: 43 observed
-  failing pre-edit; axis + guard + 8×5 family references + `/cat`-untouched
-  pin).
+- `tests/skills/tdd_cat/` — 74 structural tests (RED→GREEN: 43 observed
+  failing pre-edit; axis + guard + mode↔semantics swap-guards + 8×7 family
+  references incl. column-0 heading pins + `/cat`-untouched pin).
 
 ### Notes (v2.0.0)
 

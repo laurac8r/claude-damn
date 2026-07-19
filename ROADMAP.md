@@ -394,7 +394,7 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       `AskUserQuestion`. Canonical definition + never-default-silently guard in
       `skills/tdd-cat/SKILL.md`, referenced by the other eight; `/cat`
       untouched (it serves non-TDD compositions). Structural suite
-      `tests/skills/tdd_cat/` (57 tests, RED→GREEN); RED pressure baseline
+      `tests/skills/tdd_cat/` (74 tests, RED→GREEN); RED pressure baseline
       captured the silent-default rationalization ("I decided it myself" under
       dispatch-overhead pressure); GREEN re-probe surfaced all three axes in
       one combined call.

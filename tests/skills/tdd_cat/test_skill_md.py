@@ -100,6 +100,12 @@ class TestExecutionModeAxis:
         assert "third question" in skill_md.lower()
         assert "AskUserQuestion" in skill_md
 
+    def test_mode_semantics_pairing_in_table(self, skill_md: str) -> None:
+        # PR #92 expert-review: independent substring checks let an A<->B
+        # swap pass — pin the label->semantics binding in the table rows.
+        assert re.search(r"(?m)^\|\s*\*\*A — Split-phase\*\*", skill_md)
+        assert re.search(r"(?m)^\|\s*\*\*B — Micro-cycle\*\*", skill_md)
+
     def test_orthogonality_note(self, skill_md: str) -> None:
         # A/B is orthogonal to /cat's two axes; within one behavior RED must
         # precede GREEN, so phases of the same behavior never parallelize.
@@ -154,6 +160,22 @@ class TestFamilyReferencesAxis:
 
     def test_never_default_wording(self, family_skill: str) -> None:
         assert "never default" in read_skill_md(family_skill).lower()
+
+    def test_mode_semantics_pairing(self, family_skill: str) -> None:
+        # Same swap-guard as the canonical table: bind each mode label to
+        # its semantics adjacently (\s* tolerates a reflowed line break).
+        content = read_skill_md(family_skill)
+        assert re.search(r"Mode A\*\*\s*\(split-phase", content)
+        assert re.search(r"Mode B\*\*\s*\(micro-cycle", content)
+
+    def test_axis_heading_at_column_zero(self, family_skill: str) -> None:
+        # Copilot on PR #92 flagged a leading space before "##". CommonMark
+        # still renders <=3 leading spaces as a heading, but the drift breaks
+        # heading-anchored tooling and sibling consistency — pin column 0.
+        assert re.search(
+            r"(?m)^## TDD execution mode \(third axis\)$",
+            read_skill_md(family_skill),
+        )
 
 
 class TestCatStaysUntouched:
