@@ -421,3 +421,32 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       have to `pkill` — fragile (one of those calls failed exit 144) and not
       portable. Replace with an HTTP shutdown endpoint that `httpd.shutdown()`s
       from a worker thread.
+
+## Phase 7 — Semantic skill-discovery service (pgvector RAG + Node/TS MCP)
+
+**PRIORITY (2026-07-19): next implementation work — ahead of the remaining
+Phase 3–6 items.** The catalog is at 61 skills and discovery is unwieldy;
+this phase ships semantic search over the skills corpus as a dogfooded
+service. Design spec:
+`docs/superpowers/specs/2026-07-19-semantic-skill-discovery-design.md`.
+Authoring contract applies: `/brainstorming` → `/writing-plans` →
+`/test-driven-development` before implementation.
+
+- [ ] **Golden-set retrieval eval (build FIRST)** — 30–50 hand-labeled
+      query→skill pairs from the real catalog; deterministic pytest
+      recall@k / MRR assertions; no LLM calls in CI
+- [ ] **pgvector store + corpus embedding** — embed all `SKILL.md`
+      name/description/body chunks into Postgres + pgvector (Neon or Supabase
+      free tier); public corpus only — never proprietary/canonical content
+- [ ] **Embeddings A/B via the eval harness** — local sentence-transformers vs
+      Voyage API; the golden set decides, not a leaderboard
+- [ ] **Retrieval + Claude-API answer synthesis** — cited answers over
+      retrieved chunks; optional RAGAS pass pre-release only (heavier
+      dependency, not a CI gate)
+- [ ] **MCP HTTP-transport spike** — short `@modelcontextprotocol/sdk`
+      HTTP/SSE ergonomics check BEFORE committing the server build
+- [ ] **`find_skill(query)` MCP server — Node/TypeScript** — HTTP/SSE
+      transport on a free host; the idiomatic-SDK rationale for Node is part
+      of the design record
+- [ ] **Dogfood + document** — wire into daily Claude Code use; per-skill
+      quickstart entry; README + docs/index.html section
