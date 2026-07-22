@@ -156,6 +156,21 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       backup before overwriting the shared slot. Add a step:
       before overwriting, confirm the displaced lane's per-worktree checkpoint
       exists (else preserve/append, don't clobber). Surfaced via `/learn`.
+- [ ] **`/cat` per-round re-invocation counter** — in a 2026-07-18 session the
+      first `/cat` dispatch round correctly Skill-invoked its mapped source
+      skill (`/dispatching-parallel-agents`), but the second round (same
+      session, new plan) dispatched subagents directly, rationalizing "the
+      execution mode was already chosen earlier this session." Mode answers
+      persist per round; the mapped source-skill invocation does not. Add a
+      rationalization-table row + an explicit "each dispatch round re-invokes
+      the mapped skill" line to the Dispatch section. Surfaced via `/learn`.
+- [ ] **`/task-list` restart-loss handling in `--update`** — Mode 2 (reconcile)
+      assumes the tracked list survives the session; after a harness restart
+      `TaskUpdate` returned "Task not found" for every prior id (observed
+      2026-07-18) and the agent silently recreated the list. Document the
+      recovery path: on restart-loss, recreate still-relevant tasks and surface
+      a one-line "list did not survive restart; ids changed" note instead of
+      erroring or silently recreating. Surfaced via `/learn`.
 - [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
       in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
       The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
