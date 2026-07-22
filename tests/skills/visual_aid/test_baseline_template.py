@@ -47,7 +47,7 @@ class TestBaselineHtmlExtracted:
         assert ":focus-visible" in baseline_html
         # Find the region around :focus-visible to check selector tokens.
         idx = baseline_html.index(":focus-visible")
-        region = baseline_html[max(0, idx - 300): idx + 20]
+        region = baseline_html[max(0, idx - 300) : idx + 20]
         for token in (
             "a",
             "button",
@@ -111,23 +111,37 @@ class TestInlineCodeWrapping:
     edge."""
 
     def test_inline_code_has_overflow_wrap(self, baseline_html: str) -> None:
-        """code/kbd/samp must declare overflow-wrap: anywhere (or break-word)
-        so unbreakable identifiers can wrap inside the card."""
-        # Find the rule body for `code, kbd, samp`.
-        match = re.search(
-            r"code\s*,\s*kbd\s*,\s*samp\s*\{([^}]*)\}",
-            baseline_html,
-            re.IGNORECASE,
-        )
-        assert match, "code, kbd, samp rule not found in baseline.html"
-        body = match.group(1)
-        assert re.search(
-            r"overflow-wrap\s*:\s*(anywhere|break-word)",
-            body,
-            re.IGNORECASE,
-        ), (
-            "code/kbd/samp rule must set overflow-wrap to anywhere or "
-            "break-word so long identifiers wrap inside cards"
+        """code/kbd/samp must each declare overflow-wrap: anywhere (or
+        break-word) so unbreakable identifiers can wrap inside the card.
+        Selector-list order, whitespace, and combined-vs-split rules are
+        deliberately NOT pinned — any semantically equivalent form passes."""
+        # CSS comments may contain commas and braces, which would corrupt
+        # the naive rule parse below — strip them first.
+        stylesheet = re.sub(r"/\*.*?\*/", "", baseline_html, flags=re.DOTALL)
+
+        required_selectors = {"code", "kbd", "samp"}
+        selectors_with_wrap: set[str] = set()
+
+        for match in re.finditer(r"([^{}]+)\{([^}]*)\}", stylesheet):
+            selectors_text, body = match.groups()
+            if not re.search(
+                r"overflow-wrap\s*:\s*(anywhere|break-word)",
+                body,
+                re.IGNORECASE,
+            ):
+                continue
+            selectors = {
+                selector.strip().lower()
+                for selector in selectors_text.split(",")
+                if selector.strip()
+            }
+            selectors_with_wrap.update(required_selectors & selectors)
+
+        missing_selectors = sorted(required_selectors - selectors_with_wrap)
+        assert not missing_selectors, (
+            "baseline.html must set overflow-wrap to anywhere or break-word "
+            "for code, kbd, and samp so long identifiers wrap inside cards; "
+            f"missing: {', '.join(missing_selectors)}"
         )
 
     def test_card_has_min_width_zero(self, baseline_html: str) -> None:
@@ -188,7 +202,7 @@ class TestSkillMdReferencesBaseline:
         """SKILL.md must instruct the agent to copy/include/use baseline.html."""
         idx = skill_md.find("baseline.html")
         assert idx != -1, "baseline.html not mentioned in SKILL.md"
-        region = skill_md[max(0, idx - 200): idx + 200]
+        region = skill_md[max(0, idx - 200) : idx + 200]
         assert re.search(
             r"\b(copy|include|use|start from)\b",
             region,
