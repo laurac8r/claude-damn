@@ -105,6 +105,52 @@ class TestBaselineHtmlExtracted:
         )
 
 
+class TestInlineCodeWrapping:
+    """Long inline <code> identifiers (FQ Java/Kotlin paths, dotted method
+    chains) must wrap inside cards instead of overflowing past the right
+    edge."""
+
+    def test_inline_code_has_overflow_wrap(self, baseline_html: str) -> None:
+        """code/kbd/samp must declare overflow-wrap: anywhere (or break-word)
+        so unbreakable identifiers can wrap inside the card."""
+        # Find the rule body for `code, kbd, samp`.
+        match = re.search(
+            r"code\s*,\s*kbd\s*,\s*samp\s*\{([^}]*)\}",
+            baseline_html,
+            re.IGNORECASE,
+        )
+        assert match, "code, kbd, samp rule not found in baseline.html"
+        body = match.group(1)
+        assert re.search(
+            r"overflow-wrap\s*:\s*(anywhere|break-word)",
+            body,
+            re.IGNORECASE,
+        ), (
+            "code/kbd/samp rule must set overflow-wrap to anywhere or "
+            "break-word so long identifiers wrap inside cards"
+        )
+
+    def test_card_has_min_width_zero(self, baseline_html: str) -> None:
+        """.card must set min-width: 0 so it can shrink below intrinsic
+        min-content when inline code becomes long; without this, even
+        overflow-wrap can't help because the grid track refuses to narrow."""
+        match = re.search(
+            r"\.card\s*\{([^}]*)\}",
+            baseline_html,
+            re.IGNORECASE,
+        )
+        assert match, ".card rule not found in baseline.html"
+        body = match.group(1)
+        assert re.search(
+            r"min-width\s*:\s*0",
+            body,
+            re.IGNORECASE,
+        ), (
+            ".card must set min-width: 0 so grid items shrink below "
+            "intrinsic min-content for long inline code"
+        )
+
+
 class TestSkillMdReferencesBaseline:
     """Invariants for SKILL.md after the baseline.html extraction."""
 
