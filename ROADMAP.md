@@ -405,6 +405,22 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       (browser automation legitimately needs longer snippets). Via TDD, like
       the sibling inline-interpreter item above.
 
+### `*-tdd-cat` family — TDD execution-mode axis
+
+- [x] **A/B TDD execution-mode axis across the nine `*-tdd-cat` compositions**
+      — Mode A (split-phase: one RED/GREEN/REFACTOR phase per subagent) vs
+      Mode B (micro-cycle: full `/tdd` loop inside each subagent), asked as a
+      **third question** in `/cat`'s ONE combined pre-dispatch
+      `AskUserQuestion`. Canonical definition + never-default-silently guard in
+      `skills/tdd-cat/SKILL.md`, referenced by the other eight; `/cat`
+      untouched (it serves non-TDD compositions). Structural suite
+      `tests/skills/tdd_cat/` (74 tests, RED→GREEN); RED pressure baseline
+      captured the silent-default rationalization ("I decided it myself" under
+      dispatch-overhead pressure); GREEN re-probe surfaced all three axes in
+      one combined call.
+      Completes the tdd+cat family arc (`/tdd` PR #83 → `/cat` PR #89 → this)
+      — operator-designated MAJOR ⇒ **v2.0.0**. Shipped 2026-07-18.
+
 ### `/atlas` — session-survey skill
 
 - [x] **`/atlas`** — composes `/tesseract` + `/checkpoint-resume` + `/visual-aid`
