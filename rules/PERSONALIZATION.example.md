@@ -256,10 +256,17 @@ scannable and copy-pasteable.
   [SemVer](https://semver.org/): **MAJOR** = finished a Phase; **MINOR** =
   finished an Item within a Phase; **PATCH** = docs-only / renames. Multi-tier:
   highest tier wins.
+- **A hotfix or bug fix ALWAYS bumps `PATCH` and ALWAYS gets a `CHANGELOG.md`
+  entry — even when it closes no `ROADMAP.md` item.** A ROADMAP mark-off is
+  *one* trigger for a bump, not the only one. Shipping a behavior change with no
+  version delta and no changelog line leaves consumers unable to tell which
+  build carries the fix, and leaves the fix invisible in release notes. When the
+  fix closes no checklist item: bump PATCH, write the CHANGELOG entry, skip the
+  ROADMAP edit.
 - Bump every manifest in lockstep; update `CHANGELOG.md` to match; stage
-  alongside the ROADMAP edit; don't commit. **The bump is not optional** — hence
-  `[policy]`, not a nudge. (Adding a *new unchecked* item is not a mark-off and
-  needs no bump.)
+  alongside the ROADMAP edit (when there is one); don't commit. **The bump is
+  not optional** — hence `[policy]`, not a nudge. (Adding a *new unchecked* item
+  is not a mark-off and needs no bump.)
 
 <!-- ── [nudge] — default behavior, deviate with a reason ─────────────────── -->
 
