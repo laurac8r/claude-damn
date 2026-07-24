@@ -100,16 +100,17 @@ Do not call `TaskCreate`, `TaskUpdate`, or any other mutator during this step.
 Read only.
 
 **Fallback — Task tools absent from the tool surface.** Some sessions gate
-`TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` behind an experiment flag; when
-that happens all four are simply missing, not erroring. Do not abort — fall
-back to tracking tasks with a **Markdown table** instead:
+`TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` behind an experiment flag (legacy
+`TodoWrite` can be absent too, and headless `-p` sessions are unaffected); when
+that happens all four are simply missing, not erroring. Do not abort — fall back
+to tracking tasks with a **Markdown table** instead:
 
-| ID | Subject | Status | Blocked by |
-|----|---------|--------|------------|
+| ID  | Subject | Status | Blocked by |
+| --- | ------- | ------ | ---------- |
 
 Build `TaskRecord`s from whatever Markdown to-do list is present in cwd (per
-this repo's `CLAUDE.md › Tasks, Planning, and Execution`) and continue to step
-6 as if `TaskList()` had returned them.
+this repo's `CLAUDE.md › Tasks, Planning, and Execution`) and continue to step 6
+as if `TaskList()` had returned them.
 
 ### 6. Build `AtlasInput` and call `render()`
 
@@ -154,8 +155,8 @@ This is the ONLY file write /atlas performs.
   `AtlasInput.warnings` for malformed-but-found data. Empty ≠ failure.
 - **Never abort on a missing task tool** — same never-abort contract as above,
   applied to step 5: if the `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate`
-  family is absent from the tool surface, degrade to the Markdown table
-  fallback and continue; do not abort the render.
+  family is absent from the tool surface, degrade to the Markdown table fallback
+  and continue; do not abort the render.
 
 ## Anti-shortcuts (do NOT do these, even under pressure)
 
