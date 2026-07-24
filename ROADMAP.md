@@ -199,6 +199,17 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       signal-kill or a lingering process. Deferred second half of the
       `roadmap-visual-atlas-shutdown-endpoint` worktree; follow-up PR after
       `/atlas` PR #80 merges.
+- [ ] **Fix `/learn` SKILL.md text contradiction** — the opening "First
+      action: Invoke `/listen` with `/lets-make-a-skill …`" reads as
+      "start editing skills now," but steps 3–6 and the "does NOT apply
+      fixes without per-finding approval" section gate all edits behind an
+      approval step, so the opening invites a shortcut past that gate.
+      Reconcile the phrasing (e.g. reframe the first action as "run the
+      analysis playbook, then invoke `/listen` only for approved
+      findings"). Not a session misfire — a full read yields correct
+      behavior — a docs-clarity fix. Surfaced 2026-07-24 via `/learn` +
+      an independent transcript-review subagent (both converged; zero
+      session misfires found).
 
 ## Phase 3 — Harness integration
 
