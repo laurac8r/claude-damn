@@ -90,11 +90,11 @@ Render the queue as a Markdown table — not free prose, not a bulleted checklis
 | --- | ----------- | ------------------------------ |
 | 1   | pending     | Read SKILL.md                  |
 | 2   | in_progress | Run the test suite             |
-| 3   | done        | Bump version in pyproject.toml |
+| 3   | completed   | Bump version in pyproject.toml |
 
 - `#` is a stable per-session ordinal — reuse it across edits to the same row;
   do not renumber on every update.
-- `Status` is one of `pending`, `in_progress`, `done`, or `deleted`.
+- `Status` is one of `pending`, `in_progress`, `completed`, or `deleted`.
 - Re-render the full table (not a diff) each time the queue changes, the same
   way `--display` renders the full TaskList.
 

@@ -29,7 +29,7 @@ Markdown table instead of silently dropping task tracking.
 - `skills/check-yourself/SKILL.md` — Step 1 now names the absent Task tools
   and points at the Markdown fallback already in use elsewhere in the
   session; the boundary-check rationalization row was extended so a row
-  flipping to "done" in the fallback table counts as the same boundary a
+  flipping to `completed` in the fallback table counts as the same boundary a
   `TaskUpdate` status flip would.
 
 ### Changed (v2.0.1)
