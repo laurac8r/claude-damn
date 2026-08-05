@@ -65,6 +65,39 @@ Render every task in your response — id, status, subject (and owner if set).
 - Render the full list inline as a table or numbered list — never echo the
   truncated form.
 
+## Fallback: Task tools absent from the tool surface
+
+An interactive session may have `TaskCreate`, `TaskUpdate`, `TaskList`, and
+`TaskGet` gated off the tool surface entirely (a GrowthBook experiment flag;
+legacy `TodoWrite` can be absent too, and headless `-p` sessions are
+unaffected). When none of the four tools are callable, this skill still applies
+— do not report "the tool isn't available" and drop tracking.
+
+- **State once, then proceed.** In your first response after detecting the gap,
+  say once that the Task tools are absent from this session's tool surface and
+  that you are tracking the queue as a Markdown table instead. Do not repeat the
+  caveat on every turn, and do not ask permission to proceed.
+- **This is a fallback, not a preference.** If the Task tools ARE present on the
+  tool surface, use them per the Modes above — the Markdown table is only for
+  when they are gone.
+
+### Markdown-table fallback format
+
+Render the queue as a Markdown table — not free prose, not a bulleted checklist
+— with exactly these columns:
+
+| #   | Status      | Task                           |
+| --- | ----------- | ------------------------------ |
+| 1   | pending     | Read SKILL.md                  |
+| 2   | in_progress | Run the test suite             |
+| 3   | completed   | Bump version in pyproject.toml |
+
+- `#` is a stable per-session ordinal — reuse it across edits to the same row;
+  do not renumber on every update.
+- `Status` is one of `pending`, `in_progress`, `completed`, or `deleted`.
+- Re-render the full table (not a diff) each time the queue changes, the same
+  way `--display` renders the full TaskList.
+
 ## Examples
 
 ### Bare invocation
@@ -114,8 +147,12 @@ These are the captured baseline rationalizations — do NOT do them.
 - ❌ **"Would you like me to proceed?"** The syntax is unambiguous. Act.
 - ❌ **"The skill is not available, here is your list as plain text."** The
   skill IS this body; if you're reading this, you can act.
-- ❌ **"I've been tracking these in a markdown checklist already."** Prose
-  checklists are not TaskList state. TaskCreate is the tracking mechanism.
+- ❌ **"I've been tracking these in a markdown checklist already."** This
+  applies only when the Task tools are available on the tool surface — prose
+  checklists are not a substitute for TaskList state; TaskCreate is the tracking
+  mechanism. When the Task tools are absent, this anti-pattern does not apply:
+  the Markdown-table fallback above is the correct mechanism, not an improvised
+  substitute.
 - ❌ **"I'll surface the proposed changes for confirmation."** For `--update`,
   derive and execute. The user will see the result and can correct it via
   another `/task-list --update <#> :: <fix>` if wrong.
