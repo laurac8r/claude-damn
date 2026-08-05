@@ -16,10 +16,11 @@ from __future__ import annotations
 
 def test_step1_acknowledges_task_tools_may_be_absent(skill_md: str) -> None:
     step_1_start = skill_md.index("**Update the task list.**")
-    # Look at a reasonably-sized window after Step 1's header so we're
-    # checking the acknowledgment lives near the step it qualifies, not
-    # anywhere in the file.
-    window = skill_md[step_1_start : step_1_start + 800]
+    # Bound the window to Step 1's own text — up to the next numbered step —
+    # rather than a fixed character count, so the check doesn't silently
+    # truncate the tail if Step 1's bullet grows or shrinks.
+    step_1_end = skill_md.index("2. **Run /remember.**", step_1_start)
+    window = skill_md[step_1_start:step_1_end]
 
     assert "TaskCreate" in window
     assert "TaskUpdate" in window
@@ -33,6 +34,7 @@ def test_step1_fallback_states_once(skill_md: str) -> None:
     using the fallback and why — not silently improvise, and not repeat the
     caveat every boundary."""
     step_1_start = skill_md.index("**Update the task list.**")
-    window = skill_md[step_1_start : step_1_start + 800]
+    step_1_end = skill_md.index("2. **Run /remember.**", step_1_start)
+    window = skill_md[step_1_start:step_1_end]
 
     assert "state once" in window.lower() or "once" in window.lower()
