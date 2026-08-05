@@ -6,6 +6,71 @@ All notable changes to `claude-damn` are documented here. Format loosely follows
 entries follow standard SemVer (MAJOR / MINOR / PATCH) per the PERSONALIZATION
 versioning rule.
 
+## [2.0.1] — 2026-07-22
+
+PATCH: hotfix closing a task-tool blind spot. An experiment flag
+(`tengu_vellum_ash`) removes `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` from
+the tool surface in interactive sessions on Opus 4.8, Sonnet 5, and Fable 5 —
+the tools go missing rather than erroring, leaving `task-list`, `atlas`, and
+`check-yourself` with no documented recovery. All three now degrade to a
+Markdown table instead of silently dropping task tracking.
+
+### Fixed (v2.0.1)
+
+- `skills/atlas/SKILL.md` — step 5 degrades to a fixed-shape Markdown table
+  fallback when the Task tool family is absent, with the never-abort guarantee
+  in `## Invariants` extended to explicitly cover the missing-tool case.
+- `skills/task-list/SKILL.md` — added the same Markdown-table fallback (fixed
+  `#` / `Status` / `Task` columns), and qualified the anti-pattern that banned
+  prose checklists so it fires only when the Task tools are actually present
+  on the tool surface — the ban was correct in its original context, but as
+  written it forbade the one tracking mechanism still available once the
+  tools are gated off.
+- `skills/check-yourself/SKILL.md` — Step 1 now names the absent Task tools
+  and points at the Markdown fallback already in use elsewhere in the
+  session; the boundary-check rationalization row was extended so a row
+  flipping to `completed` in the fallback table counts as the same boundary a
+  `TaskUpdate` status flip would.
+
+### Changed (v2.0.1)
+
+- `.claude-plugin/plugin.json` / `pyproject.toml` — 2.0.0 → 2.0.1.
+
+## [2.0.0] — 2026-07-18
+
+MAJOR (operator-designated milestone): completes the tdd+cat family arc —
+`/tdd` micro-cycle (PR #83) → `/cat` SDD+parallel combination (PR #89) → this
+release: the A/B TDD execution-mode axis across all nine `*-tdd-cat`
+compositions.
+
+### Added (v2.0.0)
+
+- `skills/tdd-cat/SKILL.md` — rewritten as the canonical home of the TDD
+  execution-mode axis: **Mode A** (split-phase: one RED/GREEN/REFACTOR phase
+  per subagent) vs **Mode B** (micro-cycle: full `/tdd` loop inside each
+  subagent), asked as a **third question** in `/cat`'s ONE combined
+  pre-dispatch `AskUserQuestion`; standalone bare invocations of `/tdd` +
+  `/cat`; orthogonality note (within a behavior, RED precedes GREEN — phases
+  of the same behavior never parallelize); and a "No Shortcut — Never Default
+  the TDD Mode Silently" guard with rationalization-counter table.
+- Axis reference blocks in the other eight compositions: `duper-tdd-cat`,
+  `super-tdd-cat`, `super-duper-tdd-cat`, `super-duper-fixer-tdd-cat`,
+  `expert-tdd-cat-review`, `expert-duper-tdd-cat-review`,
+  `expert-super-tdd-cat-review`, `expert-super-duper-tdd-cat-review`.
+- `tests/skills/tdd_cat/` — 74 structural tests (RED→GREEN: 43 observed
+  failing pre-edit; axis + guard + mode↔semantics swap-guards + 8×7 family
+  references incl. column-0 heading pins + `/cat`-untouched pin).
+
+### Notes (v2.0.0)
+
+- `/cat` deliberately untouched — it serves non-TDD compositions; the axis
+  rides its combined question from the tdd side only.
+- Proportionate eval per the `/cat` precedent: a RED pressure probe of the
+  as-written skills silently self-assigned the phase↔subagent mapping under
+  dispatch-overhead pressure ("I decided it myself"); the GREEN re-probe
+  against the rewrite surfaced all three axes in one combined call and quoted
+  the guard as what stopped the skip.
+
 ## [1.13.0] — 2026-07-06
 
 MINOR: manual canonical → active-dev sync (136 files vs `main`). Ships the

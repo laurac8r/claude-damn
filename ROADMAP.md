@@ -128,14 +128,49 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       (`render()` latency under realistic shelf/git/commit volumes).
       Tracks the plan's Tasks 19-21 deferred from the initial `/atlas`
       PR boundary. Cross-reference: ROADMAP `/atlas` entry in Phase 5.
-- [ ] **Root-cause `/check-yourself` skip-rate** — `/check-yourself` fires at
-      only a fraction of its enumerated task-boundary triggers (Skill returns,
-      `/proceed` gates, test-runs, durable file-writes). Observed 2026-05-16:
-      one long multi-skill session invoked it once (at `/pause`), skipping
-      ~15+ boundaries. The skill text is already maximal (full trigger
-      enumeration + 11-row rationalization table), so brainstorm whether the
-      gap is invocation-discipline, harness enforcement, or a structural fix
-      (e.g. hook-based boundary detection). Surfaced via `/learn`.
+- [ ] **Root-cause `/check-yourself` skip-rate → hookify (operator-ratified
+      2026-07-11)** — `/check-yourself` fires at only a fraction of its
+      enumerated task-boundary triggers (Skill returns, `/proceed` gates,
+      test-runs, durable file-writes). Observed 2026-05-16: one long multi-skill
+      session invoked it once (at `/pause`), skipping ~15+ boundaries. The skill
+      text is already maximal (full trigger enumeration + 11-row rationalization
+      table), so brainstorm whether the gap is invocation-discipline, harness
+      enforcement, or a structural fix (e.g. hook-based boundary detection).
+      Surfaced via `/learn`. **Recurred 2026-07-11** (~10 stale-task
+      system-reminders, still fired only at `/pause`); the `/tesseract` `learn`
+      shelf shows the same "fired only at /pause" pattern flagged 2026-07-05.
+      **Operator ratified the structural fix: hookify** — a hook that detects
+      boundary events and forces (or hard-nudges) the invocation, since a
+      self-invoked skill can't enforce itself.
+- [ ] **Bake the `/tesseract` TaskList bookend into the skill** — the operator's
+      "write a TaskList before `/tesseract`, resume from it on exit" rule lives
+      only in `PERSONALIZATION.md`, so the skill never enforces it; it was
+      skipped 2026-07-11 even though the `feedback_tesseract_task_list_bookend`
+      memory surfaced in that same run's Hallway 2. Add a bookend step to the
+      skill (guarded/optional so the shippable skill doesn't hardcode operator
+      preference). Surfaced via `/learn`.
+- [ ] **`checkpoint-save`/`remember` parallel-lane shared-slot handling** — both
+      skills say "overwrite the rolling `.remember/` slot" without covering the
+      multi-lane case where the slot holds another live lane's handoff. On
+      2026-07-11 a session had to verify the per-worktree `CHECKPOINT.md`
+      backup before overwriting the shared slot. Add a step:
+      before overwriting, confirm the displaced lane's per-worktree checkpoint
+      exists (else preserve/append, don't clobber). Surfaced via `/learn`.
+- [ ] **`/cat` per-round re-invocation counter** — in a 2026-07-18 session the
+      first `/cat` dispatch round correctly Skill-invoked its mapped source
+      skill (`/dispatching-parallel-agents`), but the second round (same
+      session, new plan) dispatched subagents directly, rationalizing "the
+      execution mode was already chosen earlier this session." Mode answers
+      persist per round; the mapped source-skill invocation does not. Add a
+      rationalization-table row + an explicit "each dispatch round re-invokes
+      the mapped skill" line to the Dispatch section. Surfaced via `/learn`.
+- [ ] **`/task-list` restart-loss handling in `--update`** — Mode 2 (reconcile)
+      assumes the tracked list survives the session; after a harness restart
+      `TaskUpdate` returned "Task not found" for every prior id (observed
+      2026-07-18) and the agent silently recreated the list. Document the
+      recovery path: on restart-loss, recreate still-relevant tasks and surface
+      a one-line "list did not survive restart; ids changed" note instead of
+      erroring or silently recreating. Surfaced via `/learn`.
 - [ ] **`/duper` + `/cat` out-of-anchor subagent worktrees** — spawn subagents
       in worktrees NOT nested under the session-launch dir via `/tmp` scripts.
       The Bash harness resets cwd above the launch anchor (verified 2026-05-30)
@@ -164,6 +199,17 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       signal-kill or a lingering process. Deferred second half of the
       `roadmap-visual-atlas-shutdown-endpoint` worktree; follow-up PR after
       `/atlas` PR #80 merges.
+- [ ] **Fix `/learn` SKILL.md text contradiction** — the opening "First
+      action: Invoke `/listen` with `/lets-make-a-skill …`" reads as
+      "start editing skills now," but steps 3–6 and the "does NOT apply
+      fixes without per-finding approval" section gate all edits behind an
+      approval step, so the opening invites a shortcut past that gate.
+      Reconcile the phrasing (e.g. reframe the first action as "run the
+      analysis playbook, then invoke `/listen` only for approved
+      findings"). Not a session misfire — a full read yields correct
+      behavior — a docs-clarity fix. Surfaced 2026-07-24 via `/learn` +
+      an independent transcript-review subagent (both converged; zero
+      session misfires found).
 
 ## Phase 3 — Harness integration
 
@@ -384,6 +430,22 @@ expert) Skills can graduate to SME Agents that supervise compositional flows.
       Decide whether the cap is same-size or a larger dedicated limit
       (browser automation legitimately needs longer snippets). Via TDD, like
       the sibling inline-interpreter item above.
+
+### `*-tdd-cat` family — TDD execution-mode axis
+
+- [x] **A/B TDD execution-mode axis across the nine `*-tdd-cat` compositions**
+      — Mode A (split-phase: one RED/GREEN/REFACTOR phase per subagent) vs
+      Mode B (micro-cycle: full `/tdd` loop inside each subagent), asked as a
+      **third question** in `/cat`'s ONE combined pre-dispatch
+      `AskUserQuestion`. Canonical definition + never-default-silently guard in
+      `skills/tdd-cat/SKILL.md`, referenced by the other eight; `/cat`
+      untouched (it serves non-TDD compositions). Structural suite
+      `tests/skills/tdd_cat/` (74 tests, RED→GREEN); RED pressure baseline
+      captured the silent-default rationalization ("I decided it myself" under
+      dispatch-overhead pressure); GREEN re-probe surfaced all three axes in
+      one combined call.
+      Completes the tdd+cat family arc (`/tdd` PR #83 → `/cat` PR #89 → this)
+      — operator-designated MAJOR ⇒ **v2.0.0**. Shipped 2026-07-18.
 
 ### `/atlas` — session-survey skill
 
