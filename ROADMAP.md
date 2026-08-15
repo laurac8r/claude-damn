@@ -210,6 +210,21 @@ cost tooling) into a first-class Claude Code plugin that installs alongside
       behavior — a docs-clarity fix. Surfaced 2026-07-24 via `/learn` +
       an independent transcript-review subagent (both converged; zero
       session misfires found).
+- [ ] **Run `/learn` on `/duper`** — a `/duper` worktree ends up tracking
+      `origin/main` as its upstream instead of merely branching from it,
+      whenever the primary worktree is checked out on a branch other than
+      `main`. In that state the agent reaches for an explicit base ref, and
+      `git worktree add <path> -b <new> origin/main` makes git auto-set the
+      upstream to the remote-tracking ref it branched from — so the first
+      push targets `origin/main`. Recovery required unsetting the upstream,
+      renaming, and re-pushing (`git branch -u` would also have worked).
+      `using-git-worktrees/SKILL.md:152` already prescribes the safe form —
+      `git worktree add "$path" -b "$BRANCH_NAME"` — which branches from
+      local HEAD and therefore cannot auto-track; the gap is that nothing
+      states what to do when HEAD is NOT the intended base. Fix should cover
+      the non-`main` primary-checkout case explicitly and require
+      `--no-track` (or a follow-up `git branch --unset-upstream`) whenever a
+      remote-tracking ref is used as the base. Observed 2026-08-14.
 
 ## Phase 3 — Harness integration
 
