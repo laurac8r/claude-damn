@@ -24,21 +24,51 @@ can watch it legally on whichever streaming service currently has it. Default:
 1. **Parse `$ARGUMENTS`.** If a value is supplied, slugify it (lowercase, spaces
    → `-`, strip non-`[a-z0-9-]`). If empty, default to `bloodsport`.
 
-2. **Construct the URL** using the JustWatch movie path pattern:
+2. **Construct the candidate URL** using the JustWatch movie path pattern:
 
    ```
    https://www.justwatch.com/us/movie/<slug>
    ```
 
-3. **Open the browser** via the platform-appropriate single-statement command:
-   - **macOS:** `open "https://www.justwatch.com/us/movie/<slug>"`
-   - **Linux:** `xdg-open "https://www.justwatch.com/us/movie/<slug>"`
-   - **Windows:** `start "" "https://www.justwatch.com/us/movie/<slug>"`
+3. **Verify the slug, then fall back to search.** A slugified title is a guess,
+   not the real path — JustWatch disambiguates same-named films with suffixes
+   (`bloodsport-i`, `the-dish-2026-1`), so the naive slug 404s more often than
+   it lands. Check before opening:
+
+   ```
+   curl -s -o /dev/null -w "%{http_code}" -L "https://www.justwatch.com/us/movie/<slug>"
+   ```
+
+   - **`200`** → that is the URL to open.
+   - **anything else** → build the search URL, which always resolves:
+
+      ```
+      https://www.justwatch.com/us/search?q=<query>
+      ```
+
+      `<query>` is the raw `$ARGUMENTS` text (or `bloodsport` when empty) with
+      spaces as `+`. Optionally grep the search page for `/us/movie/[a-z0-9-]*`
+      to recover the real film slug and open that page instead of the listing.
+
+   Never dead-end the user on a 404. If the check itself can't run (offline, no
+   `curl`), skip straight to the search URL — a listing page beats a broken
+   link.
+
+   Known correction, verified 2026-09-06: the default **Bloodsport** (1988)
+   lives at `bloodsport-i`. Both `bloodsport` and `bloodsport-1988` return 404.
+
+4. **Open the browser** on the resolved URL via the platform-appropriate
+   single-statement command:
+   - **macOS:** `open "<url>"`
+   - **Linux:** `xdg-open "<url>"`
+   - **Windows:** `start "" "<url>"`
 
    If none of those commands are available, print the URL instead and tell the
    user to click it. Do not fail loudly — this is supposed to be fun.
 
-4. **Deliver a line.** Print a one-liner appropriate to the chosen film:
+5. **Deliver a line.** Print a one-liner appropriate to the chosen film, keyed
+   on the slug the user asked for — not the slug JustWatch resolved to, or
+   `/jcvd` would drop `bloodsport` into the fallback row:
 
    | Slug                | Quote                                                       |
    | ------------------- | ----------------------------------------------------------- |
@@ -56,7 +86,7 @@ can watch it legally on whichever streaming service currently has it. Default:
    | `cyborg`            | "It's a good day to die."                                   |
    | _any other slug_    | "You break my record, now I break you."                     |
 
-5. **Done.** No shared memory, no subagents, no test-writer, no red gate. Just
+6. **Done.** No shared memory, no subagents, no test-writer, no red gate. Just
    kicks, splits, and the Muscles from Brussels.
 
 ---
@@ -69,6 +99,9 @@ can watch it legally on whichever streaming service currently has it. Default:
   slugify hyphenates).
 - `/jcvd maximum-risk` → Maximum Risk. (Yes, the same one we named a test tier
   after.)
+- Any slug JustWatch doesn't actually use → the search page for that title, not
+  a 404. `/jcvd` bare is exactly this case: `bloodsport` 404s, `bloodsport-i` is
+  the real page.
 
 ---
 
@@ -85,3 +118,7 @@ can watch it legally on whichever streaming service currently has it. Default:
 - JustWatch is used because it is a legal aggregator and does not privilege any
   single streaming service — it tells the user where the film is currently
   available.
+- Its slugs are editorial, not derived from the title, and they change as the
+  catalog changes. Treat any hardcoded slug in this file as a hint that needs
+  the step-3 status check, never as a guarantee. The search URL is the stable
+  surface.
